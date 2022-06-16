@@ -18,9 +18,9 @@ class Controller:
         self.setup()
 
     def connect(self):
-        self.generator = rm.open_resource(
+        self.generator = self.resource_manager.open_resource(
             "USB0::0x0699::0x0353::1742374::INSTR")
-        self.meter = rm.open_resource("GPIB0::0::INSTR")
+        self.meter = self.resource_manager.open_resource("GPIB0::0::INSTR")
 
     def setup(self):
         # Tektronix
