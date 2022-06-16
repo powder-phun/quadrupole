@@ -115,6 +115,8 @@ class Ui_MainWindow(object):
         self.sweepTwoStepsSpinbox = QSpinBox(self.centralwidget)
         self.sweepTwoStepsSpinbox.setObjectName(u"sweepTwoStepsSpinbox")
         self.sweepTwoStepsSpinbox.setEnabled(False)
+        self.sweepTwoStepsSpinbox.setMinimum(1)
+        self.sweepTwoStepsSpinbox.setMaximum(1000)
 
         self.sweepGridLayout.addWidget(self.sweepTwoStepsSpinbox, 1, 10, 1, 1)
 
@@ -130,6 +132,8 @@ class Ui_MainWindow(object):
 
         self.sweepOneStepsSpinbox = QSpinBox(self.centralwidget)
         self.sweepOneStepsSpinbox.setObjectName(u"sweepOneStepsSpinbox")
+        self.sweepOneStepsSpinbox.setMinimum(1)
+        self.sweepOneStepsSpinbox.setMaximum(1000)
 
         self.sweepGridLayout.addWidget(self.sweepOneStepsSpinbox, 0, 10, 1, 1)
 
@@ -295,6 +299,7 @@ class Ui_MainWindow(object):
         self.settingsHorizontalLayout.addLayout(self.settingsRightVerticalLayout)
 
         self.settingsHorizontalLayout.setStretch(0, 1)
+        self.settingsHorizontalLayout.setStretch(2, 2)
 
         self.verticalLayout_3.addLayout(self.settingsHorizontalLayout)
 
