@@ -22,6 +22,7 @@ from PySide6.QtWidgets import (QApplication, QDockWidget, QFrame, QHBoxLayout,
 
 from paramDock import ParamDock
 from sweepWidget import SweepWidget
+from timeChart import TimeChart
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -40,10 +41,10 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.plotLayout = QHBoxLayout()
         self.plotLayout.setObjectName(u"plotLayout")
-        self.widget = QWidget(self.timeTab)
-        self.widget.setObjectName(u"widget")
+        self.timeChart = TimeChart(self.timeTab)
+        self.timeChart.setObjectName(u"timeChart")
 
-        self.plotLayout.addWidget(self.widget)
+        self.plotLayout.addWidget(self.timeChart)
 
 
         self.verticalLayout_2.addLayout(self.plotLayout)

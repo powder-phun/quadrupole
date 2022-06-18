@@ -28,7 +28,7 @@
         <item>
          <layout class="QHBoxLayout" name="plotLayout">
           <item>
-           <widget class="QWidget" name="widget" native="true"/>
+           <widget class="TimeChart" name="timeChart" native="true"/>
           </item>
          </layout>
         </item>
@@ -224,6 +224,12 @@
    <class>SweepWidget</class>
    <extends>QWidget</extends>
    <header location="global">sweepWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>TimeChart</class>
+   <extends>QWidget</extends>
+   <header location="global">timeChart.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

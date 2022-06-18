@@ -113,30 +113,30 @@ class SweepWidget(QWidget):
             if self.ui.sweepOneCheckbox.isChecked():
                 self.ui.sweepTwoCheckbox.setEnabled(True)
 
-                self.sweepOneCombobox.setEnabled(True)
-                self.sweepOneMinEdit.setEnabled(True)
-                self.sweepOneMaxEdit.setEnabled(True)
-                self.sweepOneStepsSpinbox.setEnabled(True)
+                self.ui.sweepOneCombobox.setEnabled(True)
+                self.ui.sweepOneMinEdit.setEnabled(True)
+                self.ui.sweepOneMaxEdit.setEnabled(True)
+                self.ui.sweepOneStepsSpinbox.setEnabled(True)
 
             # Enable sweep two only if checkbox selected
             if self.ui.sweepTwoCheckbox.isChecked():
-                self.sweepTwoCombobox.setEnabled(True)
-                self.sweepTwoMinEdit.setEnabled(True)
-                self.sweepTwoMaxEdit.setEnabled(True)
-                self.sweepTwoStepsSpinbox.setEnabled(True)
+                self.ui.sweepTwoCombobox.setEnabled(True)
+                self.ui.sweepTwoMinEdit.setEnabled(True)
+                self.ui.sweepTwoMaxEdit.setEnabled(True)
+                self.ui.sweepTwoStepsSpinbox.setEnabled(True)
         else:
             # Always disable everything
             self.ui.sweepTwoCheckbox.setEnabled(False)
 
-            self.sweepOneCombobox.setEnabled(False)
-            self.sweepOneMinEdit.setEnabled(False)
-            self.sweepOneMaxEdit.setEnabled(False)
-            self.sweepOneStepsSpinbox.setEnabled(False)
+            self.ui.sweepOneCombobox.setEnabled(False)
+            self.ui.sweepOneMinEdit.setEnabled(False)
+            self.ui.sweepOneMaxEdit.setEnabled(False)
+            self.ui.sweepOneStepsSpinbox.setEnabled(False)
 
-            self.sweepTwoCombobox.setEnabled(False)
-            self.sweepTwoMinEdit.setEnabled(False)
-            self.sweepTwoMaxEdit.setEnabled(False)
-            self.sweepTwoStepsSpinbox.setEnabled(False)
+            self.ui.sweepTwoCombobox.setEnabled(False)
+            self.ui.sweepTwoMinEdit.setEnabled(False)
+            self.ui.sweepTwoMaxEdit.setEnabled(False)
+            self.ui.sweepTwoStepsSpinbox.setEnabled(False)
 
         self.ui.sweepOneCheckbox.setEnabled(value)
 

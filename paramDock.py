@@ -23,11 +23,11 @@ class ParamDock(QWidget):
         self.layoutEditable = QGridLayout()
         self.layoutNotEditable = QGridLayout()
         self.setLayout(self.verticalLayout)
-        self.nameLabels = {}
-        self.valueLabels = {}
-        self.unitLabels = {}
-        self.lineEdits = {}
-        self.pushButtons = {}
+        self.nameLabels: dict[ParameterID, QLabel] = {}
+        self.valueLabels: dict[ParameterID, QLabel] = {}
+        self.unitLabels: dict[ParameterID, QLabel] = {}
+        self.lineEdits: dict[ParameterID, QLineEdit] = {}
+        self.pushButtons: dict[ParameterID, QPushButton] = {}
 
     # Generate UI based on list of parameters
     def fill(self, params: dict[ParameterID, Parameter]):
@@ -83,6 +83,9 @@ class ParamDock(QWidget):
             else 0.0
         )
         self.valueSet.emit(identifier, val)
+
+    def setData(self, identifier, value):
+        self.valueLabels[identifier].setText(str(value))
 
     # Enabling or disabling editing
     def setEnabledParam(self, id: ParameterID, value: bool):

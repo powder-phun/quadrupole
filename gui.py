@@ -4,11 +4,21 @@ from PySide6.QtTest import QSignalSpy
 from ui.main_window import Ui_MainWindow
 
 from parameter import ParameterID, Parameter
-from utils import FLOAT_VALIDATOR
+from utils import FLOAT_VALIDATOR, State, DataPacket
 from executor import Executor
 
 
 class Main(QMainWindow):
+    started = Signal(str, str)
+    stoped = Signal()
+    paused = Signal()
+    restarted = Signal()
+
+    sweepOneSetup = Signal((bool,), (bool, ParameterID, float, float, int))
+    sweepTwoSetup = Signal((bool,), (bool, ParameterID, float, float, int))
+
+    exited = Signal()
+
     def __init__(self):
         super(Main, self).__init__()
         self.ui = Ui_MainWindow()
@@ -17,8 +27,7 @@ class Main(QMainWindow):
         self.params: dict[ParameterID, Parameter] = {}
         self.setupParams()
 
-        self.started: bool = False
-        self.paused = False
+        self.state = State.STOPPED
 
         self.executor = Executor()
         self.executorThread = QThread()
@@ -38,6 +47,9 @@ class Main(QMainWindow):
         self.ui.sweepWidget.params = self.params
         self.ui.sweepWidget.fillComboboxes()
 
+        # Setting up timeChart
+        self.ui.timeChart.setup(self.params)
+
     def connectAll(self):
         self.ui.startButton.clicked.connect(self.startClicked)
         self.ui.stopButton.clicked.connect(self.stopClicked)
@@ -45,8 +57,21 @@ class Main(QMainWindow):
         self.ui.sweepWidget.selectedOneChanged.connect(self.sweepOneChanged)
         self.ui.sweepWidget.selectedTwoChanged.connect(self.sweepTwoChanged)
 
-        self.executorThread.started.connect(self.executor.connect)
+        self.executorThread.started.connect(self.executor.connectControllers)
+
         self.ui.paramDock.valueSet.connect(self.executor.adjust)
+
+        self.started.connect(self.executor.start)
+        self.paused.connect(self.executor.pause)
+        self.restarted.connect(self.executor.restart)
+        self.stoped.connect(self.executor.stop)
+        self.exited.connect(self.executor.exit)
+
+        self.executor.exited.connect(self.executorThread.quit)
+        self.executor.exited.connect(self.executor.deleteLater)
+        self.executor.exited.connect(self.executorThread.deleteLater)
+
+        self.executor.measured.connect(self.dataMeasured)
 
     @Slot(ParameterID, ParameterID)
     def sweepOneChanged(self, identifier, old):
@@ -63,47 +88,52 @@ class Main(QMainWindow):
             self.ui.paramDock.setEnabledParam(old, True)
 
     def startClicked(self):
-        if not self.started and not self.paused:
-            self.started = True
-            self.paused = False
+        if self.state == State.STOPPED:
+            self.state = State.RUNNING
 
             self.ui.startButton.setText("Pause")
             self.ui.stopButton.setEnabled(False)
+            self.ui.sweepWidget.setEnabledEverything(False)
 
             # TODO: Send sweep data
 
-            # TODO: Start measurement
+            self.started.emit(
+                self.ui.titleEdit.text(), self.ui.commentEdit.toPlainText()
+            )
 
-        elif self.started and not self.paused:
-            self.started = False
-            self.paused = True
+        elif self.state == State.RUNNING:
+            self.state = State.PAUSED
 
             self.ui.startButton.setText("Re-start")
             self.ui.stopButton.setEnabled(True)
 
-            # TODO: Pause measurement
+            self.paused.emit()
 
-        elif self.paused:
-            self.paused = False
-            self.started = True
+        elif self.state == State.PAUSED:
+            self.state = State.RUNNING
 
             self.ui.startButton.setText("Pause")
             self.ui.stopButton.setEnabled(False)
 
-            # TODO: Restart measurement
+            self.restarted.emit()
 
     def stopClicked(self):
-        self.started = False
-        self.paused = False
+        self.state = State.STOPPED
 
         self.ui.startButton.setText("Start")
         self.ui.stopButton.setEnabled(False)
+        self.ui.sweepWidget.setEnabledEverything(True)
 
-        # TODO: Stop measurement
+        self.ui.timeChart.clear()
+
+        self.stoped.emit()
 
     def setupParams(self):
         self.params[ParameterID.DC] = Parameter(ParameterID.DC, "DC", "V", True, 0, 20)
         self.params[ParameterID.AC] = Parameter(ParameterID.AC, "AC", "V", True, 0, 20)
+        self.params[ParameterID.FREQUENCY] = Parameter(
+            ParameterID.FREQUENCY, "Frequency", "Hz", True, 0, 20e6
+        )
         self.params[ParameterID.DELAY] = Parameter(
             ParameterID.DELAY, "Delay", "s", True, 0, 100
         )
@@ -111,5 +141,17 @@ class Main(QMainWindow):
             ParameterID.PRESSURE, "Pressure", "mbar", True, 0, 1e-2
         )
         self.params[ParameterID.CURRENT] = Parameter(
-            ParameterID.CURRENT, "Ion Current", "A", False, None, None
+            ParameterID.CURRENT, "Ion Current", "A", False, -1, 1
         )
+
+    def closeEvent(self, event):
+        self.exited.emit()
+
+        super(Main, self).closeEvent(event)
+
+    @Slot(DataPacket)
+    def dataMeasured(self, packet):
+        for param, value in packet.data.items():
+            self.ui.paramDock.setData(param, value)
+
+        self.ui.timeChart.addData(packet)
