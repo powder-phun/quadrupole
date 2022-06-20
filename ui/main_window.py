@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'main_window.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.3.0
+## Created by: Qt User Interface Compiler version 6.3.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -23,6 +23,7 @@ from PySide6.QtWidgets import (QApplication, QDockWidget, QFrame, QHBoxLayout,
 from paramDock import ParamDock
 from sweepWidget import SweepWidget
 from timeChart import TimeChart
+from twoDChart import TwoDChart
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -39,20 +40,21 @@ class Ui_MainWindow(object):
         self.timeTab.setObjectName(u"timeTab")
         self.verticalLayout_2 = QVBoxLayout(self.timeTab)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.plotLayout = QHBoxLayout()
-        self.plotLayout.setObjectName(u"plotLayout")
         self.timeChart = TimeChart(self.timeTab)
         self.timeChart.setObjectName(u"timeChart")
 
-        self.plotLayout.addWidget(self.timeChart)
+        self.verticalLayout_2.addWidget(self.timeChart)
 
-
-        self.verticalLayout_2.addLayout(self.plotLayout)
-
-        self.verticalLayout_2.setStretch(0, 2)
         self.tabWidget.addTab(self.timeTab, "")
         self.twoDTab = QWidget()
         self.twoDTab.setObjectName(u"twoDTab")
+        self.verticalLayout = QVBoxLayout(self.twoDTab)
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.twoDChart = TwoDChart(self.twoDTab)
+        self.twoDChart.setObjectName(u"twoDChart")
+
+        self.verticalLayout.addWidget(self.twoDChart)
+
         self.tabWidget.addTab(self.twoDTab, "")
         self.threeDTab = QWidget()
         self.threeDTab.setObjectName(u"threeDTab")
@@ -168,11 +170,11 @@ class Ui_MainWindow(object):
         self.settingsHorizontalLayout.addLayout(self.settingsRightVerticalLayout)
 
         self.settingsHorizontalLayout.setStretch(0, 1)
-        self.settingsHorizontalLayout.setStretch(2, 2)
+        self.settingsHorizontalLayout.setStretch(2, 3)
 
         self.verticalLayout_3.addLayout(self.settingsHorizontalLayout)
 
-        self.verticalLayout_3.setStretch(0, 2)
+        self.verticalLayout_3.setStretch(0, 3)
         self.verticalLayout_3.setStretch(1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.paramDockWidget = QDockWidget(MainWindow)

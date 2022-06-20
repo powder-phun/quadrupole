@@ -50,8 +50,10 @@ class ParamDock(QWidget):
 
                 self.lineEdits[param.id] = QLineEdit()
                 self.lineEdits[param.id].setValidator(FLOAT_VALIDATOR)
+                self.lineEdits[param.id].setFixedWidth(100)
                 self.layoutEditable.addWidget(self.lineEdits[param.id], i, 3)
                 self.pushButtons[param.id] = QPushButton("Set")
+                self.pushButtons[param.id].setFixedWidth(50)
                 self.layoutEditable.addWidget(self.pushButtons[param.id], i, 4)
 
                 # Weird lambda to capture id
@@ -85,7 +87,7 @@ class ParamDock(QWidget):
         self.valueSet.emit(identifier, val)
 
     def setData(self, identifier, value):
-        self.valueLabels[identifier].setText(str(value))
+        self.valueLabels[identifier].setText("{:.2E}".format(value))
 
     # Enabling or disabling editing
     def setEnabledParam(self, id: ParameterID, value: bool):

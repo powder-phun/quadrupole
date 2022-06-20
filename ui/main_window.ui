@@ -14,7 +14,7 @@
    <string>Quadrupole Mass Spectrometer Measurement Software</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout_3" stretch="2,1">
+   <layout class="QVBoxLayout" name="verticalLayout_3" stretch="3,1">
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
@@ -24,13 +24,9 @@
        <attribute name="title">
         <string>Time</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="2">
+       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0">
         <item>
-         <layout class="QHBoxLayout" name="plotLayout">
-          <item>
-           <widget class="TimeChart" name="timeChart" native="true"/>
-          </item>
-         </layout>
+         <widget class="TimeChart" name="timeChart" native="true"/>
         </item>
        </layout>
       </widget>
@@ -38,6 +34,11 @@
        <attribute name="title">
         <string>2D</string>
        </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="TwoDChart" name="twoDChart" native="true"/>
+        </item>
+       </layout>
       </widget>
       <widget class="QWidget" name="threeDTab">
        <attribute name="title">
@@ -47,7 +48,7 @@
      </widget>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="settingsHorizontalLayout" stretch="1,0,2">
+     <layout class="QHBoxLayout" name="settingsHorizontalLayout" stretch="1,0,3">
       <item>
        <layout class="QVBoxLayout" name="settingsLeftVerticalLayout">
         <item>
@@ -230,6 +231,12 @@
    <class>TimeChart</class>
    <extends>QWidget</extends>
    <header location="global">timeChart.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>TwoDChart</class>
+   <extends>QWidget</extends>
+   <header location="global">twoDChart.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

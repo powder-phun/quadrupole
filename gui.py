@@ -49,6 +49,8 @@ class Main(QMainWindow):
 
         # Setting up timeChart
         self.ui.timeChart.setup(self.params)
+        # Setting up twoDChart
+        self.ui.twoDChart.setup(self.params)
 
     def connectAll(self):
         self.ui.startButton.clicked.connect(self.startClicked)
@@ -67,9 +69,10 @@ class Main(QMainWindow):
         self.stoped.connect(self.executor.stop)
         self.exited.connect(self.executor.exit)
 
-        self.executor.exited.connect(self.executorThread.quit)
+        self.executor.exited.connect(self.executorThread.terminate)
         self.executor.exited.connect(self.executor.deleteLater)
         self.executor.exited.connect(self.executorThread.deleteLater)
+        self.executor.exited.connect(self.close)
 
         self.executor.measured.connect(self.dataMeasured)
 
@@ -147,11 +150,10 @@ class Main(QMainWindow):
     def closeEvent(self, event):
         self.exited.emit()
 
-        super(Main, self).closeEvent(event)
-
     @Slot(DataPacket)
     def dataMeasured(self, packet):
         for param, value in packet.data.items():
             self.ui.paramDock.setData(param, value)
 
         self.ui.timeChart.addData(packet)
+        self.ui.twoDChart.addData(packet)
