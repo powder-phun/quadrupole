@@ -29,6 +29,12 @@ class TwoDChart(CustomChart):
     def parameterChanged(self, text):
         self.selected = next(param.id for param in self.params.values() if param.name == text)
 
+        self.clear()
+
+        for param in self.params.keys():
+            for i in range(len(self.data[param])):
+                self.series[param].append(self.data[self.selected][i], self.data[identifier][i])
+
     def updateSeries(self, packet: DataPacket()):
         for identifier in packet.data.keys():
             self.series[identifier].append(self.data[self.selected][-1], self.data[identifier][-1])
