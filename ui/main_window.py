@@ -111,6 +111,20 @@ class Ui_MainWindow(object):
 
         self.settingsRightVerticalLayout.addItem(self.verticalSpacer_2)
 
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_2.addItem(self.horizontalSpacer)
+
+        self.enableButton = QPushButton(self.centralwidget)
+        self.enableButton.setObjectName(u"enableButton")
+
+        self.horizontalLayout_2.addWidget(self.enableButton)
+
+
+        self.settingsRightVerticalLayout.addLayout(self.horizontalLayout_2)
+
         self.progressHorizontalLayout = QHBoxLayout()
         self.progressHorizontalLayout.setObjectName(u"progressHorizontalLayout")
         self.stepCountTitleLabel = QLabel(self.centralwidget)
@@ -202,6 +216,7 @@ class Ui_MainWindow(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.threeDTab), QCoreApplication.translate("MainWindow", u"3D", None))
         self.titleLabel.setText(QCoreApplication.translate("MainWindow", u"Title:", None))
         self.commentLabel.setText(QCoreApplication.translate("MainWindow", u"Comment:", None))
+        self.enableButton.setText(QCoreApplication.translate("MainWindow", u"Enable", None))
         self.stepCountTitleLabel.setText(QCoreApplication.translate("MainWindow", u"Step count:", None))
         self.stepCountLabel.setText(QCoreApplication.translate("MainWindow", u"--/--", None))
         self.timeLeftTitleLabel.setText(QCoreApplication.translate("MainWindow", u"Time left:", None))

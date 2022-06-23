@@ -61,6 +61,7 @@ class CustomChart(QWidget):
         self.ui.resetButton.clicked.connect(self.resetView)
         self.chartView.viewChanged.connect(self.viewChanged)
 
+
     def setup(self, params: dict[ParameterID, Parameter]):
         self.params = params
         for identifier, param in params.items():
@@ -117,7 +118,6 @@ class CustomChart(QWidget):
         # Adding data
         for identifier, value in packet.data.items():
             self.data[identifier].append(value)
-
         self.updateSeries(packet)
 
         self.scale()
@@ -145,7 +145,6 @@ class CustomChart(QWidget):
         self.ui.yLabel.setText("{:.2E}".format(y))
 
     def scaleChanged(self):
-        print("SCALE CHANGED")
         self.xMin = float(self.ui.minXEdit.text())
         self.xMax = float(self.ui.maxXEdit.text())
         self.yMin = float(self.ui.minYEdit.text())

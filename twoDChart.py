@@ -31,9 +31,9 @@ class TwoDChart(CustomChart):
 
         self.clear()
 
-        for param in self.params.keys():
-            for i in range(len(self.data[param])):
-                self.series[param].append(self.data[self.selected][i], self.data[identifier][i])
+        for identifier in self.params.keys():
+            for i in range(len(self.data[identifier])):
+                self.series[identifier].append(self.data[self.selected][i], self.data[identifier][i])
 
     def updateSeries(self, packet: DataPacket()):
         for identifier in packet.data.keys():

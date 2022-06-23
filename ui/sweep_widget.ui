@@ -36,10 +36,10 @@
       <bool>false</bool>
      </property>
      <property name="minimum">
-      <number>1</number>
+      <number>2</number>
      </property>
      <property name="maximum">
-      <number>1000</number>
+      <number>100000</number>
      </property>
     </widget>
    </item>
@@ -65,10 +65,10 @@
       <bool>false</bool>
      </property>
      <property name="minimum">
-      <number>1</number>
+      <number>2</number>
      </property>
      <property name="maximum">
-      <number>1000</number>
+      <number>100000</number>
      </property>
     </widget>
    </item>
@@ -109,6 +109,9 @@
      <property name="enabled">
       <bool>false</bool>
      </property>
+     <property name="text">
+      <string>0.0</string>
+     </property>
     </widget>
    </item>
    <item row="0" column="9">
@@ -132,6 +135,9 @@
      <property name="enabled">
       <bool>false</bool>
      </property>
+     <property name="text">
+      <string>0.0</string>
+     </property>
     </widget>
    </item>
    <item row="0" column="3">
@@ -151,6 +157,9 @@
     <widget class="QLineEdit" name="sweepOneMinEdit">
      <property name="enabled">
       <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>0.0</string>
      </property>
     </widget>
    </item>
@@ -246,10 +255,25 @@
      <property name="enabled">
       <bool>false</bool>
      </property>
+     <property name="text">
+      <string>0.0</string>
+     </property>
     </widget>
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>sweepOneCheckbox</tabstop>
+  <tabstop>sweepOneCombobox</tabstop>
+  <tabstop>sweepOneMinEdit</tabstop>
+  <tabstop>sweepOneMaxEdit</tabstop>
+  <tabstop>sweepOneStepsSpinbox</tabstop>
+  <tabstop>sweepTwoCheckbox</tabstop>
+  <tabstop>sweepTwoCombobox</tabstop>
+  <tabstop>sweepTwoMinEdit</tabstop>
+  <tabstop>sweepTwoMaxEdit</tabstop>
+  <tabstop>sweepTwoStepsSpinbox</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

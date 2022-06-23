@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'sweepWidget.ui'
+## Form generated from reading UI file 'sweep_widget.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.3.0
+## Created by: Qt User Interface Compiler version 6.3.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -40,8 +40,8 @@ class Ui_sweepWidget(object):
         self.sweepTwoStepsSpinbox = QSpinBox(sweepWidget)
         self.sweepTwoStepsSpinbox.setObjectName(u"sweepTwoStepsSpinbox")
         self.sweepTwoStepsSpinbox.setEnabled(False)
-        self.sweepTwoStepsSpinbox.setMinimum(1)
-        self.sweepTwoStepsSpinbox.setMaximum(1000)
+        self.sweepTwoStepsSpinbox.setMinimum(2)
+        self.sweepTwoStepsSpinbox.setMaximum(100000)
 
         self.sweepGridLayout.addWidget(self.sweepTwoStepsSpinbox, 1, 10, 1, 1)
 
@@ -59,8 +59,8 @@ class Ui_sweepWidget(object):
         self.sweepOneStepsSpinbox = QSpinBox(sweepWidget)
         self.sweepOneStepsSpinbox.setObjectName(u"sweepOneStepsSpinbox")
         self.sweepOneStepsSpinbox.setEnabled(False)
-        self.sweepOneStepsSpinbox.setMinimum(1)
-        self.sweepOneStepsSpinbox.setMaximum(1000)
+        self.sweepOneStepsSpinbox.setMinimum(2)
+        self.sweepOneStepsSpinbox.setMaximum(100000)
 
         self.sweepGridLayout.addWidget(self.sweepOneStepsSpinbox, 0, 10, 1, 1)
 
@@ -164,6 +164,15 @@ class Ui_sweepWidget(object):
 
         self.sweepGridLayout.addWidget(self.sweepTwoMaxEdit, 1, 8, 1, 1)
 
+        QWidget.setTabOrder(self.sweepOneCheckbox, self.sweepOneCombobox)
+        QWidget.setTabOrder(self.sweepOneCombobox, self.sweepOneMinEdit)
+        QWidget.setTabOrder(self.sweepOneMinEdit, self.sweepOneMaxEdit)
+        QWidget.setTabOrder(self.sweepOneMaxEdit, self.sweepOneStepsSpinbox)
+        QWidget.setTabOrder(self.sweepOneStepsSpinbox, self.sweepTwoCheckbox)
+        QWidget.setTabOrder(self.sweepTwoCheckbox, self.sweepTwoCombobox)
+        QWidget.setTabOrder(self.sweepTwoCombobox, self.sweepTwoMinEdit)
+        QWidget.setTabOrder(self.sweepTwoMinEdit, self.sweepTwoMaxEdit)
+        QWidget.setTabOrder(self.sweepTwoMaxEdit, self.sweepTwoStepsSpinbox)
 
         self.retranslateUi(sweepWidget)
 
@@ -179,12 +188,16 @@ class Ui_sweepWidget(object):
         self.sweepTwoCheckbox.setText("")
         self.sweepTwoStepsLabel.setText(QCoreApplication.translate("sweepWidget", u"Steps:", None))
         self.sweepTwoLabel.setText(QCoreApplication.translate("sweepWidget", u"Sweep 2:", None))
+        self.sweepOneMaxEdit.setText(QCoreApplication.translate("sweepWidget", u"0.0", None))
         self.sweepOneStepsLabel.setText(QCoreApplication.translate("sweepWidget", u"Steps:", None))
+        self.sweepTwoMinEdit.setText(QCoreApplication.translate("sweepWidget", u"0.0", None))
         self.sweepOneCombobox.setCurrentText("")
+        self.sweepOneMinEdit.setText(QCoreApplication.translate("sweepWidget", u"0.0", None))
         self.sweepOneLabel.setText(QCoreApplication.translate("sweepWidget", u"Sweep 1:", None))
         self.sweepTwoMinLabel.setText(QCoreApplication.translate("sweepWidget", u"Min:", None))
         self.sweepOneCheckbox.setText("")
         self.sweepTwoMaxLabel.setText(QCoreApplication.translate("sweepWidget", u"Max:", None))
         self.sweepOneMaxLabel.setText(QCoreApplication.translate("sweepWidget", u"Max:", None))
+        self.sweepTwoMaxEdit.setText(QCoreApplication.translate("sweepWidget", u"0.0", None))
     # retranslateUi
 

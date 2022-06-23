@@ -7,6 +7,7 @@ class ParameterID(Enum):
     FREQUENCY = 3
     PRESSURE = 4
     CURRENT = 5
+    HV_DETECTOR = 6
 
 class Parameter:
     def __init__(self, id: ParameterID, name: str, unit: str, editable: bool, minimum: float, maximum: float):
