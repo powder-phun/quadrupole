@@ -13,9 +13,10 @@ class Main(QMainWindow):
     stoped = Signal()
     paused = Signal()
     restarted = Signal()
+    enableDevicesChanged = Signal(bool)
 
-    sweepOneSetup = Signal((bool,), (bool, ParameterID, float, float, int))
-    sweepTwoSetup = Signal((bool,), (bool, ParameterID, float, float, int))
+    sweepOneSetup = Signal(bool, ParameterID, float, float, int)
+    sweepTwoSetup = Signal(bool, ParameterID, float, float, int)
 
     exited = Signal()
 
@@ -25,22 +26,26 @@ class Main(QMainWindow):
         self.ui.setupUi(self)
 
         self.params: dict[ParameterID, Parameter] = {}
-        self.setupParams()
-
+        
         self.state = State.STOPPED
 
         self.executor = Executor()
         self.executorThread = QThread()
         self.executor.moveToThread(self.executorThread)
 
-        self.initializeUI()
-
         self.connectAll()
+
+        self.executor.controllersConnected.connect(self.initializeUI)
+
+        self.devicesEnabled: bool = False
 
         self.executorThread.start()
 
     # Initialize everything such as ParamDock, SweepWidget
-    def initializeUI(self):
+
+    def initializeUI(self, params):
+        self.params = params
+
         self.ui.paramDock.fill(self.params)
 
         # Setting-up sweepWidget
@@ -55,6 +60,7 @@ class Main(QMainWindow):
     def connectAll(self):
         self.ui.startButton.clicked.connect(self.startClicked)
         self.ui.stopButton.clicked.connect(self.stopClicked)
+        self.ui.enableButton.clicked.connect(self.enableClicked)
 
         self.ui.sweepWidget.selectedOneChanged.connect(self.sweepOneChanged)
         self.ui.sweepWidget.selectedTwoChanged.connect(self.sweepTwoChanged)
@@ -68,6 +74,9 @@ class Main(QMainWindow):
         self.restarted.connect(self.executor.restart)
         self.stoped.connect(self.executor.stop)
         self.exited.connect(self.executor.exit)
+        self.sweepOneSetup.connect(self.executor.sweepOneSet)
+        self.sweepTwoSetup.connect(self.executor.sweepTwoSet)
+        self.enableDevicesChanged.connect(self.executor.enable)
 
         self.executor.exited.connect(self.executorThread.terminate)
         self.executor.exited.connect(self.executor.deleteLater)
@@ -75,6 +84,7 @@ class Main(QMainWindow):
         self.executor.exited.connect(self.close)
 
         self.executor.measured.connect(self.dataMeasured)
+        self.executor.stoped.connect(self.stopMeasurement)
 
     @Slot(ParameterID, ParameterID)
     def sweepOneChanged(self, identifier, old):
@@ -94,11 +104,37 @@ class Main(QMainWindow):
         if self.state == State.STOPPED:
             self.state = State.RUNNING
 
+            self.ui.twoDChart.clear()
+            self.ui.timeChart.clear()
+
+            self.enableDevices(True)
+
             self.ui.startButton.setText("Pause")
             self.ui.stopButton.setEnabled(False)
+            self.ui.progressBar.setEnabled(True)
             self.ui.sweepWidget.setEnabledEverything(False)
 
-            # TODO: Send sweep data
+            if self.ui.sweepWidget.ui.sweepOneCheckbox.isChecked():
+                self.sweepOneSetup.emit(
+                    self.ui.sweepWidget.ui.sweepOneCheckbox.isChecked(),
+                    self.ui.sweepWidget.selectedOne,
+                    float(self.ui.sweepWidget.ui.sweepOneMinEdit.text()),
+                    float(self.ui.sweepWidget.ui.sweepOneMaxEdit.text()),
+                    self.ui.sweepWidget.ui.sweepOneStepsSpinbox.value(),
+                )
+            else:
+                self.sweepOneSetup.emit(False, None, 0, 0, 2)
+
+            if self.ui.sweepWidget.ui.sweepTwoCheckbox.isChecked():
+                self.sweepTwoSetup.emit(
+                    self.ui.sweepWidget.ui.sweepTwoCheckbox.isChecked(),
+                    self.ui.sweepWidget.selectedTwo,
+                    float(self.ui.sweepWidget.ui.sweepTwoMinEdit.text()),
+                    float(self.ui.sweepWidget.ui.sweepTwoMaxEdit.text()),
+                    self.ui.sweepWidget.ui.sweepTwoStepsSpinbox.value(),
+                )
+            else:
+                self.sweepTwoSetup.emit(False, None, 0, 0, 2)
 
             self.started.emit(
                 self.ui.titleEdit.text(), self.ui.commentEdit.toPlainText()
@@ -121,39 +157,63 @@ class Main(QMainWindow):
             self.restarted.emit()
 
     def stopClicked(self):
+        self.stopMeasurement()     
+
+        self.stoped.emit()
+
+    def enableClicked(self):
+        self.enableDevices(not self.devicesEnabled)
+
+    def enableDevices(self, val):
+        if val:
+            self.devicesEnabled = True
+            self.ui.enableButton.setText("Disable")
+            self.enableDevicesChanged.emit(True)
+
+        else:
+            self.devicesEnabled = False
+            self.ui.enableButton.setText("Enable")
+            self.enableDevicesChanged.emit(False)
+
+
+    @Slot()
+    def stopMeasurement(self):
         self.state = State.STOPPED
+
+        self.enableDevices(False)
 
         self.ui.startButton.setText("Start")
         self.ui.stopButton.setEnabled(False)
         self.ui.sweepWidget.setEnabledEverything(True)
 
-        self.ui.timeChart.clear()
+        self.ui.progressBar.setEnabled(False)
 
-        self.stoped.emit()
-
-    def setupParams(self):
-        self.params[ParameterID.DC] = Parameter(ParameterID.DC, "DC", "V", True, 0, 20)
-        self.params[ParameterID.AC] = Parameter(ParameterID.AC, "AC", "V", True, 0, 20)
-        self.params[ParameterID.FREQUENCY] = Parameter(
-            ParameterID.FREQUENCY, "Frequency", "Hz", True, 0, 20e6
-        )
-        self.params[ParameterID.DELAY] = Parameter(
-            ParameterID.DELAY, "Delay", "s", True, 0, 100
-        )
-        self.params[ParameterID.PRESSURE] = Parameter(
-            ParameterID.PRESSURE, "Pressure", "mbar", True, 0, 1e-2
-        )
-        self.params[ParameterID.CURRENT] = Parameter(
-            ParameterID.CURRENT, "Ion Current", "A", False, -1, 1
-        )
 
     def closeEvent(self, event):
         self.exited.emit()
 
     @Slot(DataPacket)
-    def dataMeasured(self, packet):
+    def dataMeasured(self, packet: DataPacket):
+        self.setProgress(packet.step, packet.timestamp)
+
         for param, value in packet.data.items():
             self.ui.paramDock.setData(param, value)
+            self.ui.timeChart.addData(packet)
+            self.ui.twoDChart.addData(packet)
 
-        self.ui.timeChart.addData(packet)
-        self.ui.twoDChart.addData(packet)
+    def setProgress(self, steps, timestamp):
+        steps += 1
+        stepsMax = 1
+        stepsMax *= self.ui.sweepWidget.ui.sweepOneStepsSpinbox.value() if self.ui.sweepWidget.ui.sweepOneCheckbox.isChecked() else 1
+        stepsMax *= self.ui.sweepWidget.ui.sweepTwoStepsSpinbox.value() if self.ui.sweepWidget.ui.sweepTwoCheckbox.isChecked() else 1
+
+        self.ui.stepCountLabel.setText(f"{steps}/{stepsMax}")
+        seconds = int(timestamp/steps * (stepsMax-steps))
+        seconds_left = seconds % 60
+        minutes = seconds // 60
+        minutes_left = minutes % 60
+        hours = minutes // 60
+
+        self.ui.timeLeftLabel.setText(f"{hours}:{minutes_left}:{seconds_left}")
+
+        self.ui.progressBar.setValue(steps/stepsMax * 100)
