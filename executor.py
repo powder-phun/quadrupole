@@ -7,6 +7,7 @@ from controllers.controller import Controller, DummyController
 from controllers.pressureController import PressureController
 from controllers.keithleyVController import KeithleyVController
 from controllers.tekController import TekController
+from controllers.instekController import InstekController
 from utils import DataPacket
 
 
@@ -50,8 +51,10 @@ class Executor(QObject):
         # self.addController(keithley)
         # pressure = PressureController()
         # self.addController(pressure)
-        tek = TekController()
-        self.addController(tek)
+        # tek = TekController()
+        # self.addController(tek)
+        instek = InstekController()
+        self.addController(instek)
 
     def addController(self, controller: Controller) -> None:
         params = controller.getHandled()
@@ -201,5 +204,6 @@ class Executor(QObject):
 
     @Slot(bool)
     def enable(self, bool):
-        for controller in self.controllers.values():
+        controllerSet = set(self.controllers.values())
+        for controller in controllerSet:
             controller.enable(bool)

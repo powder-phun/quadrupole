@@ -2,16 +2,16 @@ import serial
 from serial.tools import list_ports
 
 from controllers.controller import Controller
-from parameter import ParameterID
+from parameter import ParameterID, Parameter
 
 class PressureController(Controller):
     def __init__(self):
         self.serial = None
 
     def getHandled(self):
-        return [
-            ParameterID.PRESSURE,
-        ]
+        return {
+            ParameterID.PRESSURE: Parameter(ParameterID.PRESSURE, "Pressure", "mbar", True, 0, 1e3),
+        }
 
     def adjust(self, param: ParameterID, value: float) -> None:
         if param == ParameterID.PRESSURE:

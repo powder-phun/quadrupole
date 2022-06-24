@@ -60,6 +60,9 @@ class ParamDock(QWidget):
                 self.pushButtons[param.id].clicked.connect(
                     (lambda identifier: lambda _: self.setValue(identifier))(param.id)
                 )
+                self.lineEdits[param.id].returnPressed.connect(
+                    (lambda identifier: lambda: self.setValue(identifier))(param.id)
+                )
 
             else:
                 # Add to non editable table
