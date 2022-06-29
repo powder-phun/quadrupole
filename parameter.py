@@ -6,10 +6,14 @@ class ParameterID(Enum):
     AC = 2
     FREQUENCY = 3
     PRESSURE = 4
-    CURRENT = 5
-    HV_DETECTOR = 6
-    INSTEK_V_1 = 7
-    INSTEK_V_2 = 8
+    INSTEK_V_1 = 5
+    INSTEK_V_2 = 6
+    RUDI_1 = 7
+    RUDI_2 = 8
+    RUDI_3 = 9
+    RUDI_4 = 10
+    KEITHLEY_V = 11
+    KEITHLEY_I = 12
 
 class Parameter:
     def __init__(self, id: ParameterID, name: str, unit: str, editable: bool, minimum: float, maximum: float):

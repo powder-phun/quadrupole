@@ -8,6 +8,8 @@ from controllers.pressureController import PressureController
 from controllers.keithleyVController import KeithleyVController
 from controllers.tekController import TekController
 from controllers.instekController import InstekController
+from controllers.rudiController import RudiController
+from controllers.keithleyIController import KeithleyIController
 from utils import DataPacket
 
 
@@ -53,8 +55,12 @@ class Executor(QObject):
         # self.addController(pressure)
         # tek = TekController()
         # self.addController(tek)
-        instek = InstekController()
-        self.addController(instek)
+        # instek = InstekController()
+        # self.addController(instek)
+        rudi = RudiController()
+        self.addController(rudi)
+        keithley_voltage = KeithleyIController()
+        self.addController(keithley_voltage)
 
     def addController(self, controller: Controller) -> None:
         params = controller.getHandled()
@@ -62,6 +68,9 @@ class Executor(QObject):
             for identifier, key in params.items():
                 self.controllers[identifier] = controller
                 self.params[identifier] = key
+
+
+        self.params[ParameterID.DELAY] = Parameter(ParameterID.DELAY, "Delay", "s", True, 0, 10000)
 
     @Slot()
     def connectControllers(self):

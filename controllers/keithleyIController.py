@@ -4,24 +4,26 @@ import time
 from controllers.controller import Controller
 from parameter import ParameterID, Parameter
 
-class KeithleyVController(Controller):
+class KeithleyIController(Controller):
     def __init__(self):
         self.device = None
 
-        self.voltage = 0
+        self.current = 0
         
 
     def getHandled(self):
         return {
-            ParameterID.KEITHLEY_I: Parameter(ParameterID.KEITHLEY_I, "Keythley I", "A", False, 0, 1),
-            ParameterID.KEITHLEY_V: Parameter(ParameterID.KEITHLEY_V, "Keythley V", "V", True, 0, 100)
+            ParameterID.KEITHLEY_I: Parameter(ParameterID.KEITHLEY_I, "Keithley I", "A", True, 0, 0.1),
+            ParameterID.KEITHLEY_V: Parameter(ParameterID.KEITHLEY_V, "Keithley V", "V", False, 0, 100),
         }
 
 
     def adjust(self, param: ParameterID, value: float) -> None:
-        if param == ParameterID.HV_DETECTOR:
-            self.voltage = value
-            self.device.write("B{},0,0X".format(int(value)))
+        if param == ParameterID.KEITHLEY_I:
+            self.current = value
+            self.device.write("B{:.2E},0,0X".format(value))
+            print("B{:.2E},0,0X".format(value))
+            self.device.write("H0X")
 
 
     def connect(self) -> bool:
@@ -31,16 +33,15 @@ class KeithleyVController(Controller):
             print(devices)
             for device in devices:
                 if "GPIB" in device:
-                    print("Connecting to keithley")
-                    print(device)
+                    print("Keithley I: Connecting")
                     time.sleep(0.1)
                     self.device = rm.open_resource(device)
 
                     self.device.write("J0X") # Restore default settings
                     self.device.write("N0X")  #Standby mode
                     self.device.write("G4,2,0X") # Setup communication format
-                    self.device.write("F0,0X") # Setup DC V Bias
-                    self.device.write("L1,0X") # Setup auto range
+                    self.device.write("F1,0X") # Setup DC I Bias
+                    self.device.write("L1100,0X") # Setup auto range
 
                     return True
             else:
@@ -58,8 +59,8 @@ class KeithleyVController(Controller):
 
 
     def read(self, param: ParameterID) -> float:
-        if param == ParameterID.CURRENT:
+        if param == ParameterID.KEITHLEY_V:
             val = float(self.device.read().strip())
             return val
-        if param == ParameterID.HV_DETECTOR:
-            return self.voltage
+        if param == ParameterID.KEITHLEY_I:
+            return self.current
