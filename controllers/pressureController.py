@@ -15,6 +15,8 @@ class PressureController(Controller):
 
     def adjust(self, param: ParameterID, value: float) -> None:
         if param == ParameterID.PRESSURE:
+            if value > 2e-2:
+                value = 2e-2
             self.serial.write("PRS={:.2E}\r\n".format(value).encode("ASCII"))
             
 
