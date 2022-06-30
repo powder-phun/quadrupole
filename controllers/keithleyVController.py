@@ -19,7 +19,7 @@ class KeithleyVController(Controller):
 
 
     def adjust(self, param: ParameterID, value: float) -> None:
-        if param == ParameterID.HV_DETECTOR:
+        if param == ParameterID.KEITHLEY_V:
             self.voltage = value
             self.device.write("B{},0,0X".format(int(value)))
 
@@ -58,8 +58,8 @@ class KeithleyVController(Controller):
 
 
     def read(self, param: ParameterID) -> float:
-        if param == ParameterID.CURRENT:
+        if param == ParameterID.KEITHLEY_I:
             val = float(self.device.read().strip())
             return val
-        if param == ParameterID.HV_DETECTOR:
+        if param == ParameterID.KEITHLEY_V:
             return self.voltage
