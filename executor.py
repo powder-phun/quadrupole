@@ -47,14 +47,14 @@ class Executor(QObject):
         self.sweepTwoValue = 0
 
     def initControllers(self) -> None:
-        # dummy = DummyController()
-        # self.addController(dummy)
+        dummy = DummyController()
+        self.addController(dummy)
         # pressure = PressureController()
         # self.addController(pressure)
-        keithley = KeithleyVController()
-        self.addController(keithley)
-        tek = TekController()
-        self.addController(tek)
+        # keithley = KeithleyVController()
+        # self.addController(keithley)
+        # tek = TekController()
+        # self.addController(tek)
         # instek = InstekController()
         # self.addController(instek)
         # rudi = RudiController()
@@ -163,6 +163,8 @@ class Executor(QObject):
     @Slot()
     def stop(self) -> None:
         self.timer.stop()
+        if self.file is not None:
+            self.file.close()
 
         self.counter = 0
         self.stoped.emit()
