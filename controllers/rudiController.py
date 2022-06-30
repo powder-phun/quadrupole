@@ -28,15 +28,23 @@ class RudiController(Controller):
         if param == ParameterID.RUDI_1:
             self.device.unit_id = 1
             self.voltage1 = value
+            control = 3 if self.voltage1 >= 0 else 4
+            self.device.write_single_register(5, control)
         elif param == ParameterID.RUDI_2:
             self.device.unit_id = 2
             self.voltage2 = value
+            control = 3 if self.voltage2 >= 0 else 4
+            self.device.write_single_register(5, control)
         elif param == ParameterID.RUDI_3:
             self.device.unit_id = 3
             self.voltage3 = value
+            control = 3 if self.voltage3 >= 0 else 4
+            self.device.write_single_register(5, control)
         elif param == ParameterID.RUDI_4:
             self.device.unit_id = 4
             self.voltage4 = value
+            control = 3 if self.voltage4 >= 0 else 4
+            self.device.write_single_register(5, control)
 
         self.device.write_multiple_registers(2, words)
 
@@ -54,9 +62,26 @@ class RudiController(Controller):
         self.device.unit_id = 4
         self.device.write_single_register(5, value)
 
+    def enableOutputs(self):
+        self.device.unit_id = 1
+        value = 3 if self.voltage1 >= 0 else 4
+        self.device.write_single_register(5, value)
+
+        self.device.unit_id = 2
+        value = 3 if self.voltage2 >= 0 else 4
+        self.device.write_single_register(5, value)
+
+        self.device.unit_id = 3
+        value = 3 if self.voltage3 >= 0 else 4
+        self.device.write_single_register(5, value)
+
+        self.device.unit_id = 4
+        value = 3 if self.voltage4 >= 0 else 4
+        self.device.write_single_register(5, value)
+
     def enable(self, state: bool):
         if state:
-            self.changeMode(5)
+            self.enable(enableOutputs)
         else:
             self.changeMode(7)
 
