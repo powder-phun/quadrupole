@@ -1,6 +1,7 @@
 from pyModbusTCP.client import ModbusClient
 from pyModbusTCP import utils
 import numpy as np
+import math
 
 
 from controllers.controller import Controller
@@ -9,10 +10,7 @@ from parameter import ParameterID, Parameter
 class RudiController(Controller):
     def __init__(self):
         self.device = None
-        self.voltage1 = 0
-        self.voltage2 = 0
-        self.voltage3 = 0
-        self.voltage4 = 0
+        self.voltage = [0, 0, 0, 0]
 
     def getHandled(self):
         return {
@@ -23,28 +21,16 @@ class RudiController(Controller):
         }
 
     def adjust(self, param: ParameterID, value: float) -> None:
-        voltageMilivolts = np.uint32(value * 1000)
+        voltageMilivolts = np.uint32(math.fabs(value) * 1000)
         words = utils.long_list_to_word([voltageMilivolts])
         if param == ParameterID.RUDI_1:
-            self.device.unit_id = 1
-            self.voltage1 = value
-            control = 3 if self.voltage1 >= 0 else 4
-            self.device.write_single_register(5, control)
+            self.setOutput(1, value)
         elif param == ParameterID.RUDI_2:
-            self.device.unit_id = 2
-            self.voltage2 = value
-            control = 3 if self.voltage2 >= 0 else 4
-            self.device.write_single_register(5, control)
+            self.setOutput(2, value)
         elif param == ParameterID.RUDI_3:
-            self.device.unit_id = 3
-            self.voltage3 = value
-            control = 3 if self.voltage3 >= 0 else 4
-            self.device.write_single_register(5, control)
+            self.setOutput(3, value)
         elif param == ParameterID.RUDI_4:
-            self.device.unit_id = 4
-            self.voltage4 = value
-            control = 3 if self.voltage4 >= 0 else 4
-            self.device.write_single_register(5, control)
+            self.setOutput(4, value)            
 
         self.device.write_multiple_registers(2, words)
 
@@ -63,35 +49,47 @@ class RudiController(Controller):
         self.device.write_single_register(5, value)
 
     def enableOutputs(self):
-        self.device.unit_id = 1
-        value = 3 if self.voltage1 >= 0 else 4
-        self.device.write_single_register(5, value)
+        self.setOutput(1, self.voltage[0])
+        self.setOutput(2, self.voltage[1])
+        self.setOutput(3, self.voltage[2])
+        self.setOutput(4, self.voltage[3])
 
-        self.device.unit_id = 2
-        value = 3 if self.voltage2 >= 0 else 4
-        self.device.write_single_register(5, value)
+    def setOutput(self, channel, value):
+        self.voltage[channel-1] = value
 
-        self.device.unit_id = 3
-        value = 3 if self.voltage3 >= 0 else 4
-        self.device.write_single_register(5, value)
+        self.device.unit_id = channel
+        mode = 7
+        if value >= 0:
+            if value < 1500:
+                mode = 5
+            else:
+                mode = 3
+        else:
+            if value > -1500:
+                mode = 6
+            else:
+                mode = 4
+        self.device.write_single_register(5, mode)
 
-        self.device.unit_id = 4
-        value = 3 if self.voltage4 >= 0 else 4
-        self.device.write_single_register(5, value)
+        voltageMilivolts = np.uint32(math.fabs(value) * 1000)
+        words = utils.long_list_to_word([voltageMilivolts])
+
+        self.device.write_multiple_registers(2, words) 
+
 
     def enable(self, state: bool):
         if state:
-            self.enable(enableOutputs)
+            self.enableOutputs()
         else:
             self.changeMode(7)
 
 
     def read(self, param: ParameterID) -> float:
         if param == ParameterID.RUDI_1:
-            return self.voltage1
+            return self.voltage[0]
         elif param == ParameterID.RUDI_2:
-            return self.voltage2
+            return self.voltage[1]
         elif param == ParameterID.RUDI_3:
-            return self.voltage3
+            return self.voltage[2]
         elif param == ParameterID.RUDI_4:
-            return self.voltage4
+            return self.voltage[3]

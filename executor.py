@@ -47,8 +47,8 @@ class Executor(QObject):
         self.sweepTwoValue = 0
 
     def initControllers(self) -> None:
-        dummy = DummyController()
-        self.addController(dummy)
+        # dummy = DummyController()
+        # self.addController(dummy)
         # pressure = PressureController()
         # self.addController(pressure)
         # keithley = KeithleyVController()
@@ -57,8 +57,8 @@ class Executor(QObject):
         # self.addController(tek)
         # instek = InstekController()
         # self.addController(instek)
-        # rudi = RudiController()
-        # self.addController(rudi)
+        rudi = RudiController()
+        self.addController(rudi)
         # keithley_voltage = KeithleyIController()
         # self.addController(keithley_voltage)
 
