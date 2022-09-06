@@ -51,14 +51,14 @@ class Executor(QObject):
         # self.addController(dummy)
         # pressure = PressureController()
         # self.addController(pressure)
-        # keithley = KeithleyVController()
-        # self.addController(keithley)
-        # tek = TekController()
-        # self.addController(tek)
+        keithley = KeithleyVController()
+        self.addController(keithley)
+        tek = TekController()
+        self.addController(tek)
         # instek = InstekController()
         # self.addController(instek)
-        rudi = RudiController()
-        self.addController(rudi)
+        # rudi = RudiController()
+        # self.addController(rudi)
         # keithley_voltage = KeithleyIController()
         # self.addController(keithley_voltage)
 
@@ -165,6 +165,7 @@ class Executor(QObject):
         self.timer.stop()
         if self.file is not None:
             self.file.close()
+            self.file = None
 
         self.counter = 0
         self.stoped.emit()
