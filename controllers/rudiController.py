@@ -21,7 +21,7 @@ class RudiController(Controller):
         }
 
     def adjust(self, param: ParameterID, value: float) -> None:
-        voltageMilivolts = np.uint32(math.fabs(value) * 1000)
+        voltageMilivolts = np.uint32(int(math.fabs(value)) * 1000)
         words = utils.long_list_to_word([voltageMilivolts])
         if param == ParameterID.RUDI_1:
             self.setOutput(1, value)
