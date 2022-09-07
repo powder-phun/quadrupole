@@ -1,15 +1,19 @@
 from PySide6.QtCharts import QScatterSeries
+from PySide6.QtCharts import QLineSeries
 
 
 from customChart import CustomChart
 from ui.two_d_chart import Ui_twoDChart
 from utils import DataPacket
 from parameter import ParameterID, Parameter
+from queue import Queue
 
 class TwoDChart(CustomChart):
     def __init__(self, parent=None):
         super(TwoDChart, self).__init__(parent)
         self.selected = None
+
+        self.points = 5000
 
     def setupUi(self):
         self.ui = Ui_twoDChart()
@@ -25,6 +29,7 @@ class TwoDChart(CustomChart):
         self.selected = next(param.id for param in self.params.values() if param.name == self.ui.xAxisCombobox.currentText())
 
         self.ui.xAxisCombobox.currentTextChanged.connect(self.parameterChanged)
+        self.ui.pointsSpinBox.valueChanged.connect(self.pointsChanged)
 
     def parameterChanged(self, text):
         self.selected = next(param.id for param in self.params.values() if param.name == text)
@@ -35,12 +40,22 @@ class TwoDChart(CustomChart):
             for i in range(len(self.data[identifier])):
                 self.series[identifier].append(self.data[self.selected][i], self.data[identifier][i])
 
+    def pointsChanged(self, points):
+        self.points = points
+        for series in self.series.values():
+            while series.count() > self.points:
+                series.remove(0)
+
     def updateSeries(self, packet: DataPacket()):
         for identifier in packet.data.keys():
             self.series[identifier].append(self.data[self.selected][-1], self.data[identifier][-1])
+            if self.series[identifier].count() > self.points:
+                self.series[identifier].remove(0)
 
     def createSeries(self):
-        return QScatterSeries()
+        series = QScatterSeries()
+        series.setMarkerSize(10)
+        return series
 
     def scale(self, force=False):
         # Autoscaling x if selected

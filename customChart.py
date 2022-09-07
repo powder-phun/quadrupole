@@ -70,6 +70,7 @@ class CustomChart(QWidget):
             self.series[identifier] = self.createSeries()
             self.chart.addSeries(self.series[identifier])
             self.series[identifier].attachAxis(self.xAxis)
+            self.series[identifier].setUseOpenGL(True)
             self.series[identifier].attachAxis(self.yAxis)
             self.series[identifier].setName(param.name)
             self.series[identifier].setVisible(False)

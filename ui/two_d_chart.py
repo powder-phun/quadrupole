@@ -17,7 +17,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QHBoxLayout,
     QLabel, QLineEdit, QPushButton, QSizePolicy,
-    QSpacerItem, QVBoxLayout, QWidget)
+    QSpacerItem, QSpinBox, QVBoxLayout, QWidget)
 
 class Ui_twoDChart(object):
     def setupUi(self, twoDChart):
@@ -159,6 +159,20 @@ class Ui_twoDChart(object):
 
         self.rightVLayout.addWidget(self.resetButton)
 
+        self.label_4 = QLabel(self.widget)
+        self.label_4.setObjectName(u"label_4")
+
+        self.rightVLayout.addWidget(self.label_4)
+
+        self.pointsSpinBox = QSpinBox(self.widget)
+        self.pointsSpinBox.setObjectName(u"pointsSpinBox")
+        self.pointsSpinBox.setMinimum(1)
+        self.pointsSpinBox.setMaximum(50000)
+        self.pointsSpinBox.setSingleStep(100)
+        self.pointsSpinBox.setValue(5000)
+
+        self.rightVLayout.addWidget(self.pointsSpinBox)
+
 
         self.verticalLayout_2.addLayout(self.rightVLayout)
 
@@ -182,5 +196,6 @@ class Ui_twoDChart(object):
         self.scaleXCheckbox.setText(QCoreApplication.translate("twoDChart", u"Scale X", None))
         self.scaleYCheckbox.setText(QCoreApplication.translate("twoDChart", u"Scale Y", None))
         self.resetButton.setText(QCoreApplication.translate("twoDChart", u"Reset", None))
+        self.label_4.setText(QCoreApplication.translate("twoDChart", u"# of points:", None))
     # retranslateUi
 

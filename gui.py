@@ -198,8 +198,8 @@ class Main(QMainWindow):
 
         for param, value in packet.data.items():
             self.ui.paramDock.setData(param, value)
-            self.ui.timeChart.addData(packet)
-            self.ui.twoDChart.addData(packet)
+        self.ui.timeChart.addData(packet)
+        self.ui.twoDChart.addData(packet)
 
     def setProgress(self, steps, timestamp):
         steps += 1

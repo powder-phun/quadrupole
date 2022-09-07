@@ -11,7 +11,7 @@ class TimeChart(CustomChart):
 
     def updateSeries(self, packet: DataPacket()):
         for identifier in packet.data.keys():
-            self.series[identifier].append(self.timestamps[-1], self.data[identifier][-1])
+            self.series[identifier].append(self.timestamps[-1], packet.data[identifier])
 
     def scale(self, force=False):
         # Scrolling if scrolling selected
