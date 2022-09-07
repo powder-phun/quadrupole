@@ -29,13 +29,13 @@ class CustomChart(QWidget):
         self.yMin: float = -1
         self.yMax: float = 1
 
-        self.timestamps: [float] = []
+        self.timestamps: list[float] = []
 
         self.initialize()
 
         self.checkboxes: dict[ParameterID, QCheckBox] = {}
 
-        self.data: dict[ParameterID, [float]] = {}
+        self.data: dict[ParameterID, list[float]] = {}
         self.params: dict[ParameterID, Parameter] = None
 
     def initialize(self):
