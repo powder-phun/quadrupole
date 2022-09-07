@@ -14,6 +14,7 @@ class ParameterID(Enum):
     RUDI_4 = 10
     KEITHLEY_V = 11
     KEITHLEY_I = 12
+    SDM_DC = 13
 
 class Parameter:
     def __init__(self, id: ParameterID, name: str, unit: str, editable: bool, minimum: float, maximum: float):

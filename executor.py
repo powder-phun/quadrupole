@@ -6,10 +6,12 @@ from parameter import ParameterID, Parameter
 from controllers.controller import Controller, DummyController
 from controllers.pressureController import PressureController
 from controllers.keithleyVController import KeithleyVController
+from controllers.keithleyVControllerReversed import KeithleyVControllerReversed
 from controllers.tekController import TekController
 from controllers.instekController import InstekController
 from controllers.rudiController import RudiController
 from controllers.keithleyIController import KeithleyIController
+from controllers.sdmController import SDMController
 from utils import DataPacket
 
 
@@ -51,8 +53,8 @@ class Executor(QObject):
         # self.addController(dummy)
         # pressure = PressureController()
         # self.addController(pressure)
-        keithley = KeithleyVController()
-        self.addController(keithley)
+        # keithley = KeithleyVControllerReversed()
+        # self.addController(keithley)
         tek = TekController()
         self.addController(tek)
         # instek = InstekController()
@@ -61,6 +63,8 @@ class Executor(QObject):
         # self.addController(rudi)
         # keithley_voltage = KeithleyIController()
         # self.addController(keithley_voltage)
+        sdm = SDMController()
+        self.addController(sdm)
 
     def addController(self, controller: Controller) -> None:
         params = controller.getHandled()
