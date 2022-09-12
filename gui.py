@@ -29,6 +29,8 @@ class Main(QMainWindow):
         
         self.state = State.STOPPED
 
+        self.showMaximized()
+
         self.executor = Executor()
         self.executorThread = QThread()
         self.executor.moveToThread(self.executorThread)
