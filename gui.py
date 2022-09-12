@@ -58,6 +58,8 @@ class Main(QMainWindow):
         self.ui.timeChart.setup(self.params)
         # Setting up twoDChart
         self.ui.twoDChart.setup(self.params)
+        # Setting up threeDChart
+        self.ui.threeDChart.setup(self.params)
 
     def connectAll(self):
         self.ui.startButton.clicked.connect(self.startClicked)
@@ -138,6 +140,18 @@ class Main(QMainWindow):
             else:
                 self.sweepTwoSetup.emit(False, None, 0, 0, 2)
 
+            if self.ui.sweepWidget.ui.sweepOneCheckbox.isChecked() and self.ui.sweepWidget.ui.sweepTwoCheckbox.isChecked():
+                self.ui.threeDChart.setRanges(
+                    self.ui.sweepWidget.selectedOne,
+                    self.ui.sweepWidget.selectedTwo,
+                    float(self.ui.sweepWidget.ui.sweepOneMinEdit.text()),
+                    float(self.ui.sweepWidget.ui.sweepOneMaxEdit.text()),
+                    self.ui.sweepWidget.ui.sweepOneStepsSpinbox.value(),
+                    float(self.ui.sweepWidget.ui.sweepTwoMinEdit.text()),
+                    float(self.ui.sweepWidget.ui.sweepTwoMaxEdit.text()),
+                    self.ui.sweepWidget.ui.sweepTwoStepsSpinbox.value()
+                )
+
             self.started.emit(
                 self.ui.titleEdit.text(), self.ui.commentEdit.toPlainText()
             )
@@ -202,6 +216,7 @@ class Main(QMainWindow):
             self.ui.paramDock.setData(param, value)
         self.ui.timeChart.addData(packet)
         self.ui.twoDChart.addData(packet)
+        self.ui.threeDChart.addData(packet)
 
     def setProgress(self, steps, timestamp):
         steps += 1

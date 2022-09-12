@@ -54,10 +54,10 @@ class DummyController(Controller):
 
     def read(self, param: ParameterID) -> float:
         if param == ParameterID.AC:
-            return self.dc**2
+            return self.ac
         if param == ParameterID.DC:
             return self.dc
         if param == ParameterID.FREQUENCY:
-            return self.frequency
+            return self.ac * self.dc
         if param == ParameterID.CURRENT:
             return math.sin(time.time())
