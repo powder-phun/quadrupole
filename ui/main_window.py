@@ -22,6 +22,7 @@ from PySide6.QtWidgets import (QApplication, QDockWidget, QFrame, QHBoxLayout,
 
 from paramDock import ParamDock
 from sweepWidget import SweepWidget
+from threeDChart import ThreeDChart
 from timeChart import TimeChart
 from twoDChart import TwoDChart
 
@@ -58,6 +59,13 @@ class Ui_MainWindow(object):
         self.tabWidget.addTab(self.twoDTab, "")
         self.threeDTab = QWidget()
         self.threeDTab.setObjectName(u"threeDTab")
+        self.verticalLayout_4 = QVBoxLayout(self.threeDTab)
+        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
+        self.threeDChart = ThreeDChart(self.threeDTab)
+        self.threeDChart.setObjectName(u"threeDChart")
+
+        self.verticalLayout_4.addWidget(self.threeDChart)
+
         self.tabWidget.addTab(self.threeDTab, "")
 
         self.verticalLayout_3.addWidget(self.tabWidget)
@@ -203,7 +211,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(2)
 
 
         QMetaObject.connectSlotsByName(MainWindow)

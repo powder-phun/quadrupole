@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="timeTab">
        <attribute name="title">
@@ -44,6 +44,11 @@
        <attribute name="title">
         <string>3D</string>
        </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <item>
+         <widget class="ThreeDChart" name="threeDChart" native="true"/>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>
@@ -261,6 +266,12 @@
    <class>TwoDChart</class>
    <extends>QWidget</extends>
    <header location="global">twoDChart.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ThreeDChart</class>
+   <extends>QWidget</extends>
+   <header location="global">threeDChart.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
