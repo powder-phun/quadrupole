@@ -216,7 +216,8 @@ class Main(QMainWindow):
             self.ui.paramDock.setData(param, value)
         self.ui.timeChart.addData(packet)
         self.ui.twoDChart.addData(packet)
-        self.ui.threeDChart.addData(packet)
+        if self.ui.sweepWidget.ui.sweepTwoCheckbox.isChecked():
+            self.ui.threeDChart.addData(packet)
 
     def setProgress(self, steps, timestamp):
         steps += 1
