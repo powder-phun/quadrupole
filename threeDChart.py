@@ -2,6 +2,7 @@ from PySide6.QtWidgets import QWidget, QCheckBox
 from PySide6.QtCharts import QChartView, QChart, QValueAxis, QAbstractSeries, QLineSeries
 from PySide6.QtCore import Qt, QMargins, Signal, Slot
 from PySide6.QtGui import QPainter, QMouseEvent
+from PySide6 import QtCore
 
 from ui.three_d_chart import Ui_threeDChart
 
@@ -36,11 +37,11 @@ class ThreeDChart(QWidget):
 
         self.xDataMin: float = 0
         self.xDataMax: float = 1
-        self.xDataSteps: int = 1
+        self.xDataSteps: int = 2
         self.xParam: ParameterID = None
         self.yDataMin: float = 0
         self.yDataMax: float = 1
-        self.yDataSteps: int = 1
+        self.yDataSteps: int = 2
         self.yParam: ParameterID = None
 
         self.data: dict[ParameterID, Any] = {}
@@ -72,6 +73,7 @@ class ThreeDChart(QWidget):
         self.ui.horizontalLayout.replaceWidget(self.ui.chart, self.plotWidget)
         data = np.random.random((5, 5))
         self.imshow = self.plotWidget.axes.imshow(data, origin='lower')
+        self.plotWidget.mpl_connect('motion_notify_event', self.mouse_event)
 
         # show window
         self.show() 
@@ -106,12 +108,13 @@ class ThreeDChart(QWidget):
         self.plotWidget = newPlotWidget
         data = np.random.random((stepY, stepX))
         self.imshow = self.plotWidget.axes.imshow(data, origin='lower')
+        self.plotWidget.mpl_connect('motion_notify_event', self.mouse_event)
 
         self.createLabels()
 
         self.plotWidget.axes.set_xlabel(self.params[self.xParam].name)
         self.plotWidget.axes.set_ylabel(self.params[self.yParam].name)
-        self.plotWidget.fig.tight_layout()
+        # self.plotWidget.fig.tight_layout()
 
     def addData(self, packet: DataPacket):
         # Adding data
@@ -127,9 +130,14 @@ class ThreeDChart(QWidget):
     def draw(self):
         # Normalize data to [0, 1]
         data = self.data[self.selected]
-        self.imshow.set_norm(Normalize(np.amin(data), np.amax(data)))
+        if self.ui.scaleZCheckbox.isChecked():
+            self.imshow.set_norm(Normalize(np.amin(data), np.amax(data)))
+        else:
+            self.imshow.set_norm(Normalize(self.ui.zMinSpinbox.value(), self.ui.zMaxSpinbox.value()))
         # Set new data and redraw
         self.imshow.set_data(data)
+
+        self.plotWidget.setGeometry(QtCore.QRect(0, 0, self.ui.chartLayout.geometry().width(), self.ui.chartLayout.geometry().height()-20))
         self.plotWidget.draw()
 
     def comboboxChanged(self, text):
@@ -156,3 +164,23 @@ class ThreeDChart(QWidget):
         y_values = np.linspace(self.yDataMin, self.yDataMax, num=y_count) # Get label values
         y_labels = [f"{value:.2e}" for value in y_values] # Format labels in scientific notation
         self.plotWidget.axes.set_yticks(y_positions, y_labels) # Set new ticks and labels
+
+    def mouse_event(self, event):
+        if self.xDataMin is not None and event.xdata is not None and event.ydata is not None:
+            x = int(event.xdata+0.5)
+            x_real = self.xDataMin + ((self.xDataMax-self.xDataMin) / (self.xDataSteps-1)) * x
+            y = int(event.ydata+0.5)
+            y_real = self.yDataMin + ((self.yDataMax-self.yDataMin) / (self.yDataSteps-1)) * y
+            self.ui.xLabel.setText(f"{x_real:.2e}")
+            self.ui.yLabel.setText(f"{y_real:.2e}")
+            z = self.imshow.get_cursor_data(event)
+            self.ui.zLabel.setText(f"{z:.2e}")
+
+    def resizeEvent(self, event):
+        self.resizeFunction()
+
+
+    def resizeFunction(self):
+        if self.plotWidget is not None:
+            self.plotWidget.setGeometry(QtCore.QRect(0, 0, self.ui.chartLayout.geometry().width(), self.height()))
+            # self.plotWidget.setGeometry(QtCore.QRect(0, 0, self.width(), self.height()-30))

@@ -36,7 +36,7 @@ class ParamDock(QWidget):
             self.nameLabels[param.id] = QLabel(f"{param.name}:")
             self.nameLabels[param.id].setAlignment(Qt.AlignRight)
 
-            self.valueLabels[param.id] = QLabel("0.0")
+            self.valueLabels[param.id] = QLabel("0.00E+00")
             self.valueLabels[param.id].setAlignment(Qt.AlignRight)
 
             self.unitLabels[param.id] = QLabel(f"[{param.unit}]")
