@@ -12,6 +12,7 @@ import numpy as np
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
+from matplotlib.colors import Normalize
 
 
 class MplCanvas(FigureCanvasQTAgg):
@@ -46,6 +47,7 @@ class ThreeDChart(QWidget):
         self.params: dict[ParameterID, Parameter] = None
 
         self.plotWidget = None
+        self.imshow = None
         self.selected = None
 
     def setup(self, params: dict[ParameterID, Parameter]):
@@ -69,7 +71,7 @@ class ThreeDChart(QWidget):
         self.plotWidget = MplCanvas(self)
         self.ui.horizontalLayout.replaceWidget(self.ui.chart, self.plotWidget)
         data = np.random.random((5, 5))
-        self.imshow = self.plotWidget.axes.imshow(data)
+        self.imshow = self.plotWidget.axes.imshow(data, origin='lower')
 
         # show window
         self.show() 
@@ -103,26 +105,31 @@ class ThreeDChart(QWidget):
         self.ui.horizontalLayout.replaceWidget(self.plotWidget, newPlotWidget)
         self.plotWidget = newPlotWidget
         data = np.random.random((stepY, stepX))
-        self.imshow = self.plotWidget.axes.imshow(data)
+        self.imshow = self.plotWidget.axes.imshow(data, origin='lower')
 
         self.createLabels()
 
+        self.plotWidget.axes.set_xlabel(self.params[self.xParam].name)
+        self.plotWidget.axes.set_ylabel(self.params[self.yParam].name)
         self.plotWidget.fig.tight_layout()
 
     def addData(self, packet: DataPacket):
         # Adding data
         x = packet.step % self.xDataSteps
-        y = self.yDataSteps - int(packet.step / self.xDataSteps) - 1
+        y = int(packet.step / self.xDataSteps)
         for identifier, value in packet.data.items():
             self.data[identifier][y][x] = value
-    
+
         # Redrawing
         self.draw()
 
 
     def draw(self):
+        # Normalize data to [0, 1]
+        data = self.data[self.selected]
+        self.imshow.set_norm(Normalize(np.amin(data), np.amax(data)))
         # Set new data and redraw
-        self.imshow.set_data(self.data[self.selected])
+        self.imshow.set_data(data)
         self.plotWidget.draw()
 
     def comboboxChanged(self, text):
@@ -147,5 +154,5 @@ class ThreeDChart(QWidget):
         y_count = min(self.yDataSteps, 6) # Get count of ticks
         y_positions = np.linspace(0, self.yDataSteps-1, num=y_count) # Distribute ticks linearly
         y_values = np.linspace(self.yDataMin, self.yDataMax, num=y_count) # Get label values
-        y_labels = [f"{value:.2e}" for value in y_values[::-1]] # Format labels in scientific notation
+        y_labels = [f"{value:.2e}" for value in y_values] # Format labels in scientific notation
         self.plotWidget.axes.set_yticks(y_positions, y_labels) # Set new ticks and labels
