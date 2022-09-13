@@ -9,15 +9,17 @@ from parameter import ParameterID, Parameter
 from utils import DataPacket, FLOAT_VALIDATOR
 
 import numpy as np
-from matplotlib.backends.backend_qt5agg import FigureCanvas
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
+
 
 class MplCanvas(FigureCanvasQTAgg):
 
-    def __init__(self, parent=None, width=5, height=4, dpi=100):
-        fig = Figure(figsize=(width, height), dpi=dpi)
-        self.axes = fig.add_subplot(111)
-        super(MplCanvas, self).__init__(fig)
+    def __init__(self, parent=None):
+        self.fig = Figure()
+        self.axes = self.fig.add_subplot(111)
+        super(MplCanvas, self).__init__(self.fig)
 
 class ThreeDChart(QWidget):
     def __init__(self, parent=None):
@@ -44,10 +46,7 @@ class ThreeDChart(QWidget):
         self.params: dict[ParameterID, Parameter] = None
 
         self.plotWidget = None
-        self.imshow = None
         self.selected = None
-        self.fig = None
-        self.ax = None
 
     def setup(self, params: dict[ParameterID, Parameter]):
         self.params = params
@@ -60,19 +59,17 @@ class ThreeDChart(QWidget):
 
         # Setup empty data matrixes
         for param in self.params.keys():
-            self.data[param] = [[0]]
+            self.data[param] = np.random.random((5, 5))
 
         # Connect combobox event
         self.ui.zAxisCombobox.currentTextChanged.connect(self.comboboxChanged)
         self.comboboxChanged(self.ui.zAxisCombobox.currentText())
 
     def setupPlot(self):
-        data = [[0]]
-        self.fig, self.ax = plt.subplots()
-        self.imshow = self.ax.imshow(data)
-        # plot
-        self.plotWidget = FigureCanvas(self.fig)
+        self.plotWidget = MplCanvas(self)
         self.ui.horizontalLayout.replaceWidget(self.ui.chart, self.plotWidget)
+        data = np.random.random((5, 5))
+        self.imshow = self.plotWidget.axes.imshow(data)
 
         # show window
         self.show() 
@@ -89,7 +86,7 @@ class ThreeDChart(QWidget):
         
         # Seting up new matrices
         for parameter in self.params.keys():
-            self.data[parameter] = np.zeros((stepX, stepY))
+            self.data[parameter] = np.zeros((stepY, stepX))
 
         # Saving sweep parameters to be able to index data based on values
         self.xDataMin = minX
@@ -101,32 +98,54 @@ class ThreeDChart(QWidget):
         self.yDataSteps = stepY
         self.yParam = paramY
 
+        # Replacing imshow with new one with new dimensions
+        newPlotWidget = MplCanvas(self)
+        self.ui.horizontalLayout.replaceWidget(self.plotWidget, newPlotWidget)
+        self.plotWidget = newPlotWidget
+        data = np.random.random((stepY, stepX))
+        self.imshow = self.plotWidget.axes.imshow(data)
+
+        self.createLabels()
+
+        self.plotWidget.fig.tight_layout()
+
     def addData(self, packet: DataPacket):
         # Adding data
-        x = int((packet.data[self.xParam] - self.xDataMin) / ((self.xDataMax-self.xDataMin)/(self.xDataSteps-1)))
-        y = int((packet.data[self.yParam] - self.yDataMin) / ((self.yDataMax-self.yDataMin)/(self.yDataSteps-1)))
-        print(x, packet.data[self.xParam], self.xDataMin, self.xDataMax, self.xDataSteps)
+        x = packet.step % self.xDataSteps
+        y = self.yDataSteps - int(packet.step / self.xDataSteps) - 1
         for identifier, value in packet.data.items():
-            self.data[identifier][x][y] = value
+            self.data[identifier][y][x] = value
     
+        # Redrawing
         self.draw()
 
 
     def draw(self):
-        # self.data[self.selected]
-        data = np.random.random((16, 16))
+        # Set new data and redraw
+        self.imshow.set_data(self.data[self.selected])
+        self.plotWidget.draw()
 
-        self.imshow.vmin = np.amin(data)
-        self.imshow.vmax = np.amax(data)
-        self.imshow.set_data(data)
-        # self.fig.canvas.cla()
-        self.fig.canvas.draw_idle()
-        self.show()
-        
     def comboboxChanged(self, text):
+        # Read set parameter and save it
         identifier = next(
             param.id for param in self.params.values() if param.name == text
         )
         self.selected = identifier
 
+        # Draw new graph
         self.draw()
+
+    def createLabels(self):
+        x_count = min(self.xDataSteps, 6) # Get count of ticks
+        x_positions = np.linspace(0, self.xDataSteps-1, num=x_count) # Distribute ticks linearly
+        x_values = np.linspace(self.xDataMin, self.xDataMax, num=x_count) # Get label values
+        x_labels = [f"{value:.2e}" for value in x_values] # Format labels in scientific notation
+        self.plotWidget.axes.set_xticks(x_positions, x_labels) # Set new ticks and labels
+        self.plotWidget.axes.tick_params(axis="x", labelrotation=90) # Set label orientation
+
+        # Same for y
+        y_count = min(self.yDataSteps, 6) # Get count of ticks
+        y_positions = np.linspace(0, self.yDataSteps-1, num=y_count) # Distribute ticks linearly
+        y_values = np.linspace(self.yDataMin, self.yDataMax, num=y_count) # Get label values
+        y_labels = [f"{value:.2e}" for value in y_values[::-1]] # Format labels in scientific notation
+        self.plotWidget.axes.set_yticks(y_positions, y_labels) # Set new ticks and labels
