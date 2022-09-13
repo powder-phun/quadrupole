@@ -32,6 +32,7 @@ class SweepWidget(QWidget):
     def connectAll(self):
         self.ui.sweepOneCheckbox.stateChanged.connect(self.checkboxOneClicked)
         self.ui.sweepTwoCheckbox.stateChanged.connect(self.checkboxTwoClicked)
+        self.ui.fileSweepCheckbox.stateChanged.connect(self.checkboxFileClicked)
 
         self.ui.sweepOneCombobox.currentTextChanged.connect(self.comboboxOneChanged)
         self.ui.sweepTwoCombobox.currentTextChanged.connect(self.comboboxTwoChanged)
@@ -107,6 +108,12 @@ class SweepWidget(QWidget):
         # Re-setup comboboxes
         self.fillComboboxes()
 
+    def setEnabledFile(self, value):
+        self.ui.fileSweepAddSpinBox.setEnabled(value)
+        self.ui.fileSweepLineEdit.setEnabled(value)
+        self.ui.fileSweepMultiplySpinbox.setEnabled(value)
+        self.ui.fileSweepOpenPushbutton.setEnabled(value)
+
     def setEnabledEverything(self, value):
         if value:
             # Enable sweep one only if checkbox selected
@@ -124,9 +131,23 @@ class SweepWidget(QWidget):
                 self.ui.sweepTwoMinEdit.setEnabled(True)
                 self.ui.sweepTwoMaxEdit.setEnabled(True)
                 self.ui.sweepTwoStepsSpinbox.setEnabled(True)
+
+            # Enable file sweep only if checkbox selected
+            if self.ui.fileSweepCheckbox.isChecked():
+                self.ui.fileSweepAddSpinBox.setEnabled(True)
+                self.ui.fileSweepLineEdit.setEnabled(True)
+                self.ui.fileSweepMultiplySpinbox.setEnabled(True)
+                self.ui.fileSweepOpenPushbutton.setEnabled(True)
+
+            if not self.ui.fileSweepCheckbox.isChecked():
+                self.ui.sweepOneCheckbox.setEnabled(True)
+            if not self.ui.sweepOneCheckbox.isChecked():
+                self.ui.fileSweepCheckbox.setEnabled(True)
         else:
             # Always disable everything
             self.ui.sweepTwoCheckbox.setEnabled(False)
+            self.ui.sweepOneCheckbox.setEnabled(False)
+            self.ui.fileSweepCheckbox.setEnabled(False)
 
             self.ui.sweepOneCombobox.setEnabled(False)
             self.ui.sweepOneMinEdit.setEnabled(False)
@@ -138,22 +159,35 @@ class SweepWidget(QWidget):
             self.ui.sweepTwoMaxEdit.setEnabled(False)
             self.ui.sweepTwoStepsSpinbox.setEnabled(False)
 
-        self.ui.sweepOneCheckbox.setEnabled(value)
+            self.ui.fileSweepAddSpinBox.setEnabled(False)
+            self.ui.fileSweepLineEdit.setEnabled(False)
+            self.ui.fileSweepMultiplySpinbox.setEnabled(False)
+            self.ui.fileSweepOpenPushbutton.setEnabled(False)
 
     def checkboxOneClicked(self, value):
         if value:
             self.setEnabledOne(True)
             self.ui.sweepTwoCheckbox.setEnabled(True)
+            self.ui.fileSweepCheckbox.setEnabled(False)
         else:
             self.setEnabledOne(False)
             self.ui.sweepTwoCheckbox.setEnabled(False)
             self.ui.sweepTwoCheckbox.setChecked(False)
+            self.ui.fileSweepCheckbox.setEnabled(True)
 
     def checkboxTwoClicked(self, value):
         if value:
             self.setEnabledTwo(True)
         else:
             self.setEnabledTwo(False)
+
+    def checkboxFileClicked(self, value):
+        if value:
+            self.setEnabledFile(True)
+            self.ui.sweepOneCheckbox.setEnabled(False)
+        else:
+            self.setEnabledFile(False)
+            self.ui.sweepOneCheckbox.setEnabled(True)
 
     def comboboxOneChanged(self, text):
         if self.ui.sweepOneCheckbox.isChecked() and self.selectingCallbackEnabled:

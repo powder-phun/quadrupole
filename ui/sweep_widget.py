@@ -176,45 +176,50 @@ class Ui_sweepWidget(object):
 
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.checkBox = QCheckBox(sweepWidget)
-        self.checkBox.setObjectName(u"checkBox")
+        self.fileSweepCheckbox = QCheckBox(sweepWidget)
+        self.fileSweepCheckbox.setObjectName(u"fileSweepCheckbox")
 
-        self.horizontalLayout.addWidget(self.checkBox)
+        self.horizontalLayout.addWidget(self.fileSweepCheckbox)
 
         self.label = QLabel(sweepWidget)
         self.label.setObjectName(u"label")
 
         self.horizontalLayout.addWidget(self.label)
 
-        self.lineEdit = QLineEdit(sweepWidget)
-        self.lineEdit.setObjectName(u"lineEdit")
+        self.fileSweepLineEdit = QLineEdit(sweepWidget)
+        self.fileSweepLineEdit.setObjectName(u"fileSweepLineEdit")
+        self.fileSweepLineEdit.setEnabled(False)
 
-        self.horizontalLayout.addWidget(self.lineEdit)
+        self.horizontalLayout.addWidget(self.fileSweepLineEdit)
 
-        self.pushButton = QPushButton(sweepWidget)
-        self.pushButton.setObjectName(u"pushButton")
+        self.fileSweepOpenPushbutton = QPushButton(sweepWidget)
+        self.fileSweepOpenPushbutton.setObjectName(u"fileSweepOpenPushbutton")
+        self.fileSweepOpenPushbutton.setEnabled(False)
 
-        self.horizontalLayout.addWidget(self.pushButton)
+        self.horizontalLayout.addWidget(self.fileSweepOpenPushbutton)
 
         self.label_3 = QLabel(sweepWidget)
         self.label_3.setObjectName(u"label_3")
 
         self.horizontalLayout.addWidget(self.label_3)
 
-        self.doubleSpinBox = QDoubleSpinBox(sweepWidget)
-        self.doubleSpinBox.setObjectName(u"doubleSpinBox")
+        self.fileSweepMultiplySpinbox = QDoubleSpinBox(sweepWidget)
+        self.fileSweepMultiplySpinbox.setObjectName(u"fileSweepMultiplySpinbox")
+        self.fileSweepMultiplySpinbox.setEnabled(False)
 
-        self.horizontalLayout.addWidget(self.doubleSpinBox)
+        self.horizontalLayout.addWidget(self.fileSweepMultiplySpinbox)
 
         self.label_4 = QLabel(sweepWidget)
         self.label_4.setObjectName(u"label_4")
+        self.label_4.setEnabled(True)
 
         self.horizontalLayout.addWidget(self.label_4)
 
-        self.doubleSpinBox_2 = QDoubleSpinBox(sweepWidget)
-        self.doubleSpinBox_2.setObjectName(u"doubleSpinBox_2")
+        self.fileSweepAddSpinBox = QDoubleSpinBox(sweepWidget)
+        self.fileSweepAddSpinBox.setObjectName(u"fileSweepAddSpinBox")
+        self.fileSweepAddSpinBox.setEnabled(False)
 
-        self.horizontalLayout.addWidget(self.doubleSpinBox_2)
+        self.horizontalLayout.addWidget(self.fileSweepAddSpinBox)
 
         self.horizontalLayout.setStretch(2, 2)
         self.horizontalLayout.setStretch(5, 1)
@@ -248,9 +253,9 @@ class Ui_sweepWidget(object):
         self.sweepTwoMaxLabel.setText(QCoreApplication.translate("sweepWidget", u"Max:", None))
         self.sweepOneStepsLabel.setText(QCoreApplication.translate("sweepWidget", u"Steps:", None))
         self.sweepTwoStepsLabel.setText(QCoreApplication.translate("sweepWidget", u"Steps:", None))
-        self.checkBox.setText("")
+        self.fileSweepCheckbox.setText("")
         self.label.setText(QCoreApplication.translate("sweepWidget", u"FIle sweep:", None))
-        self.pushButton.setText(QCoreApplication.translate("sweepWidget", u"Open", None))
+        self.fileSweepOpenPushbutton.setText(QCoreApplication.translate("sweepWidget", u"Open", None))
         self.label_3.setText(QCoreApplication.translate("sweepWidget", u"Multiply:", None))
         self.label_4.setText(QCoreApplication.translate("sweepWidget", u"Add:", None))
     # retranslateUi
