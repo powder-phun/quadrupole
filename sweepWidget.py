@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QWidget
+from PySide6.QtWidgets import QWidget, QFileDialog
 from PySide6.QtCore import Signal
 
 from ui.sweep_widget import Ui_sweepWidget
@@ -36,6 +36,8 @@ class SweepWidget(QWidget):
 
         self.ui.sweepOneCombobox.currentTextChanged.connect(self.comboboxOneChanged)
         self.ui.sweepTwoCombobox.currentTextChanged.connect(self.comboboxTwoChanged)
+
+        self.ui.fileSweepOpenPushbutton.clicked.connect(self.openFileClicked)
 
     def fillComboboxes(self):
         # Disable callback on change
@@ -212,3 +214,7 @@ class SweepWidget(QWidget):
     def setSelectedTwo(self, identifier):
         self.selectedTwoChanged.emit(identifier, self.selectedTwo)
         self.selectedTwo = identifier
+
+    def openFileClicked(self):
+        file_name, _ = QFileDialog.getOpenFileName(self, "Open profile file", "./profiles/", "CSV UTF-8 (comma delimited)(*.csv)")
+        self.ui.fileSweepLineEdit.setText(file_name)
