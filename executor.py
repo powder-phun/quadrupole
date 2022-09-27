@@ -1,6 +1,7 @@
 from PySide6.QtCore import QObject, Slot, QTimer, Signal
 import time
 import datetime
+import csv
 
 from parameter import ParameterID, Parameter
 from controllers.controller import Controller, DummyController
@@ -48,6 +49,9 @@ class Executor(QObject):
 
         self.fileSweepEnabled: bool = False
         self.fileSweepName: str = ""
+
+        self.fileSweepData: dict(ParameterID, list(float)) = {}
+        self.fileSweepSteps: int = 0
 
         self.sweepTwoValue = 0
 
@@ -126,6 +130,11 @@ class Executor(QObject):
                 self.stop()
             else:
                 self.timer.start()
+        elif self.fileSweepEnabled:
+            if self.counter == self.fileSweepSteps:
+                self.stop()
+            else:
+                self.timer.start()
         else:
             self.timer.start()
 
@@ -144,7 +153,11 @@ class Executor(QObject):
         if self.sweepTwoEnabled:
             value = (sweepTwoIndex/(self.sweepTwoSteps-1)) * (self.sweepTwoMax-self.sweepTwoMin) + self.sweepTwoMin
             self.sweepTwoValue = value
-            self.adjust(self.sweepTwoParam, value)
+            self.adjust(self.sweepTwoParam)
+
+        if self.fileSweepEnabled:
+            for param, values in self.fileSweepData.items():
+                self.adjust(param, values[self.counter])
 
 
     @Slot(ParameterID, float)
@@ -208,6 +221,34 @@ class Executor(QObject):
         self.fileSweepName = filename
         print(self.fileSweepName)
 
+        with open(filename, encoding='utf-8-sig') as f:
+            reader = csv.reader(f, skipinitialspace=True, dialect="excel")
+            header = next(reader)
+
+            # Read in header as list of parameter ID's
+            list_of_params = []
+            for name in header:
+                param = next((param for param in self.params.values() if param.name == name), None)
+                if param is not None:
+                    list_of_params.append(param.id)
+                else:
+                    list_of_params.append(None)
+                    print(f'[Executor][Error] No param named "{name}" found')
+
+            # Create empty list for each parameter
+            for param in list_of_params:
+                self.fileSweepData[param] = []
+
+            # Fill in values for parameters and count rows
+            self.fileSweepSteps = 0
+            for row in reader:
+                self.fileSweepSteps += 1
+                for index, value in enumerate(row):
+                    self.fileSweepData[list_of_params[index]].append(float(value))
+
+        
+            
+            
 
     def openFile(self):
         t = datetime.datetime.now().strftime('%Y-%m-%dT%H-%M-%S')
