@@ -3,6 +3,9 @@ from PySide6.QtCore import Slot, Signal, QThread
 from PySide6.QtTest import QSignalSpy
 from ui.main_window import Ui_MainWindow
 
+import os
+import csv
+
 from parameter import ParameterID, Parameter
 from utils import FLOAT_VALIDATOR, State, DataPacket
 from executor import Executor
@@ -43,6 +46,8 @@ class Main(QMainWindow):
         self.devicesEnabled: bool = False
 
         self.executorThread.start()
+
+        self.fileSweepParams: list(ParameterID) = []
 
     # Initialize everything such as ParamDock, SweepWidget
 
@@ -92,6 +97,9 @@ class Main(QMainWindow):
         self.executor.measured.connect(self.dataMeasured)
         self.executor.stoped.connect(self.stopMeasurement)
 
+        self.ui.sweepWidget.ui.fileSweepLineEdit.textChanged.connect(self.sweepFileSelected)
+        self.ui.sweepWidget.ui.fileSweepCheckbox.stateChanged.connect(self.fileSweepEnabled)
+
     @Slot(ParameterID, ParameterID)
     def sweepOneChanged(self, identifier, old):
         if identifier is not None:
@@ -105,6 +113,14 @@ class Main(QMainWindow):
             self.ui.paramDock.setEnabledParam(identifier, False)
         if old is not None:
             self.ui.paramDock.setEnabledParam(old, True)
+
+    def fileSweepChanged(self, new_list, old_list):
+        print(new_list, old_list)
+        for param in old_list:
+            self.ui.paramDock.setEnabledParam(param, True)
+        for param in new_list:
+            self.ui.paramDock.setEnabledParam(param, False)
+
 
     def startClicked(self):
         if self.state == State.STOPPED:
@@ -242,3 +258,28 @@ class Main(QMainWindow):
         self.ui.timeLeftLabel.setText(f"{hours}:{minutes_left}:{seconds_left}")
 
         self.ui.progressBar.setValue(steps/stepsMax * 100)
+
+    def sweepFileSelected(self, filename):
+        old = self.fileSweepParams
+        if os.path.exists(filename):
+            with open(filename, encoding='utf-8-sig') as f:
+                reader = csv.reader(f, skipinitialspace=True, dialect="excel")
+                header = next(reader)
+
+                # Read in header as list of parameter ID's
+                self.fileSweepParams = []
+                for name in header:
+                    param = next((param for param in self.params.values() if param.name == name), None)
+                    if param is not None:
+                        self.fileSweepParams.append(param.id)
+                    else:
+                        print(f'[GUI][Error] No param named "{name}" found')
+        else:
+            self.fileSweepParams = []
+        self.fileSweepChanged(self.fileSweepParams, old)
+
+    def fileSweepEnabled(self, value):
+        if value:
+            self.fileSweepChanged(self.fileSweepParams, [])
+        else:
+            self.fileSweepChanged([], self.fileSweepParams)
