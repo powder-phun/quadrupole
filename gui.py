@@ -48,6 +48,7 @@ class Main(QMainWindow):
         self.executorThread.start()
 
         self.fileSweepParams: list(ParameterID) = []
+        self.fileSweepSteps: int = 0
 
     # Initialize everything such as ParamDock, SweepWidget
 
@@ -247,6 +248,7 @@ class Main(QMainWindow):
         stepsMax = 1
         stepsMax *= self.ui.sweepWidget.ui.sweepOneStepsSpinbox.value() if self.ui.sweepWidget.ui.sweepOneCheckbox.isChecked() else 1
         stepsMax *= self.ui.sweepWidget.ui.sweepTwoStepsSpinbox.value() if self.ui.sweepWidget.ui.sweepTwoCheckbox.isChecked() else 1
+        stepsMax *= self.fileSweepSteps if self.ui.sweepWidget.ui.fileSweepCheckbox.isChecked() else 1
 
         self.ui.stepCountLabel.setText(f"{steps}/{stepsMax}")
         seconds = int(timestamp/steps * (stepsMax-steps))
@@ -274,8 +276,14 @@ class Main(QMainWindow):
                         self.fileSweepParams.append(param.id)
                     else:
                         print(f'[GUI][Error] No param named "{name}" found')
+                
+                self.fileSweepSteps = 0
+                for row in reader:
+                    self.fileSweepSteps += 1
+
         else:
             self.fileSweepParams = []
+            self.fileSweepSteps = 0
         self.fileSweepChanged(self.fileSweepParams, old)
 
     def fileSweepEnabled(self, value):
