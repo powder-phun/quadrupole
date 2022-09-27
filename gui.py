@@ -17,6 +17,7 @@ class Main(QMainWindow):
 
     sweepOneSetup = Signal(bool, ParameterID, float, float, int)
     sweepTwoSetup = Signal(bool, ParameterID, float, float, int)
+    fileSweepSetup = Signal(bool, str)
 
     exited = Signal()
 
@@ -80,6 +81,7 @@ class Main(QMainWindow):
         self.exited.connect(self.executor.exit)
         self.sweepOneSetup.connect(self.executor.sweepOneSet)
         self.sweepTwoSetup.connect(self.executor.sweepTwoSet)
+        self.fileSweepSetup.connect(self.executor.fileSweepSet)
         self.enableDevicesChanged.connect(self.executor.enable)
 
         self.executor.exited.connect(self.executorThread.terminate)
@@ -139,6 +141,11 @@ class Main(QMainWindow):
                 )
             else:
                 self.sweepTwoSetup.emit(False, None, 0, 0, 2)
+
+            if self.ui.sweepWidget.ui.fileSweepCheckbox.isChecked():
+                self.fileSweepSetup.emit(True, self.ui.sweepWidget.ui.fileSweepLineEdit.text())
+            else:
+                self.fileSweepSetup.emit(False, "")
 
             if self.ui.sweepWidget.ui.sweepOneCheckbox.isChecked() and self.ui.sweepWidget.ui.sweepTwoCheckbox.isChecked():
                 self.ui.threeDChart.setRanges(

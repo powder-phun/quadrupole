@@ -46,6 +46,9 @@ class Executor(QObject):
         self.sweepTwoMax: float = 0
         self.sweepTwoSteps: int = 2
 
+        self.fileSweepEnabled: bool = False
+        self.fileSweepName: str = ""
+
         self.sweepTwoValue = 0
 
     def initControllers(self) -> None:
@@ -198,6 +201,12 @@ class Executor(QObject):
         self.sweepTwoMin = minimum
         self.sweepTwoMax = maximum
         self.sweepTwoSteps = steps
+
+    @Slot(bool, str)
+    def fileSweepSet(self, enabled: bool, filename: str):
+        self.fileSweepEnabled = enabled
+        self.fileSweepName = filename
+        print(self.fileSweepName)
 
 
     def openFile(self):
