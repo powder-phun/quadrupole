@@ -62,7 +62,8 @@ class ThreeDChart(QWidget):
 
         # Setup empty data matrixes
         for param in self.params.keys():
-            self.data[param] = np.random.random((5, 5))
+            self.data[param] = np.zeros((5, 5))
+            self.data[param][:] = np.nan
 
         # Connect combobox event
         self.ui.zAxisCombobox.currentTextChanged.connect(self.comboboxChanged)
@@ -71,7 +72,8 @@ class ThreeDChart(QWidget):
     def setupPlot(self):
         self.plotWidget = MplCanvas(self)
         self.ui.horizontalLayout.replaceWidget(self.ui.chart, self.plotWidget)
-        data = np.random.random((5, 5))
+        data = np.zeros((5, 5))
+        data[:] = np.nan
         self.imshow = self.plotWidget.axes.imshow(data, origin='lower')
         self.plotWidget.mpl_connect('motion_notify_event', self.mouse_event)
 
@@ -91,6 +93,7 @@ class ThreeDChart(QWidget):
         # Seting up new matrices
         for parameter in self.params.keys():
             self.data[parameter] = np.zeros((stepY, stepX))
+            self.data[parameter][:] = np.nan
 
         # Saving sweep parameters to be able to index data based on values
         self.xDataMin = minX
@@ -106,7 +109,8 @@ class ThreeDChart(QWidget):
         newPlotWidget = MplCanvas(self)
         self.ui.horizontalLayout.replaceWidget(self.plotWidget, newPlotWidget)
         self.plotWidget = newPlotWidget
-        data = np.random.random((stepY, stepX))
+        data = np.zeros((stepY, stepX))
+        data[:] = np.nan
         self.imshow = self.plotWidget.axes.imshow(data, origin='lower')
         self.plotWidget.mpl_connect('motion_notify_event', self.mouse_event)
 
