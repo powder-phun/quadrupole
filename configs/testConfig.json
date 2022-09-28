@@ -1,0 +1,35 @@
+{
+    "name": "Dummy test config",
+    "defaults": {
+        "sweepOne": {
+            "enabled": true,
+            "param": "AC",
+            "min": 0,
+            "max": 10,
+            "steps": 11
+        },
+        "sweepTwo": {
+            "enabled": false
+        },
+        "fileSweep": {
+            "enabled": false
+        }
+    },
+    "controllers": [
+        {
+            "type": "dummy",
+            "params": [
+                {
+                    "type": "AC",
+                    "name": "AC dummy",
+                    "default": 1
+                },
+                {
+                    "type": "DC",
+                    "name": "DC dummy",
+                    "default": 0.5
+                }
+            ]
+        }
+    ]
+}
