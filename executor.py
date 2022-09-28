@@ -3,16 +3,10 @@ import time
 import datetime
 import csv
 
-from parameter import ParameterID, Parameter
-from controllers.controller import Controller, DummyController
-from controllers.pressureController import PressureController
-from controllers.keithleyVController import KeithleyVController
-from controllers.keithleyVControllerReversed import KeithleyVControllerReversed
-from controllers.tekController import TekController
-from controllers.instekController import InstekController
-from controllers.rudiController import RudiController
-from controllers.keithleyIController import KeithleyIController
-from controllers.sdmController import SDMController
+from parameter import Parameter
+from controllers.controller import Controller
+from controllers.dummyController import DummyController
+
 from utils import DataPacket
 
 
@@ -24,8 +18,8 @@ class Executor(QObject):
 
     def __init__(self, parent: QObject = None):
         super(Executor, self).__init__(parent)
-        self.controllers: dict[ParameterID, Controller] = {}
-        self.params:dict[ParameterID, Parameter] = {}
+        self.controllers: dict[str, Controller] = {}
+        self.params:dict[str, Parameter] = {}
         self.timer = None
         self.delay = 0.1
         self.counter = 0
@@ -36,13 +30,13 @@ class Executor(QObject):
         self.comment = None
 
         self.sweepOneEnabled: bool = False
-        self.sweepOneParam: ParameterID = None
+        self.sweepOneParam: str = None
         self.sweepOneMin: float = 0
         self.sweepOneMax: float = 0
         self.sweepOneSteps: int = 2
 
         self.sweepTwoEnabled: bool = False
-        self.sweepTwoParam: ParameterID = None
+        self.sweepTwoParam: str = None
         self.sweepTwoMin: float = 0
         self.sweepTwoMax: float = 0
         self.sweepTwoSteps: int = 2
@@ -50,13 +44,13 @@ class Executor(QObject):
         self.fileSweepEnabled: bool = False
         self.fileSweepName: str = ""
 
-        self.fileSweepData: dict(ParameterID, list(float)) = {}
+        self.fileSweepData: dict(str, list(float)) = {}
         self.fileSweepSteps: int = 0
 
         self.sweepTwoValue = 0
 
     def initControllers(self) -> None:
-        dummy = DummyController()
+        dummy = DummyController(None)
         self.addController(dummy)
         # pressure = PressureController()
         # self.addController(pressure)
@@ -74,14 +68,14 @@ class Executor(QObject):
         # self.addController(sdm)
 
     def addController(self, controller: Controller) -> None:
-        params = controller.getHandled()
-        if controller.connect():
-            for identifier, key in params.items():
-                self.controllers[identifier] = controller
-                self.params[identifier] = key
+        # params = controller.getHandled()
+        # if controller.connect():
+        #     for identifier, key in params.items():
+        #         self.controllers[identifier] = controller
+        #         self.params[identifier] = key
 
 
-        self.params[ParameterID.DELAY] = Parameter(ParameterID.DELAY, "Delay", "s", True, 0, 10000)
+        self.params["Delay"] = Parameter("Delay", "s", True, 0, 10000)
 
     @Slot()
     def connectControllers(self):
@@ -138,7 +132,7 @@ class Executor(QObject):
         else:
             self.timer.start()
 
-    def read(self, param: ParameterID) -> float:
+    def read(self, param: str) -> float:
         return self.controllers[param].read(param)
 
 
@@ -160,9 +154,9 @@ class Executor(QObject):
                 self.adjust(param, values[self.counter])
 
 
-    @Slot(ParameterID, float)
-    def adjust(self, param: ParameterID, value: float) -> None:
-        if param == ParameterID.DELAY:
+    @Slot(str, float)
+    def adjust(self, param: str, value: float) -> None:
+        if param == "Delay":
             self.delay = value
         else:
             self.controllers[param].adjust(param, value)
@@ -199,16 +193,16 @@ class Executor(QObject):
         self.timer.stop()
         self.exited.emit()
 
-    @Slot(bool, ParameterID, float, float, int)
-    def sweepOneSet(self, enabled: bool, param: ParameterID = None, minimum: float = 0, maximum: float = 0, steps: int = 2):
+    @Slot(bool, str, float, float, int)
+    def sweepOneSet(self, enabled: bool, param: str = None, minimum: float = 0, maximum: float = 0, steps: int = 2):
         self.sweepOneEnabled = enabled
         self.sweepOneParam = param
         self.sweepOneMin = minimum
         self.sweepOneMax = maximum
         self.sweepOneSteps = steps
 
-    @Slot(bool, ParameterID, float, float, int)
-    def sweepTwoSet(self, enabled: bool, param: ParameterID = None, minimum: float = 0, maximum: float = 0, steps: int = 2):
+    @Slot(bool, str, float, float, int)
+    def sweepTwoSet(self, enabled: bool, param: str = None, minimum: float = 0, maximum: float = 0, steps: int = 2):
         self.sweepTwoEnabled = enabled
         self.sweepTwoParam = param
         self.sweepTwoMin = minimum
@@ -230,7 +224,7 @@ class Executor(QObject):
             for name in header:
                 param = next((param for param in self.params.values() if param.name == name), None)
                 if param is not None:
-                    list_of_params.append(param.id)
+                    list_of_params.append(param.name)
                 else:
                     list_of_params.append(None)
                     print(f'[Executor][Error] No param named "{name}" found')
@@ -245,10 +239,6 @@ class Executor(QObject):
                 self.fileSweepSteps += 1
                 for index, value in enumerate(row):
                     self.fileSweepData[list_of_params[index]].append(float(value))
-
-        
-            
-            
 
     def openFile(self):
         t = datetime.datetime.now().strftime('%Y-%m-%dT%H-%M-%S')

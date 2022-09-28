@@ -5,7 +5,7 @@ from PySide6.QtCharts import QLineSeries
 from customChart import CustomChart
 from ui.two_d_chart import Ui_twoDChart
 from utils import DataPacket
-from parameter import ParameterID, Parameter
+from parameter import Parameter
 from queue import Queue
 
 class TwoDChart(CustomChart):
@@ -21,18 +21,18 @@ class TwoDChart(CustomChart):
 
         self.ui.horizontalLayout.replaceWidget(self.ui.chart, self.chartView)
 
-    def setup(self, params: dict[ParameterID, Parameter]):
+    def setup(self, params: dict[str, str]):
         super(TwoDChart, self).setup(params)
 
         for param in self.params.values():
             self.ui.xAxisCombobox.addItem(param.name)
-        self.selected = next(param.id for param in self.params.values() if param.name == self.ui.xAxisCombobox.currentText())
+        self.selected = self.ui.xAxisCombobox.currentText()
 
         self.ui.xAxisCombobox.currentTextChanged.connect(self.parameterChanged)
         self.ui.pointsSpinBox.valueChanged.connect(self.pointsChanged)
 
     def parameterChanged(self, text):
-        self.selected = next(param.id for param in self.params.values() if param.name == text)
+        self.selected = text
 
         self.clear()
 

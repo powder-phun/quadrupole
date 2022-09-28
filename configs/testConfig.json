@@ -3,7 +3,7 @@
     "defaults": {
         "sweepOne": {
             "enabled": true,
-            "param": "AC",
+            "param": "Dummy 1",
             "min": 0,
             "max": 10,
             "steps": 11
@@ -20,16 +20,27 @@
             "type": "dummy",
             "params": [
                 {
-                    "type": "AC",
-                    "name": "AC dummy",
+                    "type": "dummy",
+                    "name": "Dummy 1",
                     "default": 1
                 },
                 {
-                    "type": "DC",
-                    "name": "DC dummy",
-                    "default": 0.5
+                    "type": "dummy_out",
+                    "name": "Dummy Out 1"
                 }
             ]
+            
+        },
+        {
+            "type": "dummy",
+            "params": [
+                {
+                    "type": "dummy",
+                    "name": "Dummy 2",
+                    "default": 3
+                }
+            ]
+            
         }
     ]
 }

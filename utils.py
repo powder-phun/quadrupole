@@ -1,7 +1,6 @@
 from PySide6.QtGui import QRegularExpressionValidator
 from enum import Enum
 import time
-from parameter import ParameterID
 
 FLOAT_VALIDATOR = QRegularExpressionValidator("[+-]?[0-9]+[.,]?[0-9]*(e[+-]?[0-9]+)?")
 
@@ -18,5 +17,5 @@ class DataPacket:
         self.step = step
         self.data = {}
 
-    def addData(self, param: ParameterID, value: float) -> None:
+    def addData(self, param: str, value: float) -> None:
         self.data[param] = value

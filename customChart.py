@@ -5,7 +5,7 @@ from PySide6.QtGui import QPainter, QMouseEvent
 
 from ui.time_chart import Ui_timeChart
 
-from parameter import ParameterID, Parameter
+from parameter import Parameter
 from utils import DataPacket, FLOAT_VALIDATOR
 
 TIMESTAMP = "Timestamp"
@@ -19,7 +19,7 @@ class CustomChart(QWidget):
         self.ui = None
         self.setupUi()
 
-        self.series: dict[ParameterID, QLineSeries] = {}
+        self.series: dict[str, QLineSeries] = {}
 
         self.xAxis: QValueAxis = QValueAxis()
         self.yAxis: QValueAxis = QValueAxis()
@@ -33,10 +33,10 @@ class CustomChart(QWidget):
 
         self.initialize()
 
-        self.checkboxes: dict[ParameterID, QCheckBox] = {}
+        self.checkboxes: dict[str, QCheckBox] = {}
 
-        self.data: dict[ParameterID, list[float]] = {}
-        self.params: dict[ParameterID, Parameter] = None
+        self.data: dict[str, list[float]] = {}
+        self.params: dict[str, Parameter] = None
 
     def initialize(self):
 
@@ -62,7 +62,7 @@ class CustomChart(QWidget):
         self.chartView.viewChanged.connect(self.viewChanged)
 
 
-    def setup(self, params: dict[ParameterID, Parameter]):
+    def setup(self, params: dict[str, Parameter]):
         self.params = params
         for identifier, param in params.items():
 

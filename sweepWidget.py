@@ -3,24 +3,24 @@ from PySide6.QtCore import Signal
 
 from ui.sweep_widget import Ui_sweepWidget
 from utils import FLOAT_VALIDATOR
-from parameter import ParameterID, Parameter
+from parameter import Parameter
 
 
 class SweepWidget(QWidget):
-    selectedOneChanged = Signal(ParameterID, ParameterID)
-    selectedTwoChanged = Signal(ParameterID, ParameterID)
+    selectedOneChanged = Signal(str, str)
+    selectedTwoChanged = Signal(str, str)
 
     def __init__(self, parent=None):
         super(SweepWidget, self).__init__(parent)
         self.ui = Ui_sweepWidget()
         self.ui.setupUi(self)
 
-        self.selectedOne: ParameterID = None
-        self.selectedTwo: ParameterID = None
+        self.selectedOne: str = None
+        self.selectedTwo: str = None
 
         self.selectingCallbackEnabled = True
 
-        self.params: dict[ParameterId, Parameter] = None
+        self.params: dict[str, Parameter] = None
 
         self.ui.sweepOneMinEdit.setValidator(FLOAT_VALIDATOR)
         self.ui.sweepOneMaxEdit.setValidator(FLOAT_VALIDATOR)
@@ -50,9 +50,9 @@ class SweepWidget(QWidget):
         # Fill comboboxes
         for param in self.params.values():
             if param.editable:
-                if param.id != self.selectedOne:
+                if param.name != self.selectedOne:
                     self.ui.sweepTwoCombobox.addItem(param.name)
-                if param.id != self.selectedTwo:
+                if param.name != self.selectedTwo:
                     self.ui.sweepOneCombobox.addItem(param.name)
 
         # Select the correct one
@@ -76,13 +76,7 @@ class SweepWidget(QWidget):
 
         # Set selected one based on current text
         if value:
-            self.setSelectedOne(
-                next(
-                    param.id
-                    for param in self.params.values()
-                    if param.name == self.ui.sweepOneCombobox.currentText()
-                )
-            )
+            self.setSelectedOne(self.ui.sweepOneCombobox.currentText())
         else:
             self.setSelectedOne(None)
 
@@ -97,13 +91,7 @@ class SweepWidget(QWidget):
 
         # Set selected one based on current text
         if value:
-            self.setSelectedTwo(
-                next(
-                    param.id
-                    for param in self.params.values()
-                    if param.name == self.ui.sweepTwoCombobox.currentText()
-                )
-            )
+            self.setSelectedTwo(self.ui.sweepTwoCombobox.currentText())
         else:
             self.setSelectedTwo(None)
 
@@ -193,18 +181,12 @@ class SweepWidget(QWidget):
 
     def comboboxOneChanged(self, text):
         if self.ui.sweepOneCheckbox.isChecked() and self.selectingCallbackEnabled:
-            identifier = next(
-                param.id for param in self.params.values() if param.name == text
-            )
-            self.setSelectedOne(identifier)
+            self.setSelectedOne(text)
             self.fillComboboxes()
 
     def comboboxTwoChanged(self, text):
         if self.ui.sweepTwoCheckbox.isChecked() and self.selectingCallbackEnabled:
-            identifier = next(
-                param.id for param in self.params.values() if param.name == text
-            )
-            self.setSelectedTwo(identifier)
+            self.setSelectedTwo(text)
             self.fillComboboxes()
 
     def setSelectedOne(self, identifier):

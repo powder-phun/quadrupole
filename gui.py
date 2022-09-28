@@ -6,7 +6,7 @@ from ui.main_window import Ui_MainWindow
 import os
 import csv
 
-from parameter import ParameterID, Parameter
+from parameter import Parameter
 from utils import FLOAT_VALIDATOR, State, DataPacket
 from executor import Executor
 
@@ -18,8 +18,8 @@ class Main(QMainWindow):
     restarted = Signal()
     enableDevicesChanged = Signal(bool)
 
-    sweepOneSetup = Signal(bool, ParameterID, float, float, int)
-    sweepTwoSetup = Signal(bool, ParameterID, float, float, int)
+    sweepOneSetup = Signal(bool, str, float, float, int)
+    sweepTwoSetup = Signal(bool, str, float, float, int)
     fileSweepSetup = Signal(bool, str)
 
     exited = Signal()
@@ -29,7 +29,7 @@ class Main(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        self.params: dict[ParameterID, Parameter] = {}
+        self.params: dict[str, Parameter] = {}
         
         self.state = State.STOPPED
 
@@ -47,7 +47,7 @@ class Main(QMainWindow):
 
         self.executorThread.start()
 
-        self.fileSweepParams: list(ParameterID) = []
+        self.fileSweepParams: list(str) = []
         self.fileSweepSteps: int = 0
 
     # Initialize everything such as ParamDock, SweepWidget
@@ -101,14 +101,14 @@ class Main(QMainWindow):
         self.ui.sweepWidget.ui.fileSweepLineEdit.textChanged.connect(self.sweepFileSelected)
         self.ui.sweepWidget.ui.fileSweepCheckbox.stateChanged.connect(self.fileSweepEnabled)
 
-    @Slot(ParameterID, ParameterID)
+    @Slot(str, str)
     def sweepOneChanged(self, identifier, old):
         if identifier is not None:
             self.ui.paramDock.setEnabledParam(identifier, False)
         if old is not None:
             self.ui.paramDock.setEnabledParam(old, True)
 
-    @Slot(ParameterID, ParameterID)
+    @Slot(str, str)
     def sweepTwoChanged(self, identifier, old):
         if identifier is not None:
             self.ui.paramDock.setEnabledParam(identifier, False)
@@ -273,7 +273,7 @@ class Main(QMainWindow):
                 for name in header:
                     param = next((param for param in self.params.values() if param.name == name), None)
                     if param is not None:
-                        self.fileSweepParams.append(param.id)
+                        self.fileSweepParams.append(param.name)
                     else:
                         print(f'[GUI][Error] No param named "{name}" found')
                 
