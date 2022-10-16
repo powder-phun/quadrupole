@@ -6,6 +6,7 @@ import csv
 from parameter import Parameter
 from controllers.controller import Controller
 from controllers.dummyController import DummyController
+from config import Config, ControllerConfig
 
 from utils import DataPacket
 
@@ -16,8 +17,12 @@ class Executor(QObject):
     stoped = Signal()
     controllersConnected = Signal(object)
 
-    def __init__(self, parent: QObject = None):
+    def __init__(self, config, parent: QObject = None):
         super(Executor, self).__init__(parent)
+
+        self.config: Config = config
+        
+        self.controllerTemplates: dict[str, Controller] = {}
         self.controllers: dict[str, Controller] = {}
         self.params:dict[str, Parameter] = {}
         self.timer = None
@@ -50,8 +55,7 @@ class Executor(QObject):
         self.sweepTwoValue = 0
 
     def initControllers(self) -> None:
-        dummy = DummyController(None)
-        self.addController(dummy)
+        self.controllerTemplates[DummyController.getName()] = DummyController
         # pressure = PressureController()
         # self.addController(pressure)
         # keithley = KeithleyVControllerReversed()
@@ -66,13 +70,16 @@ class Executor(QObject):
         # self.addController(keithley_voltage)
         # sdm = SDMController()
         # self.addController(sdm)
+        for controller in self.config.controllers:
+            self.addController(self.controllerTemplates[controller.type](controller), controller)
+            
 
-    def addController(self, controller: Controller) -> None:
-        # params = controller.getHandled()
-        # if controller.connect():
-        #     for identifier, key in params.items():
-        #         self.controllers[identifier] = controller
-        #         self.params[identifier] = key
+    def addController(self, controller: Controller, config: ControllerConfig) -> None:
+        params = controller.getHandled()
+        if controller.connect():
+            for identifier, key in params.items():
+                self.controllers[identifier] = controller
+                self.params[identifier] = key
 
 
         self.params["Delay"] = Parameter("Delay", "s", True, 0, 10000)

@@ -10,6 +10,9 @@ class Controller:
     @staticmethod
     def getName() -> str:
         pass
+    
+    def getHandled(self) -> dict:
+        pass
 
     def connect(self) -> bool:
         pass

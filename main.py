@@ -2,8 +2,11 @@ from PySide6.QtWidgets import QApplication
 import sys
 from gui import Main
 
+from config import Config
+
 import logging
 import argparse
+import pathlib
 
 # Custom logging formater to add color to terminal
 class CustomFormatter(logging.Formatter):
@@ -40,9 +43,14 @@ def setupLogging(level):
     console.setFormatter(CustomFormatter())
     logging.getLogger('').addHandler(console)
 
+def loadConfig(filename):
+    config = Config(filename)
+    return config
+
 
 def parseArguments():
     parser = argparse.ArgumentParser(description="Measurement Automation Software")
+    parser.add_argument("-c", "--config", dest="config", metavar="PATH", type=pathlib.Path, default=pathlib.Path("./configs/default.json"), help="Path to config file")
     parser.add_argument("--log", metavar="LEVEL", dest="level", choices=["DEBUG", "INFO", "WARNING", "ERROR"], default="WARNING", help="Set log level")
 
     args = parser.parse_args()
@@ -51,9 +59,8 @@ def parseArguments():
 if __name__ == "__main__":
     args = parseArguments()
     setupLogging(args.level)
-    logging.warning("Test")
-    logging.debug("Debug")
+    config = loadConfig(args.config)
     app = QApplication(sys.argv)
-    m = Main()
+    m = Main(config)
     m.show()
     sys.exit(app.exec())

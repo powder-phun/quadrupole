@@ -24,10 +24,12 @@ class Main(QMainWindow):
 
     exited = Signal()
 
-    def __init__(self):
+    def __init__(self, config):
         super(Main, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+
+        self.config = config
 
         self.params: dict[str, Parameter] = {}
         
@@ -35,13 +37,11 @@ class Main(QMainWindow):
 
         self.showMaximized()
 
-        self.executor = Executor()
+        self.executor = Executor(config)
         self.executorThread = QThread()
         self.executor.moveToThread(self.executorThread)
 
         self.connectAll()
-
-        self.executor.controllersConnected.connect(self.initializeUI)
 
         self.devicesEnabled: bool = False
 
@@ -95,6 +95,7 @@ class Main(QMainWindow):
         self.executor.exited.connect(self.executorThread.deleteLater)
         self.executor.exited.connect(self.close)
 
+        self.executor.controllersConnected.connect(self.initializeUI)
         self.executor.measured.connect(self.dataMeasured)
         self.executor.stoped.connect(self.stopMeasurement)
 
