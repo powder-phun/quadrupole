@@ -1,0 +1,31 @@
+{
+    "name": "Keithley test config",
+    "defaults": {
+        "sweepOne": {
+            "enabled": true,
+            "param": "Keithley I",
+            "min": 0,
+            "max": 10,
+            "steps": 11
+        },
+        "sweepTwo": {
+            "enabled": false
+        },
+        "fileSweep": {
+            "enabled": false
+        }
+    },
+    "controllers": [
+        {
+            "type": "keithley",
+            "is_cc": true,
+            "params": [
+                {
+                    "type": "current",
+                    "name": "Keithely I"
+                }
+            ]
+            
+        }
+    ]
+}

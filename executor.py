@@ -2,10 +2,12 @@ from PySide6.QtCore import QObject, Slot, QTimer, Signal
 import time
 import datetime
 import csv
+import logging
 
 from parameter import Parameter
 from controllers.controller import Controller
 from controllers.dummyController import DummyController
+from controllers.keithleyController import KeithleyController
 from config import Config, ControllerConfig
 
 from utils import DataPacket
@@ -56,20 +58,8 @@ class Executor(QObject):
 
     def initControllers(self) -> None:
         self.controllerTemplates[DummyController.getName()] = DummyController
-        # pressure = PressureController()
-        # self.addController(pressure)
-        # keithley = KeithleyVControllerReversed()
-        # self.addController(keithley)
-        # tek = TekController()
-        # self.addController(tek)
-        # instek = InstekController()
-        # self.addController(instek)
-        # rudi = RudiController()
-        # self.addController(rudi)
-        # keithley_voltage = KeithleyIController()
-        # self.addController(keithley_voltage)
-        # sdm = SDMController()
-        # self.addController(sdm)
+        self.controllerTemplates[KeithleyController.getName()] = KeithleyController
+
         for controller in self.config.controllers:
             self.addController(self.controllerTemplates[controller.type](controller), controller)
             
@@ -81,6 +71,9 @@ class Executor(QObject):
                 self.controllers[identifier] = controller
                 self.params[identifier] = key
 
+        else:
+            logging.error(f'"{config.type}" controller did not connect')
+
 
         self.params["Delay"] = Parameter("Delay", "s", True, 0, 10000)
 
@@ -91,6 +84,7 @@ class Executor(QObject):
         self.timer = QTimer()
         self.timer.timeout.connect(self.loop)
         self.timer.setInterval(10)
+        
         self.controllersConnected.emit(self.params)
 
     def loop(self):

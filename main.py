@@ -15,7 +15,7 @@ class CustomFormatter(logging.Formatter):
     red = "\x1b[31;20m"
     bold_red = "\x1b[31;1m"
     reset = "\x1b[0m"
-    format = "[%(asctime)s.%(msecs)03d][%(name)s][%(levelname)s] %(message)s"
+    format = "[%(asctime)s.%(msecs)03d][%(filename)s][%(levelname)s] %(message)s"
     FORMATS = {
         logging.DEBUG: grey + format + reset,
         logging.INFO: grey + format + reset,
@@ -36,6 +36,7 @@ def setupLogging(level):
 
     # Disable logs lower than WARNING from matplotlib
     logging.getLogger("matplotlib").setLevel(logging.WARNING)
+    logging.getLogger("pyvisa").setLevel(logging.WARNING)
 
     # Add console log handler with custom formatting
     console = logging.StreamHandler()
