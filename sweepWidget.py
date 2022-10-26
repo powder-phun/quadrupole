@@ -7,8 +7,8 @@ from parameter import Parameter
 
 
 class SweepWidget(QWidget):
-    selectedOneChanged = Signal(str, str)
-    selectedTwoChanged = Signal(str, str)
+    selectedOneChanged = Signal(object, object)
+    selectedTwoChanged = Signal(object, object)
 
     def __init__(self, parent=None):
         super(SweepWidget, self).__init__(parent)
@@ -39,6 +39,43 @@ class SweepWidget(QWidget):
 
         self.ui.fileSweepOpenPushbutton.clicked.connect(self.openFileClicked)
 
+    def setDefaults(self, defaults):
+        if "sweepOne" in defaults:
+            if "param" in defaults["sweepOne"]:
+                self.ui.sweepOneCombobox.setCurrentIndex(
+                    self.ui.sweepOneCombobox.findText(defaults["sweepOne"]["param"])
+                )
+            if "enabled" in defaults["sweepOne"] and defaults["sweepOne"]["enabled"]:
+                self.ui.sweepOneCheckbox.setChecked(True)
+            if "min" in defaults["sweepOne"]:
+                self.ui.sweepOneMinEdit.setText(str(defaults["sweepOne"]["min"]))
+            if "max" in defaults["sweepOne"]:
+                self.ui.sweepOneMaxEdit.setText(str(defaults["sweepOne"]["max"]))
+            if "steps" in defaults["sweepOne"]:
+                self.ui.sweepOneStepsSpinbox.setValue(int(defaults["sweepOne"]["steps"]))
+
+        if "sweepTwo" in defaults:
+            if "param" in defaults["sweepTwo"]:
+                self.ui.sweepTwoCombobox.setCurrentIndex(
+                    self.ui.sweepTwoCombobox.findText(defaults["sweepTwo"]["param"])
+                )
+            if "enabled" in defaults["sweepTwo"] and defaults["sweepTwo"]["enabled"]:
+                self.ui.sweepTwoCheckbox.setChecked(True)
+            if "min" in defaults["sweepTwo"]:
+                self.ui.sweepTwoMinEdit.setText(str(defaults["sweepTwo"]["min"]))
+            if "max" in defaults["sweepTwo"]:
+                self.ui.sweepTwoMaxEdit.setText(str(defaults["sweepTwo"]["max"]))
+            if "steps" in defaults["sweepTwo"]:
+                self.ui.sweepTwoStepsSpinbox.setValue(int(defaults["sweepTwo"]["steps"]))
+
+        if "fileSweep" in defaults:
+            if "enabled" in defaults["fileSweep"] and defaults["fileSweep"]["enabled"]:
+                self.ui.fileSweepCheckbox.setChecked(True)
+            if "file" in defaults["fileSweep"]:
+                self.ui.fileSweepLineEdit.setText(defaults["fileSweep"]["file"])
+
+
+
     def fillComboboxes(self):
         # Disable callback on change
         self.selectingCallbackEnabled = False
@@ -50,9 +87,9 @@ class SweepWidget(QWidget):
         # Fill comboboxes
         for param in self.params.values():
             if param.editable:
-                if param.name != self.selectedOne:
+                if param.name != self.selectedOne and param.name:
                     self.ui.sweepTwoCombobox.addItem(param.name)
-                if param.name != self.selectedTwo:
+                if param.name != self.selectedTwo and param.name:
                     self.ui.sweepOneCombobox.addItem(param.name)
 
         # Select the correct one
@@ -64,7 +101,6 @@ class SweepWidget(QWidget):
             self.ui.sweepTwoCombobox.setCurrentIndex(
                 self.ui.sweepTwoCombobox.findText(self.params[self.selectedTwo].name)
             )
-
         # Re-enable callback
         self.selectingCallbackEnabled = True
 

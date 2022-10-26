@@ -3,7 +3,7 @@
     "defaults": {
         "sweepOne": {
             "enabled": true,
-            "param": "Dummy 1",
+            "param": "Dummy 2",
             "min": 0,
             "max": 10,
             "steps": 11
@@ -12,7 +12,8 @@
             "enabled": false
         },
         "fileSweep": {
-            "enabled": false
+            "enabled": false,
+            "file": "./profiles/testProfile.csv"
         }
     },
     "controllers": [

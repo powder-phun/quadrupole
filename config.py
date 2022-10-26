@@ -12,6 +12,8 @@ class Config:
             return
 
         self.parse_controllers()
+        if "defaults" in self.json:
+            self.defaults = self.json["defaults"]
 
         logging.info(f"Parsed config")
 

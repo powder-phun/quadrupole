@@ -8,6 +8,8 @@ from parameter import Parameter
 from controllers.controller import Controller
 from controllers.dummyController import DummyController
 from controllers.keithleyController import KeithleyController
+from controllers.spdController import SPDController
+from controllers.sdmController import SDMController
 from config import Config, ControllerConfig
 
 from utils import DataPacket
@@ -59,6 +61,8 @@ class Executor(QObject):
     def initControllers(self) -> None:
         self.controllerTemplates[DummyController.getName()] = DummyController
         self.controllerTemplates[KeithleyController.getName()] = KeithleyController
+        self.controllerTemplates[SPDController.getName()] = SPDController
+        self.controllerTemplates[SDMController.getName()] = SDMController
 
         for controller in self.config.controllers:
             self.addController(self.controllerTemplates[controller.type](controller), controller)
@@ -84,7 +88,7 @@ class Executor(QObject):
         self.timer = QTimer()
         self.timer.timeout.connect(self.loop)
         self.timer.setInterval(10)
-        
+
         self.controllersConnected.emit(self.params)
 
     def loop(self):
@@ -214,32 +218,32 @@ class Executor(QObject):
     def fileSweepSet(self, enabled: bool, filename: str):
         self.fileSweepEnabled = enabled
         self.fileSweepName = filename
-        print(self.fileSweepName)
 
-        with open(filename, encoding='utf-8-sig') as f:
-            reader = csv.reader(f, skipinitialspace=True, dialect="excel")
-            header = next(reader)
+        if enabled:
+            with open(filename, encoding='utf-8-sig') as f:
+                reader = csv.reader(f, skipinitialspace=True, dialect="excel")
+                header = next(reader)
 
-            # Read in header as list of parameter ID's
-            list_of_params = []
-            for name in header:
-                param = next((param for param in self.params.values() if param.name == name), None)
-                if param is not None:
-                    list_of_params.append(param.name)
-                else:
-                    list_of_params.append(None)
-                    print(f'[Executor][Error] No param named "{name}" found')
+                # Read in header as list of parameter ID's
+                list_of_params = []
+                for name in header:
+                    param = next((param for param in self.params.values() if param.name == name), None)
+                    if param is not None:
+                        list_of_params.append(param.name)
+                    else:
+                        list_of_params.append(None)
+                        print(f'[Executor][Error] No param named "{name}" found')
 
-            # Create empty list for each parameter
-            for param in list_of_params:
-                self.fileSweepData[param] = []
+                # Create empty list for each parameter
+                for param in list_of_params:
+                    self.fileSweepData[param] = []
 
-            # Fill in values for parameters and count rows
-            self.fileSweepSteps = 0
-            for row in reader:
-                self.fileSweepSteps += 1
-                for index, value in enumerate(row):
-                    self.fileSweepData[list_of_params[index]].append(float(value))
+                # Fill in values for parameters and count rows
+                self.fileSweepSteps = 0
+                for row in reader:
+                    self.fileSweepSteps += 1
+                    for index, value in enumerate(row):
+                        self.fileSweepData[list_of_params[index]].append(float(value))
 
     def openFile(self):
         t = datetime.datetime.now().strftime('%Y-%m-%dT%H-%M-%S')

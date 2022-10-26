@@ -5,6 +5,7 @@ from ui.main_window import Ui_MainWindow
 
 import os
 import csv
+import logging
 
 from parameter import Parameter
 from utils import FLOAT_VALIDATOR, State, DataPacket
@@ -60,6 +61,7 @@ class Main(QMainWindow):
         # Setting-up sweepWidget
         self.ui.sweepWidget.params = self.params
         self.ui.sweepWidget.fillComboboxes()
+        self.ui.sweepWidget.setDefaults(self.config.defaults)
 
         # Setting up timeChart
         self.ui.timeChart.setup(self.params)
@@ -102,14 +104,14 @@ class Main(QMainWindow):
         self.ui.sweepWidget.ui.fileSweepLineEdit.textChanged.connect(self.sweepFileSelected)
         self.ui.sweepWidget.ui.fileSweepCheckbox.stateChanged.connect(self.fileSweepEnabled)
 
-    @Slot(str, str)
+    @Slot(object, object)
     def sweepOneChanged(self, identifier, old):
         if identifier is not None:
             self.ui.paramDock.setEnabledParam(identifier, False)
         if old is not None:
             self.ui.paramDock.setEnabledParam(old, True)
 
-    @Slot(str, str)
+    @Slot(object, object)
     def sweepTwoChanged(self, identifier, old):
         if identifier is not None:
             self.ui.paramDock.setEnabledParam(identifier, False)
@@ -117,7 +119,6 @@ class Main(QMainWindow):
             self.ui.paramDock.setEnabledParam(old, True)
 
     def fileSweepChanged(self, new_list, old_list):
-        print(new_list, old_list)
         for param in old_list:
             self.ui.paramDock.setEnabledParam(param, True)
         for param in new_list:
@@ -276,7 +277,7 @@ class Main(QMainWindow):
                     if param is not None:
                         self.fileSweepParams.append(param.name)
                     else:
-                        print(f'[GUI][Error] No param named "{name}" found')
+                        logging.error(f'No param named "{name}" found')
                 
                 self.fileSweepSteps = 0
                 for row in reader:
