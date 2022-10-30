@@ -134,7 +134,11 @@ class CustomChart(QWidget):
     def clear(self):
         for series in self.series.values():
             series.clear()
-            
+        for k in self.data.keys():
+            self.data[k] = []
+
+        logging.debug("Clearing series and data")
+
 
     @Slot(float, float)
     def mouseMoved(self, x: float, y: float):

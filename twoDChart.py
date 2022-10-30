@@ -37,7 +37,9 @@ class TwoDChart(CustomChart):
     def parameterChanged(self, text):
         self.selected = text
 
-        self.clear()
+        # Clear series but not the data
+        for series in self.series.values():
+            series.clear()
 
         for identifier in self.params.keys():
             for i in range(len(self.data[identifier])):
@@ -72,6 +74,8 @@ class TwoDChart(CustomChart):
             if x<=0: x = 1
             self.xMax += 0.1 * x
             self.xMin -= 0.1 * x
+
+            print(self.data[self.selected])
 
             self.updateXRange()
             logging.debug("Rescaling x")
