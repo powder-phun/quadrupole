@@ -2,7 +2,7 @@ from PySide6.QtGui import QRegularExpressionValidator
 from enum import Enum
 import time
 
-FLOAT_VALIDATOR = QRegularExpressionValidator("[+-]?[0-9]+[.,]?[0-9]*(e[+-]?[0-9]+)?")
+FLOAT_VALIDATOR = QRegularExpressionValidator("[+-]?[0-9]*[.,]?[0-9]*([Ee][+-]?[0-9]+)?")
 
 
 class State(Enum):

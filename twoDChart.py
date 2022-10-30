@@ -7,6 +7,7 @@ from ui.two_d_chart import Ui_twoDChart
 from utils import DataPacket
 from parameter import Parameter
 from queue import Queue
+import logging
 
 class TwoDChart(CustomChart):
     def __init__(self, parent=None):
@@ -31,6 +32,8 @@ class TwoDChart(CustomChart):
         self.ui.xAxisCombobox.currentTextChanged.connect(self.parameterChanged)
         self.ui.pointsSpinBox.valueChanged.connect(self.pointsChanged)
 
+        logging.debug("Setup complete")
+
     def parameterChanged(self, text):
         self.selected = text
 
@@ -39,6 +42,8 @@ class TwoDChart(CustomChart):
         for identifier in self.params.keys():
             for i in range(len(self.data[identifier])):
                 self.series[identifier].append(self.data[self.selected][i], self.data[identifier][i])
+
+        self.scale()
 
     def pointsChanged(self, points):
         self.points = points
@@ -62,7 +67,14 @@ class TwoDChart(CustomChart):
         if self.ui.scaleXCheckbox.isChecked() or force:
             self.xMin = min(self.data[self.selected])
             self.xMax = max(self.data[self.selected])
+            x = self.xMax - self.xMin
+            # Fix for bug when setting scale with the same or reversed numbers
+            if x<=0: x = 1
+            self.xMax += 0.1 * x
+            self.xMin -= 0.1 * x
+
             self.updateXRange()
+            logging.debug("Rescaling x")
 
         # Autoscaling y if selected
         if self.ui.scaleYCheckbox.isChecked() or force:
@@ -74,5 +86,13 @@ class TwoDChart(CustomChart):
                         self.yMin = min(self.yMin, point.y())
                         self.yMax = max(self.yMax, point.y())
 
+
+            y = self.yMax - self.yMin
+            # Fix for bug when setting scale with the same or reversed numbers
+            if y<=0: y=1
+            self.yMax += 0.1 * y
+            self.yMin -= 0.1 * y
+
             self.updateYRange()
+            logging.debug("Rescaling y")
 
