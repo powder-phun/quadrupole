@@ -36,5 +36,11 @@ class TimeChart(CustomChart):
                         self.yMin = min(self.yMin, point.y())
                         self.yMax = max(self.yMax, point.y())
 
+            y = self.yMax - self.yMin
+            # Fix for bug when setting scale with the same or reversed numbers
+            if y<=0: y=1
+            self.yMax += 0.1 * y
+            self.yMin -= 0.1 * y
+
             self.updateYRange()
 
