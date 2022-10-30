@@ -40,7 +40,7 @@ class Config:
 class ControllerConfig:
     def __init__(self, json, parent):
         self.type: str = None
-        self.params: dict = []
+        self.params: list = []
 
         self.json = json
         self.parent = parent
@@ -64,16 +64,24 @@ class ControllerConfig:
             logging.error(f'"params" object in config for {self.type} controller is not a list')
 
 class ParamConfig:
-    def __init__(self, json, parent):
+    def __init__(self, json=None, parent=None):
         self.type: str = None
         self.name: str = None
+        self.unit: str = None
+        self.editable: bool = False
 
         self.json = json
         self.parent: ControllerConfig = parent
-        
-        self.parse()
 
-        logging.info(f"Parsed config for {self.name} parameter")      
+        self.default: float = None
+        self.min: float = None
+        self.max: float = None
+        self.eval_set: str = None
+        self.eval_get: str = None
+        
+        if self.json is not None:
+            self.parse()
+            logging.info(f"Parsed config for {self.name} parameter")      
 
     def parse(self):
         if "type" in self.json:
@@ -85,3 +93,10 @@ class ParamConfig:
             self.name = self.json["name"]
         else:
             logging.error(f"No name specified for one of the params in {self.parent.type} controller")
+
+        self.default =  self.json.get("default", 0)
+        self.min =  self.json.get("min", None)
+        self.max =  self.json.get("max", None)
+        self.eval_set =  self.json.get("eval_set", None)
+        self.eval_get =  self.json.get("eval_get", None)
+        self.unit = self.json.get("unit", "-")

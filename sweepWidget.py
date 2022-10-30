@@ -3,8 +3,8 @@ from PySide6.QtCore import Signal
 
 from ui.sweep_widget import Ui_sweepWidget
 from utils import FLOAT_VALIDATOR
-from parameter import Parameter
 
+from config import ParamConfig
 
 class SweepWidget(QWidget):
     selectedOneChanged = Signal(object, object)
@@ -20,7 +20,7 @@ class SweepWidget(QWidget):
 
         self.selectingCallbackEnabled = True
 
-        self.params: dict[str, Parameter] = None
+        self.params: dict[str, ParamConfig] = None
 
         self.ui.sweepOneMinEdit.setValidator(FLOAT_VALIDATOR)
         self.ui.sweepOneMaxEdit.setValidator(FLOAT_VALIDATOR)

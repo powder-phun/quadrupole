@@ -5,7 +5,7 @@ from PySide6.QtGui import QPainter, QMouseEvent
 
 from ui.time_chart import Ui_timeChart
 
-from parameter import Parameter
+from config import ParamConfig
 from utils import DataPacket, FLOAT_VALIDATOR
 
 import logging
@@ -36,7 +36,7 @@ class CustomChart(QWidget):
         self.checkboxes: dict[str, QCheckBox] = {}
 
         self.data: dict[str, list[float]] = {}
-        self.params: dict[str, Parameter] = None
+        self.params: dict[str, ParamConfig] = None
 
     def initialize(self):
 
@@ -62,7 +62,7 @@ class CustomChart(QWidget):
         self.chartView.viewChanged.connect(self.viewChanged)
 
 
-    def setup(self, params: dict[str, Parameter]):
+    def setup(self, params: dict[str, ParamConfig]):
         self.params = params
         for identifier, param in params.items():
 
@@ -93,10 +93,6 @@ class CustomChart(QWidget):
             )
 
             self.data[identifier] = []
-
-            # Getting minimal and maximal value
-            self.yMin = min(self.yMin, param.minimum)
-            self.yMax = max(self.yMax, param.maximum)
             
 
         # Setting lineedits

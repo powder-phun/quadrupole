@@ -3,7 +3,7 @@ import time
 import logging
 
 from controllers.controller import Controller
-from parameter import Parameter
+from config import ParamConfig
 from config import ControllerConfig
 
 class SDMController(Controller):
@@ -23,6 +23,27 @@ class SDMController(Controller):
     def getName():
         return "sdm"
 
+    @staticmethod
+    def getIsEditableDict() -> dict[str, bool]:
+        return {
+            "VDC": False,
+            "VAC": False,
+            "RES": False,
+            "IDC": False,
+            "IAC": False
+        }
+    
+    @staticmethod
+    def getUnitDict() -> dict[str, str]:
+        return {
+            "VDC": "V",
+            "VAC": "Vrms",
+            "RES": "Ohm",
+            "IDC": "A",
+            "IAC": "Arms"
+        }
+
+
     def parseConfig(self):
         if "ip" in self.config.json:
             self.ip = self.config.json["ip"]
@@ -32,34 +53,22 @@ class SDMController(Controller):
 
         for param in self.config.params: 
             if param.type == "VDC":
-                self.param = Parameter(param.name, "V", False, -9e99, 9e99)
                 self.type = "VOLT:DC"
             elif param.type == "VAC":
-                self.param = Parameter(param.name, "V", False, -9e99, 9e99)
                 self.type = "VOLT:AC"
             elif param.type == "RES":
-                self.param = Parameter(param.name, "Ω", False, -9e99, 9e99)
                 self.type = "RES"
             elif param.type == "IDC":
-                self.param = Parameter(param.name, "A", False, -9e99, 9e99)
                 self.type = "CURR:DC"
             elif param.type == "IAC":
-                self.param = Parameter(param.name, "A", False, -9e99, 9e99)
                 self.type = "CURR:AC"
             else:
                 logging.error(f"Invalid parameter name {param}")
 
         return True
 
-    def getHandled(self):
-        handled = {}
-        if self.param is not None:
-            handled[self.param.name] = self.param
-        return handled
-
     def adjust(self, param: str, value: float) -> None:
         logging.error("No adjustable params")
-
 
     def connect(self) -> bool:
         if self.device is None:
@@ -82,7 +91,7 @@ class SDMController(Controller):
 
 
     def read(self, param: str) -> float:
-        if param == self.param.name:
+        if param == self.param:
             return float(self.device.ask(f"MEAS:{self.type}?"))
         else:
             logging.error("Wrong param name")

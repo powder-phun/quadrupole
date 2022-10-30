@@ -3,7 +3,7 @@ import time
 import logging
 
 from controllers.controller import Controller
-from parameter import Parameter
+from config import ParamConfig
 from config import ControllerConfig
 
 class SPDController(Controller):
@@ -27,6 +27,25 @@ class SPDController(Controller):
     def getName():
         return "spd"
 
+    @staticmethod
+    def getIsEditableDict() -> dict[str, bool]:
+        return {
+            "currentOne": True,
+            "voltageTwo": True,
+            "currentOne": True,
+            "voltageTwo": True
+        }
+    
+    @staticmethod
+    def getUnitDict() -> dict[str, str]:
+        return {
+            "currentOne": "A",
+            "voltageTwo": "V",
+            "currentOne": "A",
+            "voltageTwo": "V"
+        }
+
+
     def parseConfig(self):
         if "ip" in self.config.json:
             self.ip = self.config.json["ip"]
@@ -36,38 +55,26 @@ class SPDController(Controller):
 
         for param in self.config.params: 
             if param.type == "currentOne":
-                self.currentOneParam = Parameter(param.name, "I", True, -9e99, 9e99)
+                self.currentOneParam = param.name
             elif param.type == "voltageOne":
-                self.voltageOneParam = Parameter(param.name, "V", True, -9e99, 9e99)
+                self.voltageOneParam = param.name
             elif param.type == "currentTwo":
-                self.currentTwoParam = Parameter(param.name, "I", True, -9e99, 9e99)
+                self.currentTwoParam = param.name
             elif param.type == "voltageTwo":
-                self.voltageTwoParam = Parameter(param.name, "V", True, -9e99, 9e99)
+                self.voltageTwoParam = param.name
             else:
                 logging.error(f"Invalid parameter name {param}")
 
         return True
 
-    def getHandled(self):
-        handled = {}
-        if self.voltageOneParam is not None:
-            handled[self.voltageOneParam.name] = self.voltageOneParam
-        if self.currentOneParam is not None:
-            handled[self.currentOneParam.name] = self.currentOneParam
-        if self.voltageTwoParam is not None:
-            handled[self.voltageTwoParam.name] = self.voltageTwoParam
-        if self.currentTwoParam is not None:
-            handled[self.currentTwoParam.name] = self.currentTwoParam
-        return handled
-
     def adjust(self, param: str, value: float) -> None:
-        if param == self.currentOneParam.name:
+        if param == self.currentOneParam:
             self.device.write(f"CH1:CURR {value:.3f}")
-        elif param == self.voltageOneParam.name:
+        elif param == self.voltageOneParam:
             self.device.write(f"CH1:VOLT {value:.3f}")
-        elif param == self.currentTwoParam.name:
+        elif param == self.currentTwoParam:
             self.device.write(f"CH2:CURR {value:.3f}")
-        elif param == self.voltageTwoParam.name:
+        elif param == self.voltageTwoParam:
             self.device.write(f"CH2:VOLT {value:.3f}")
         else:
             logging.error("Wrong param name")
@@ -95,13 +102,13 @@ class SPDController(Controller):
 
 
     def read(self, param: str) -> float:
-        if param == self.currentOneParam.name:
+        if param == self.currentOneParam:
             return float(self.device.ask(f"MEAS:CURR? CH1"))
-        elif param == self.voltageOneParam.name:
+        elif param == self.voltageOneParam:
             return float(self.device.ask(f"MEAS:VOLT? CH1"))
-        elif param == self.currentTwoParam.name:
+        elif param == self.currentTwoParam:
             return float(self.device.ask(f"MEAS:CURR? CH2"))
-        elif param == self.voltageTwoParam.name:
+        elif param == self.voltageTwoParam:
             return float(self.device.ask(f"MEAS:VOLT? CH2"))
         else:
             logging.error("Wrong param name")

@@ -3,7 +3,7 @@
     "defaults": {
         "sweepOne": {
             "enabled": true,
-            "param": "Dummy 2",
+            "param": "Dummy 1",
             "min": 0,
             "max": 10,
             "steps": 11
@@ -23,11 +23,13 @@
                 {
                     "type": "dummy",
                     "name": "Dummy 1",
-                    "default": 1
+                    "default": 1,
+                    "eval_set": "2*x"
                 },
                 {
                     "type": "dummy_out",
-                    "name": "Dummy Out 1"
+                    "name": "Dummy Out 1",
+                    "eval_get": "x/100"
                 }
             ]
             

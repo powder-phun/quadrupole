@@ -1,8 +1,3 @@
-from parameter import Parameter
-import math
-import time
-
-
 class Controller:
     def __init__(self, config):
         pass
@@ -11,7 +6,12 @@ class Controller:
     def getName() -> str:
         pass
     
-    def getHandled(self) -> dict:
+    @staticmethod
+    def getIsEditableDict() -> dict[str, bool]:
+        pass
+    
+    @staticmethod
+    def getUnitDict() -> dict[str, str]:
         pass
 
     def connect(self) -> bool:

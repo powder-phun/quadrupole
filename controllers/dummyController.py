@@ -1,6 +1,6 @@
 from controllers.controller import Controller
-
-from parameter import Parameter
+from config import ParamConfig
+import logging
 
 class DummyController(Controller):
     def __init__(self, config):
@@ -10,25 +10,33 @@ class DummyController(Controller):
         self.value_name: str = None
         self.value_name_out: str = None
 
-        self.params: dict(str, Parameter) = {}
-
         self.parseConfig()
 
     def parseConfig(self):
         for param in self.config.params:
             if param.type == "dummy":
                 self.value_name = param.name
-                self.params[param.name] = Parameter(param.name, "-", True, -1e99, 1e99)
             elif param.type == "dummy_out":
                 self.value_name_out = param.name
-                self.params[param.name] = Parameter(param.name, "-", False, -1e99, 1e99)
 
     @staticmethod
     def getName():
         return "dummy"
 
-    def getHandled(self) -> dict:
-        return self.params
+    @staticmethod
+    def getIsEditableDict() -> dict[str, bool]:
+        return {
+            "dummy": True,
+            "dummy_out": False
+        }
+    
+    @staticmethod
+    def getUnitDict() -> dict[str, str]:
+        return {
+            "dummy": "-",
+            "dummy_out": "-"
+        }
+
 
     def adjust(self, param: str, value: float) -> None:
         self.value = value

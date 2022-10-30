@@ -7,7 +7,7 @@ import os
 import csv
 import logging
 
-from parameter import Parameter
+from config import ParamConfig
 from utils import FLOAT_VALIDATOR, State, DataPacket
 from executor import Executor
 
@@ -32,7 +32,7 @@ class Main(QMainWindow):
 
         self.config = config
 
-        self.params: dict[str, Parameter] = {}
+        self.params: dict[str, ParamConfig] = {}
         
         self.state = State.STOPPED
 

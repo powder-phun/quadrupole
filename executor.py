@@ -4,13 +4,12 @@ import datetime
 import csv
 import logging
 
-from parameter import Parameter
 from controllers.controller import Controller
 from controllers.dummyController import DummyController
 from controllers.keithleyController import KeithleyController
 from controllers.spdController import SPDController
 from controllers.sdmController import SDMController
-from config import Config, ControllerConfig
+from config import Config, ControllerConfig, ParamConfig
 
 from utils import DataPacket
 
@@ -28,7 +27,7 @@ class Executor(QObject):
         
         self.controllerTemplates: dict[str, Controller] = {}
         self.controllers: dict[str, Controller] = {}
-        self.params:dict[str, Parameter] = {}
+        self.params: dict[str, ParamConfig] = {}
         self.timer = None
         self.delay = 0.1
         self.counter = 0
@@ -58,6 +57,11 @@ class Executor(QObject):
 
         self.sweepTwoValue = 0
 
+        for controller in self.config.controllers:
+            for param in controller.params:
+                self.params[param.name] = param 
+
+
     def initControllers(self) -> None:
         self.controllerTemplates[DummyController.getName()] = DummyController
         self.controllerTemplates[KeithleyController.getName()] = KeithleyController
@@ -69,21 +73,48 @@ class Executor(QObject):
             
 
     def addController(self, controller: Controller, config: ControllerConfig) -> None:
-        params = controller.getHandled()
         if controller.connect():
-            for identifier, key in params.items():
-                self.controllers[identifier] = controller
-                self.params[identifier] = key
 
+
+            isEditableDict = controller.getIsEditableDict()
+            unitDict = controller.getUnitDict()
+
+            # For each param in config for this controller
+            for param in config.params:
+
+                # Assosiate name of param with controller
+                self.controllers[param.name] = controller
+
+                # Set whether editable in its paramConfig
+                if param.type in isEditableDict:
+                    self.params[param.name].editable = isEditableDict[param.type]
+                else:
+                    logging.warning(f"No param type: {param.type} in isEditableDict for {config.type}")
+
+                # Set appropriate unit in its paramConfig
+                if self.params[param.name].unit is None:
+                    if param.type in unitDict:
+                        self.params[param.name].unit = unitDict[param.type]
+                    else:
+                        logging.warning(f"No param type: {param.type} in unitDict for {config.type}")
+                        self.params[param.name].unit = "-"
         else:
             logging.error(f'"{config.type}" controller did not connect')
 
 
-        self.params["Delay"] = Parameter("Delay", "s", True, 0, 10000)
+        # Add delay param so that it can be editable
+        self.params["Delay"] = ParamConfig()
+        self.params["Delay"].name = "Delay"
+        self.params["Delay"].unit = "s"
+        self.params["Delay"].editable = True
+        self.params["Delay"].default = self.config.defaults.get("delay", 0.1)
+        self.params["Delay"].min = 0
 
     @Slot()
     def connectControllers(self):
         self.initControllers()
+        for param in self.params.values():
+            self.adjust(param.name, param.default)
 
         self.timer = QTimer()
         self.timer.timeout.connect(self.loop)
@@ -138,7 +169,10 @@ class Executor(QObject):
             self.timer.start()
 
     def read(self, param: str) -> float:
-        return self.controllers[param].read(param)
+        value =  self.controllers[param].read(param)
+        if self.params[param].eval_get is not None:
+            value = eval(self.params[param].eval_get, {}, {"x": value})
+        return value
 
 
     def setParameters(self) -> None:
@@ -164,6 +198,16 @@ class Executor(QObject):
         if param == "Delay":
             self.delay = value
         else:
+            # Evaluate custom expression
+            if self.params[param].eval_set is not None:
+                value = eval(self.params[param].eval_set, {}, {"x": value})
+
+            # Check safety margins
+            if self.params[param].min is not None:
+                value = max(value, self.paramsConfigs[param].min)
+            if self.params[param].max is not None:
+                value = min(value, self.paramsConfigs[param].max)
+
             self.controllers[param].adjust(param, value)
 
     @Slot(str, str)
@@ -232,7 +276,7 @@ class Executor(QObject):
                         list_of_params.append(param.name)
                     else:
                         list_of_params.append(None)
-                        print(f'[Executor][Error] No param named "{name}" found')
+                        logging.error(f'No param named "{name}" found')
 
                 # Create empty list for each parameter
                 for param in list_of_params:

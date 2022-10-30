@@ -6,7 +6,7 @@ from PySide6 import QtCore
 
 from ui.three_d_chart import Ui_threeDChart
 
-from parameter import Parameter
+from config import ParamConfig
 from utils import DataPacket, FLOAT_VALIDATOR
 
 import numpy as np
@@ -45,13 +45,13 @@ class ThreeDChart(QWidget):
         self.yParam: str = None
 
         self.data: dict[str, Any] = {}
-        self.params: dict[str, Parameter] = None
+        self.params: dict[str, ParamConfig] = None
 
         self.plotWidget = None
         self.imshow = None
         self.selected = None
 
-    def setup(self, params: dict[str, Parameter]):
+    def setup(self, params: dict[str, ParamConfig]):
         self.params = params
         self.setupUi()
         self.setupPlot()

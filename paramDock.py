@@ -10,7 +10,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt, Signal
 
-from parameter import Parameter
+from config import ParamConfig
 from utils import FLOAT_VALIDATOR
 
 
@@ -28,9 +28,11 @@ class ParamDock(QWidget):
         self.unitLabels: dict[str, QLabel] = {}
         self.lineEdits: dict[str, QLineEdit] = {}
         self.pushButtons: dict[str, QPushButton] = {}
+        self.params: dict[str, ParamConfig] = {}
 
     # Generate UI based on list of parameters
-    def fill(self, params: dict[str, Parameter]):
+    def fill(self, params: dict[str, ParamConfig]):
+        self.params = params
         for i, param in enumerate(params.values()):
 
             self.nameLabels[param.name] = QLabel(f"{param.name}:")
@@ -51,6 +53,7 @@ class ParamDock(QWidget):
                 self.lineEdits[param.name] = QLineEdit()
                 self.lineEdits[param.name].setValidator(FLOAT_VALIDATOR)
                 self.lineEdits[param.name].setFixedWidth(100)
+                self.lineEdits[param.name].setText(str(param.default))
                 self.layoutEditable.addWidget(self.lineEdits[param.name], i, 3)
                 self.pushButtons[param.name] = QPushButton("Set")
                 self.pushButtons[param.name].setFixedWidth(50)

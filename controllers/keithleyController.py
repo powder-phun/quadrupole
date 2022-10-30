@@ -3,7 +3,7 @@ import time
 import logging
 
 from controllers.controller import Controller
-from parameter import Parameter
+from config import ParamConfig
 from config import ControllerConfig
 
 class KeithleyController(Controller):
@@ -36,24 +36,16 @@ class KeithleyController(Controller):
 
         for param in self.config.params: 
             if param.type == "current":
-                self.currentParam = Parameter(param.name, "I", self.is_cc, -9e99, 9e99)
+                self.currentParam = param.name
             elif param.type == "voltage":
-                self.voltageParam = Parameter(param.name, "V", not self.is_cc, -9e99, 9e99)
-
-    def getHandled(self):
-        handled = {}
-        if self.voltageParam is not None:
-            handled[self.voltageParam.name] = self.voltageParam
-        if self.currentParam is not None:
-            handled[self.currentParam.name] = self.currentParam
-        return handled
+                self.voltageParam = param.name
 
     def adjust(self, param: str, value: float) -> None:
-        if param == self.currentParam.name and self.is_cc:
+        if param == self.currentParam and self.is_cc:
             self.current = value
             self.device.write("B{:.2E},0,0X".format(value))
             self.device.write("H0X")
-        elif param == self.voltageParam.name and not self.is_cc:
+        elif param == self.voltageParam and not self.is_cc:
             self.voltage = value
             self.device.write("B{:.2E},0,0X".format(value))
             self.device.write("H0X")
@@ -101,14 +93,14 @@ class KeithleyController(Controller):
 
 
     def read(self, param: str) -> float:
-        if param == self.voltageParam.name and self.is_cc:
+        if param == self.voltageParam and self.is_cc:
             val = float(self.device.read().strip())
             return val
-        elif param == self.voltageParam.name and not self.is_cc:
+        elif param == self.voltageParam and not self.is_cc:
             return self.voltage
 
-        elif param == self.currentParam.name and self.is_cc:
+        elif param == self.currentParam and self.is_cc:
             return self.current
-        elif param == self.currentParam.name and not self.is_cc:
+        elif param == self.currentParam and not self.is_cc:
             val = float(self.device.read().strip())
             return val

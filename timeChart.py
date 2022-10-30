@@ -21,7 +21,7 @@ class TimeChart(CustomChart):
             self.updateXRange()
 
         # Autoscaling x if selected
-        if self.ui.scaleXCheckbox.isChecked() or force:
+        if (self.ui.scaleXCheckbox.isChecked() or force) and len(self.timestamps) >= 1:
             self.xMin = 0
             self.xMax = self.timestamps[-1]
             self.updateXRange()

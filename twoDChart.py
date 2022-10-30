@@ -5,7 +5,7 @@ from PySide6.QtCharts import QLineSeries
 from customChart import CustomChart
 from ui.two_d_chart import Ui_twoDChart
 from utils import DataPacket
-from parameter import Parameter
+from config import ParamConfig
 from queue import Queue
 import logging
 
@@ -74,8 +74,6 @@ class TwoDChart(CustomChart):
             if x<=0: x = 1
             self.xMax += 0.1 * x
             self.xMin -= 0.1 * x
-
-            print(self.data[self.selected])
 
             self.updateXRange()
             logging.debug("Rescaling x")
