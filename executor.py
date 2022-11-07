@@ -9,6 +9,8 @@ from controllers.dummyController import DummyController
 from controllers.keithleyController import KeithleyController
 from controllers.spdController import SPDController
 from controllers.sdmController import SDMController
+from controllers.afgController import AFGController
+from controllers.rudiController import RudiController
 from config import Config, ControllerConfig, ParamConfig
 
 from utils import DataPacket
@@ -67,6 +69,8 @@ class Executor(QObject):
         self.controllerTemplates[KeithleyController.getName()] = KeithleyController
         self.controllerTemplates[SPDController.getName()] = SPDController
         self.controllerTemplates[SDMController.getName()] = SDMController
+        self.controllerTemplates[AFGController.getName()] = AFGController
+        self.controllerTemplates[RudiController.getName()] = RudiController
 
         for controller in self.config.controllers:
             self.addController(self.controllerTemplates[controller.type](controller), controller)
@@ -74,10 +78,10 @@ class Executor(QObject):
 
     def addController(self, controller: Controller, config: ControllerConfig) -> None:
         if controller.connect():
-
-
             isEditableDict = controller.getIsEditableDict()
             unitDict = controller.getUnitDict()
+            minDict = controller.getMinDict()
+            maxDict = controller.getMaxDict()
 
             # For each param in config for this controller
             for param in config.params:
@@ -86,10 +90,13 @@ class Executor(QObject):
                 self.controllers[param.name] = controller
 
                 # Set whether editable in its paramConfig
-                if param.type in isEditableDict:
-                    self.params[param.name].editable = isEditableDict[param.type]
-                else:
-                    logging.warning(f"No param type: {param.type} in isEditableDict for {config.type}")
+                if self.params[param.name].editable is None:
+                    if param.type in isEditableDict:
+                        self.params[param.name].editable = isEditableDict[param.type]
+                    else:
+                        logging.warning(f"No param type: {param.type} in isEditableDict for {config.type}")
+                        self.params[param.name].editable = False
+
 
                 # Set appropriate unit in its paramConfig
                 if self.params[param.name].unit is None:
@@ -98,6 +105,27 @@ class Executor(QObject):
                     else:
                         logging.warning(f"No param type: {param.type} in unitDict for {config.type}")
                         self.params[param.name].unit = "-"
+
+
+                # Set minimal value in its paramConfig
+                if self.params[param.name].editable:
+                    if self.params[param.name].min is None:
+                        if param.type in minDict:
+                            self.params[param.name].min = minDict[param.type]
+                        else:
+                            logging.warning(f"No param type: {param.type} in minDict for {config.type}")
+                            self.params[param.name].min = -1e99
+
+
+                # Set maximal value in its paramConfig
+                if self.params[param.name].editable:
+                    if self.params[param.name].max is None:
+                        if param.type in maxDict:
+                            self.params[param.name].max = maxDict[param.type]
+                        else:
+                            logging.warning(f"No param type: {param.type} in maxDict for {config.type}")
+                            self.params[param.name].max = 1e99
+
         else:
             logging.error(f'"{config.type}" controller did not connect')
 
@@ -113,19 +141,23 @@ class Executor(QObject):
     @Slot()
     def connectControllers(self):
         self.initControllers()
+
         for param in self.params.values():
-            self.adjust(param.name, param.default)
+            if param.editable:
+                self.adjust(param.name, param.default)
 
         self.timer = QTimer()
         self.timer.timeout.connect(self.loop)
         self.timer.setInterval(10)
 
+        
         self.controllersConnected.emit(self.params)
 
     def loop(self):
         self.timer.stop()
 
         self.setParameters()
+
 
         if self.file is None:
             self.openFile()
@@ -204,9 +236,13 @@ class Executor(QObject):
 
             # Check safety margins
             if self.params[param].min is not None:
-                value = max(value, self.paramsConfigs[param].min)
+                if value < self.params[param].min:
+                    value = self.params[param].min
+                    logging.warn(f"Minimal value for {param} exceeded")
             if self.params[param].max is not None:
-                value = min(value, self.paramsConfigs[param].max)
+                if value > self.params[param].max:
+                    value = self.params[param].max
+                    logging.warn(f"Maximal value for {param} exceeded")
 
             self.controllers[param].adjust(param, value)
 

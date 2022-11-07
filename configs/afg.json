@@ -1,0 +1,37 @@
+{
+    "name": "AFG Config",
+    "defaults": {
+        "sweepOne": {
+            "enabled": true,
+            "param": "AC(pk-pk)",
+            "min": 0,
+            "max": 10,
+            "steps": 21
+        }
+    },
+    "controllers": [
+        {
+            "type": "afg",
+            "waveformOne": "SIN",
+            "waveformTwo": "DC",
+            "params": [
+                {  
+                    "type": "amplitude",
+                    "channel": 1,
+                    "name": "AC(pk-pk)"
+                },
+                {
+                    "type": "frequency",
+                    "channel": 1,
+                    "name": "Frequency",
+                    "default": 3.3e6
+                },
+                {
+                    "type": "offset",
+                    "channel": 2,
+                    "name": "DC"
+                }
+            ]
+        }
+    ]
+}

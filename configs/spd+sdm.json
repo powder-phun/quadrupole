@@ -7,11 +7,11 @@
             "params": [
                 {
                     "type": "voltageOne",
-                    "name": "Voltage 1"
+                    "name": "V Set"
                 },
                 {
                     "type": "currentOne",
-                    "name": "Current 1"
+                    "name": "C Set"
                 }
             ]
         },
@@ -21,7 +21,7 @@
             "params": [
                 {
                     "type": "VDC",
-                    "name": "Voltage 1"
+                    "name": "V Meas"
                 }
             ]
         }

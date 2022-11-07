@@ -68,7 +68,7 @@ class ParamConfig:
         self.type: str = None
         self.name: str = None
         self.unit: str = None
-        self.editable: bool = False
+        self.editable: bool = None
 
         self.json = json
         self.parent: ControllerConfig = parent

@@ -15,10 +15,8 @@ class SDMController(Controller):
         self.param = None
         self.type = None
 
-        ret = self.parseConfig()
-        if ret is None:
-            return None
-    
+        self.parseConfig()
+
     @staticmethod
     def getName():
         return "sdm"
@@ -43,6 +41,13 @@ class SDMController(Controller):
             "IAC": "Arms"
         }
 
+    @staticmethod
+    def getMinDict() -> dict[str, bool]:
+        return {}
+
+    @staticmethod
+    def getMaxDict() -> dict[str, bool]:
+        return {}
 
     def parseConfig(self):
         if "ip" in self.config.json:
@@ -64,6 +69,8 @@ class SDMController(Controller):
                 self.type = "CURR:AC"
             else:
                 logging.error(f"Invalid parameter name {param}")
+
+        self.param = self.config.params[0].name
 
         return True
 
@@ -92,6 +99,9 @@ class SDMController(Controller):
 
     def read(self, param: str) -> float:
         if param == self.param:
-            return float(self.device.ask(f"MEAS:{self.type}?"))
+            ret = self.device.ask(f"MEAS:{self.type}?")
+            print(ret)
+            return float(ret)
         else:
+            print(self.param)
             logging.error("Wrong param name")

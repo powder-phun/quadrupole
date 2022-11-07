@@ -12,10 +12,8 @@ class SPDController(Controller):
 
         self.device = None
 
-        self.currentOneParam = None
-        self.voltageOneParam = None
-        self.currentTwoParam = None
-        self.voltageTwoParam = None
+        self.currentParam = [None, None]
+        self.voltageParam = [None, None]
 
         self.ip = None
 
@@ -30,19 +28,29 @@ class SPDController(Controller):
     @staticmethod
     def getIsEditableDict() -> dict[str, bool]:
         return {
-            "currentOne": True,
-            "voltageTwo": True,
-            "currentOne": True,
-            "voltageTwo": True
+            "current": True,
+            "voltage": True
         }
     
     @staticmethod
     def getUnitDict() -> dict[str, str]:
         return {
-            "currentOne": "A",
-            "voltageTwo": "V",
-            "currentOne": "A",
-            "voltageTwo": "V"
+            "current": "A",
+            "voltage": "V"
+        }
+
+    @staticmethod
+    def getMinDict() -> dict[str, float]:
+        return {
+            "current": 0,
+            "voltage": 0
+        }
+
+    @staticmethod
+    def getMaxDict() -> dict[str, float]:
+        return {
+            "current": 3.2,
+            "voltage": 32
         }
 
 
@@ -53,28 +61,27 @@ class SPDController(Controller):
             logging.error("No ip address specified")
             return False
 
-        for param in self.config.params: 
-            if param.type == "currentOne":
-                self.currentOneParam = param.name
-            elif param.type == "voltageOne":
-                self.voltageOneParam = param.name
-            elif param.type == "currentTwo":
-                self.currentTwoParam = param.name
-            elif param.type == "voltageTwo":
-                self.voltageTwoParam = param.name
+        for param in self.config.params:
+            if param.json.get("channel", 0) == 1 or param.json.get("channel", 0) == 2:
+                if param.type == "current":
+                    self.currentParam[param.json["channel"]-1] = param.name
+                elif param.type == "voltage":
+                    self.voltageParam[param.json["channel"]-1] = param.name
+                else:
+                    logging.error(f"Invalid parameter name {param}")
             else:
-                logging.error(f"Invalid parameter name {param}")
+                logging.error(f"Not specified or invalid channel (should be 1 or 2) for param {param.name}")
 
         return True
 
     def adjust(self, param: str, value: float) -> None:
-        if param == self.currentOneParam:
+        if param == self.currentParam[0]:
             self.device.write(f"CH1:CURR {value:.3f}")
-        elif param == self.voltageOneParam:
+        elif param == self.voltageParam[0]:
             self.device.write(f"CH1:VOLT {value:.3f}")
-        elif param == self.currentTwoParam:
+        elif param == self.currentParam[1]:
             self.device.write(f"CH2:CURR {value:.3f}")
-        elif param == self.voltageTwoParam:
+        elif param == self.voltageParam[1]:
             self.device.write(f"CH2:VOLT {value:.3f}")
         else:
             logging.error("Wrong param name")
@@ -102,13 +109,13 @@ class SPDController(Controller):
 
 
     def read(self, param: str) -> float:
-        if param == self.currentOneParam:
+        if param == self.currentParam[0]:
             return float(self.device.ask(f"MEAS:CURR? CH1"))
-        elif param == self.voltageOneParam:
+        elif param == self.voltageParam[0]:
             return float(self.device.ask(f"MEAS:VOLT? CH1"))
-        elif param == self.currentTwoParam:
+        elif param == self.currentParam[1]:
             return float(self.device.ask(f"MEAS:CURR? CH2"))
-        elif param == self.voltageTwoParam:
+        elif param == self.voltageParam[1]:
             return float(self.device.ask(f"MEAS:VOLT? CH2"))
         else:
             logging.error("Wrong param name")

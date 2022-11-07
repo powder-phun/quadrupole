@@ -14,6 +14,14 @@ class Controller:
     def getUnitDict() -> dict[str, str]:
         pass
 
+    @staticmethod
+    def getMinDict() -> dict[str, float]:
+        pass
+
+    @staticmethod
+    def getMaxDict() -> dict[str, float]:
+        pass
+
     def connect(self) -> bool:
         pass
 
