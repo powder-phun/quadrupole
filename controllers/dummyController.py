@@ -37,6 +37,14 @@ class DummyController(Controller):
             "dummy_out": "-"
         }
 
+    @staticmethod
+    def getMinDict() -> dict[str, bool]:
+        return {}
+
+    @staticmethod
+    def getMaxDict() -> dict[str, bool]:
+        return {}
+
 
     def adjust(self, param: str, value: float) -> None:
         self.value = value

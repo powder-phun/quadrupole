@@ -34,6 +34,7 @@ class Executor(QObject):
         self.delay = 0.1
         self.counter = 0
         self.startTime = time.time()
+        self.paramValues: dict[str, float] = {}
 
         self.file = None
         self.title = None
@@ -59,9 +60,14 @@ class Executor(QObject):
 
         self.sweepTwoValue = 0
 
+        self.a = 0
+        self.b = 0
+        self.depending = []
+
         for controller in self.config.controllers:
             for param in controller.params:
-                self.params[param.name] = param 
+                self.params[param.name] = param
+                self.paramValues[param.name] = None
 
 
     def initControllers(self) -> None:
@@ -126,6 +132,9 @@ class Executor(QObject):
                             logging.warning(f"No param type: {param.type} in maxDict for {config.type}")
                             self.params[param.name].max = 1e99
 
+                if param.depending:
+                    self.depending.append(param.name)
+
         else:
             logging.error(f'"{config.type}" controller did not connect')
 
@@ -137,6 +146,20 @@ class Executor(QObject):
         self.params["Delay"].editable = True
         self.params["Delay"].default = self.config.defaults.get("delay", 0.1)
         self.params["Delay"].min = 0
+
+        if self.config.json.get("uses_a", False):
+            self.params["a"] = ParamConfig()
+            self.params["a"].name = "a"
+            self.params["a"].unit = "-"
+            self.params["a"].editable = True
+            self.params["a"].default = self.config.defaults.get("a", 0)
+
+        if self.config.json.get("uses_b", False):
+            self.params["b"] = ParamConfig()
+            self.params["b"].name = "b"
+            self.params["b"].unit = "-"
+            self.params["b"].editable = True
+            self.params["b"].default = self.config.defaults.get("b", 0)
 
     @Slot()
     def connectControllers(self):
@@ -164,7 +187,7 @@ class Executor(QObject):
 
         time.sleep(self.delay)
         packet = DataPacket(time.time() - self.startTime, self.counter)
-        for param in self.controllers.keys():
+        for param in self.params.keys():
             packet.addData(param, self.read(param))
 
         line = ""
@@ -201,6 +224,12 @@ class Executor(QObject):
             self.timer.start()
 
     def read(self, param: str) -> float:
+        if param == "Delay":
+            return self.delay
+        if param == "a":
+            return self.a
+        if param == "b":
+            return self.b
         value =  self.controllers[param].read(param)
         if self.params[param].eval_get is not None:
             value = eval(self.params[param].eval_get, {}, {"x": value})
@@ -218,21 +247,31 @@ class Executor(QObject):
         if self.sweepTwoEnabled:
             value = (sweepTwoIndex/(self.sweepTwoSteps-1)) * (self.sweepTwoMax-self.sweepTwoMin) + self.sweepTwoMin
             self.sweepTwoValue = value
-            self.adjust(self.sweepTwoParam)
+            self.adjust(self.sweepTwoParam, value)
 
         if self.fileSweepEnabled:
             for param, values in self.fileSweepData.items():
                 self.adjust(param, values[self.counter])
+
+        for param in self.depending:
+            self.adjust(param, self.paramValues[param])
+
 
 
     @Slot(str, float)
     def adjust(self, param: str, value: float) -> None:
         if param == "Delay":
             self.delay = value
+        elif param == "a":
+            self.a = value
+        elif param == "b":
+            self.b = value
         else:
+            self.paramValues[param] = value
+
             # Evaluate custom expression
             if self.params[param].eval_set is not None:
-                value = eval(self.params[param].eval_set, {}, {"x": value})
+                value = eval(self.params[param].eval_set, {}, {"x": value, "a": self.a, "b": self.b})
 
             # Check safety margins
             if self.params[param].min is not None:

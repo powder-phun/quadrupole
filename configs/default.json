@@ -1,19 +1,21 @@
 {
     "name": "Dummy test config",
+    "uses_a": true,
+    "uses_b": true,
     "defaults": {
         "sweepOne": {
             "enabled": true,
-            "param": "Dummy 1",
+            "param": "a",
             "min": 0,
             "max": 10,
             "steps": 11
         },
         "sweepTwo": {
-            "enabled": false
-        },
-        "fileSweep": {
-            "enabled": false,
-            "file": "./profiles/testProfile.csv"
+            "enabled": true,
+            "param": "b",
+            "min": 0,
+            "max": 10,
+            "steps": 11
         }
     },
     "controllers": [
@@ -24,23 +26,11 @@
                     "type": "dummy",
                     "name": "Dummy 1",
                     "default": 1,
-                    "eval_set": "2*x"
+                    "eval_set": "a*b"
                 },
                 {
                     "type": "dummy_out",
-                    "name": "Dummy Out 1",
-                    "eval_get": "x/100"
-                }
-            ]
-            
-        },
-        {
-            "type": "dummy",
-            "params": [
-                {
-                    "type": "dummy",
-                    "name": "Dummy 2",
-                    "default": 3
+                    "name": "Dummy Out 1"
                 }
             ]
             

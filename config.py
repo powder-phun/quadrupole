@@ -1,5 +1,6 @@
 import json
 import logging
+import math
 
 class Config:
     def __init__(self, filename):
@@ -78,6 +79,8 @@ class ParamConfig:
         self.max: float = None
         self.eval_set: str = None
         self.eval_get: str = None
+
+        self.depending: bool = False
         
         if self.json is not None:
             self.parse()
@@ -100,3 +103,7 @@ class ParamConfig:
         self.eval_set =  self.json.get("eval_set", None)
         self.eval_get =  self.json.get("eval_get", None)
         self.unit = self.json.get("unit", "-")
+
+        if self.eval_set is not None:
+            if "a" in self.eval_set or "b" in self.eval_set:
+                self.depending = True

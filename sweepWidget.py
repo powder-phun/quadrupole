@@ -86,7 +86,7 @@ class SweepWidget(QWidget):
 
         # Fill comboboxes
         for param in self.params.values():
-            if param.editable:
+            if param.editable and not param.depending:
                 if param.name != self.selectedOne and param.name:
                     self.ui.sweepTwoCombobox.addItem(param.name)
                 if param.name != self.selectedTwo and param.name:
