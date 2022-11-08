@@ -5,10 +5,10 @@ from PySide6.QtGui import QPainter, QMouseEvent
 
 from ui.time_chart import Ui_timeChart
 
-from parameter import ParameterID, Parameter
+from config import ParamConfig
 from utils import DataPacket, FLOAT_VALIDATOR
 
-TIMESTAMP = "Timestamp"
+import logging
 
 
 class CustomChart(QWidget):
@@ -19,7 +19,7 @@ class CustomChart(QWidget):
         self.ui = None
         self.setupUi()
 
-        self.series: dict[ParameterID, QLineSeries] = {}
+        self.series: dict[str, QLineSeries] = {}
 
         self.xAxis: QValueAxis = QValueAxis()
         self.yAxis: QValueAxis = QValueAxis()
@@ -33,10 +33,10 @@ class CustomChart(QWidget):
 
         self.initialize()
 
-        self.checkboxes: dict[ParameterID, QCheckBox] = {}
+        self.checkboxes: dict[str, QCheckBox] = {}
 
-        self.data: dict[ParameterID, list[float]] = {}
-        self.params: dict[ParameterID, Parameter] = None
+        self.data: dict[str, list[float]] = {}
+        self.params: dict[str, ParamConfig] = None
 
     def initialize(self):
 
@@ -62,7 +62,7 @@ class CustomChart(QWidget):
         self.chartView.viewChanged.connect(self.viewChanged)
 
 
-    def setup(self, params: dict[ParameterID, Parameter]):
+    def setup(self, params: dict[str, ParamConfig]):
         self.params = params
         for identifier, param in params.items():
 
@@ -74,16 +74,6 @@ class CustomChart(QWidget):
             self.series[identifier].attachAxis(self.yAxis)
             self.series[identifier].setName(param.name)
             self.series[identifier].setVisible(False)
-
-            # Setting lineedits
-            self.ui.minXEdit.setValidator(FLOAT_VALIDATOR)
-            self.ui.maxXEdit.setValidator(FLOAT_VALIDATOR)
-            self.ui.minYEdit.setValidator(FLOAT_VALIDATOR)
-            self.ui.maxYEdit.setValidator(FLOAT_VALIDATOR)
-            self.ui.minXEdit.returnPressed.connect(self.scaleChanged)
-            self.ui.maxXEdit.returnPressed.connect(self.scaleChanged)
-            self.ui.minYEdit.returnPressed.connect(self.scaleChanged)
-            self.ui.maxYEdit.returnPressed.connect(self.scaleChanged)
 
             # Creating checkboxes for parameters
             self.checkboxes[identifier] = QCheckBox(param.name)
@@ -103,10 +93,19 @@ class CustomChart(QWidget):
             )
 
             self.data[identifier] = []
+            
 
-            # Getting minimal and maximal value
-            self.yMin = min(self.yMin, param.minimum)
-            self.yMax = max(self.yMax, param.maximum)
+        # Setting lineedits
+        self.ui.minXEdit.setValidator(FLOAT_VALIDATOR)
+        self.ui.maxXEdit.setValidator(FLOAT_VALIDATOR)
+        self.ui.minYEdit.setValidator(FLOAT_VALIDATOR)
+        self.ui.maxYEdit.setValidator(FLOAT_VALIDATOR)
+        self.ui.minXEdit.editingFinished.connect(self.scaleChanged)
+        self.ui.maxXEdit.editingFinished.connect(self.scaleChanged)
+        self.ui.minYEdit.editingFinished.connect(self.scaleChanged)
+        self.ui.maxYEdit.editingFinished.connect(self.scaleChanged)
+
+        logging.debug("Setup complete")
 
     def createSeries(self) -> QAbstractSeries:
         return QLineSeries()
@@ -125,20 +124,17 @@ class CustomChart(QWidget):
         
     def checkboxClicked(self, param, value):
         self.series[param].setVisible(value)
+        self.scale()
 
-        self.yMin = 1e20
-        self.yMax = -1e20
-
-        for param, checkbox in self.checkboxes.items():
-            if checkbox.isChecked():
-                self.yMin = min(self.yMin, self.params[param].minimum)
-                self.yMax = max(self.yMax, self.params[param].maximum)
-
-        self.yAxis.setRange(self.yMin, self.yMax)
-
+        
     def clear(self):
         for series in self.series.values():
             series.clear()
+        for k in self.data.keys():
+            self.data[k] = []
+
+        logging.debug("Clearing series and data")
+
 
     @Slot(float, float)
     def mouseMoved(self, x: float, y: float):
@@ -151,8 +147,8 @@ class CustomChart(QWidget):
         self.yMin = float(self.ui.minYEdit.text())
         self.yMax = float(self.ui.maxYEdit.text())
 
-        self.xAxis.setRange(self.xMin, self.xMax)
-        self.yAxis.setRange(self.yMin, self.yMax)
+        self.updateXRange()
+        self.updateYRange()
 
     def updateXRange(self):
         self.xAxis.setRange(self.xMin, self.xMax)

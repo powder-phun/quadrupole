@@ -5,8 +5,9 @@ from ui.main_window import Ui_MainWindow
 
 import os
 import csv
+import logging
 
-from parameter import ParameterID, Parameter
+from config import ParamConfig
 from utils import FLOAT_VALIDATOR, State, DataPacket
 from executor import Executor
 
@@ -18,36 +19,36 @@ class Main(QMainWindow):
     restarted = Signal()
     enableDevicesChanged = Signal(bool)
 
-    sweepOneSetup = Signal(bool, ParameterID, float, float, int)
-    sweepTwoSetup = Signal(bool, ParameterID, float, float, int)
+    sweepOneSetup = Signal(bool, str, float, float, int)
+    sweepTwoSetup = Signal(bool, str, float, float, int)
     fileSweepSetup = Signal(bool, str)
 
     exited = Signal()
 
-    def __init__(self):
+    def __init__(self, config):
         super(Main, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        self.params: dict[ParameterID, Parameter] = {}
+        self.config = config
+
+        self.params: dict[str, ParamConfig] = {}
         
         self.state = State.STOPPED
 
         self.showMaximized()
 
-        self.executor = Executor()
+        self.executor = Executor(config)
         self.executorThread = QThread()
         self.executor.moveToThread(self.executorThread)
 
         self.connectAll()
 
-        self.executor.controllersConnected.connect(self.initializeUI)
-
         self.devicesEnabled: bool = False
 
         self.executorThread.start()
 
-        self.fileSweepParams: list(ParameterID) = []
+        self.fileSweepParams: list(str) = []
         self.fileSweepSteps: int = 0
 
     # Initialize everything such as ParamDock, SweepWidget
@@ -60,6 +61,7 @@ class Main(QMainWindow):
         # Setting-up sweepWidget
         self.ui.sweepWidget.params = self.params
         self.ui.sweepWidget.fillComboboxes()
+        self.ui.sweepWidget.setDefaults(self.config.defaults)
 
         # Setting up timeChart
         self.ui.timeChart.setup(self.params)
@@ -95,20 +97,21 @@ class Main(QMainWindow):
         self.executor.exited.connect(self.executorThread.deleteLater)
         self.executor.exited.connect(self.close)
 
+        self.executor.controllersConnected.connect(self.initializeUI)
         self.executor.measured.connect(self.dataMeasured)
         self.executor.stoped.connect(self.stopMeasurement)
 
         self.ui.sweepWidget.ui.fileSweepLineEdit.textChanged.connect(self.sweepFileSelected)
         self.ui.sweepWidget.ui.fileSweepCheckbox.stateChanged.connect(self.fileSweepEnabled)
 
-    @Slot(ParameterID, ParameterID)
+    @Slot(object, object)
     def sweepOneChanged(self, identifier, old):
         if identifier is not None:
             self.ui.paramDock.setEnabledParam(identifier, False)
         if old is not None:
             self.ui.paramDock.setEnabledParam(old, True)
 
-    @Slot(ParameterID, ParameterID)
+    @Slot(object, object)
     def sweepTwoChanged(self, identifier, old):
         if identifier is not None:
             self.ui.paramDock.setEnabledParam(identifier, False)
@@ -116,7 +119,6 @@ class Main(QMainWindow):
             self.ui.paramDock.setEnabledParam(old, True)
 
     def fileSweepChanged(self, new_list, old_list):
-        print(new_list, old_list)
         for param in old_list:
             self.ui.paramDock.setEnabledParam(param, True)
         for param in new_list:
@@ -273,9 +275,9 @@ class Main(QMainWindow):
                 for name in header:
                     param = next((param for param in self.params.values() if param.name == name), None)
                     if param is not None:
-                        self.fileSweepParams.append(param.id)
+                        self.fileSweepParams.append(param.name)
                     else:
-                        print(f'[GUI][Error] No param named "{name}" found')
+                        logging.error(f'No param named "{name}" found')
                 
                 self.fileSweepSteps = 0
                 for row in reader:

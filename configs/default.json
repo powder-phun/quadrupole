@@ -1,0 +1,39 @@
+{
+    "name": "Dummy test config",
+    "uses_a": true,
+    "uses_b": true,
+    "defaults": {
+        "sweepOne": {
+            "enabled": true,
+            "param": "a",
+            "min": 0,
+            "max": 10,
+            "steps": 11
+        },
+        "sweepTwo": {
+            "enabled": true,
+            "param": "b",
+            "min": 0,
+            "max": 10,
+            "steps": 11
+        }
+    },
+    "controllers": [
+        {
+            "type": "dummy",
+            "params": [
+                {
+                    "type": "dummy",
+                    "name": "Dummy 1",
+                    "default": 1,
+                    "eval_set": "a*b"
+                },
+                {
+                    "type": "dummy_out",
+                    "name": "Dummy Out 1"
+                }
+            ]
+            
+        }
+    ]
+}

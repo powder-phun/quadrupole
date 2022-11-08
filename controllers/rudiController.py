@@ -2,40 +2,88 @@ from pyModbusTCP.client import ModbusClient
 from pyModbusTCP import utils
 import numpy as np
 import math
+import logging
 
 
 from controllers.controller import Controller
-from parameter import ParameterID, Parameter
+from config import ParamConfig, ControllerConfig
 
 class RudiController(Controller):
-    def __init__(self):
+    def __init__(self, config):
+        self.config: ControllerConfig = config
         self.device = None
-        self.voltage = [0, 0, 0, 0]
+        self.ip = None
+        self.voltageParam = [None, None, None, None]
+        self.voltage = [None, None, None, None]
 
-    def getHandled(self):
+        self.parseConfig()
+
+    @staticmethod
+    def getName():
+        return "rudi"
+
+    @staticmethod
+    def getIsEditableDict() -> dict[str, bool]:
         return {
-            ParameterID.RUDI_1: Parameter(ParameterID.RUDI_1, "RUDI 1", "V", True, 0, 1500),
-            ParameterID.RUDI_2: Parameter(ParameterID.RUDI_2, "RUDI 2", "V", True, 0, 1500),
-            ParameterID.RUDI_3: Parameter(ParameterID.RUDI_3, "RUDI 3", "V", True, 0, 1500),
-            ParameterID.RUDI_4 : Parameter(ParameterID.RUDI_4, "RUDI 4", "V", True, 0, 1500),
+            "voltage": True
+        }
+    
+    @staticmethod
+    def getUnitDict() -> dict[str, str]:
+        return {
+            "voltage": "V"
         }
 
-    def adjust(self, param: ParameterID, value: float) -> None:
-        voltageMilivolts = np.uint32(int(math.fabs(value)) * 1000)
-        words = utils.long_list_to_word([voltageMilivolts])
-        if param == ParameterID.RUDI_1:
-            self.setOutput(1, value)
-        elif param == ParameterID.RUDI_2:
-            self.setOutput(2, value)
-        elif param == ParameterID.RUDI_3:
-            self.setOutput(3, value)
-        elif param == ParameterID.RUDI_4:
-            self.setOutput(4, value)            
+    @staticmethod
+    def getMinDict() -> dict[str, float]:
+        return {
+            "voltage": -1500
+        }
 
-        self.device.write_multiple_registers(2, words)
+    @staticmethod
+    def getMaxDict() -> dict[str, float]:
+        return {
+            "voltage": 1500
+        }
+
+    def parseConfig(self):
+
+        if "ip" in self.config.json:
+            self.ip = self.config.json["ip"]
+        else:
+            logging.error("No ip address specified")
+            return False
+
+        for param in self.config.params:
+            if param.json.get("channel", 0) in [1, 2, 3, 4]:
+                if param.type == "voltage":
+                    self.voltageParam[param.json["channel"]-1] = param.name
+                else:
+                    logging.error(f"Invalid parameter name {param}")
+            else:
+                logging.error(f"Not specified or invalid channel (should be 1, 2, 3, or 4) for param {param.name}")
+
+
+        return True
+
+    def adjust(self, param: str, value: float) -> None:
+        if param == self.voltageParam[0]:
+            self.setOutput(1, value)
+            self.voltage[0] = value
+        elif param == self.voltageParam[1]:
+            self.setOutput(2, value)
+            self.voltage[0] = value
+        elif param == self.voltageParam[2]:
+            self.setOutput(3, value)
+            self.voltage[0] = value
+        elif param == self.voltageParam[3]:
+            self.setOutput(4, value)
+            self.voltage[0] = value
+        else:
+            logging.error(f"Invalid param name: {param}")
 
     def connect(self) -> bool:
-        self.device = ModbusClient(host="169.254.100.22", port=502, auto_open=True, auto_close=True)
+        self.device = ModbusClient(host=self.ip, port=502, auto_open=True, auto_close=True)
         return True
 
     def changeMode(self, value):
@@ -84,12 +132,14 @@ class RudiController(Controller):
             self.changeMode(7)
 
 
-    def read(self, param: ParameterID) -> float:
-        if param == ParameterID.RUDI_1:
+    def read(self, param: str) -> float:
+        if param == self.voltageParam[0]:
             return self.voltage[0]
-        elif param == ParameterID.RUDI_2:
+        elif param == self.voltageParam[1]:
             return self.voltage[1]
-        elif param == ParameterID.RUDI_3:
+        elif param == self.voltageParam[2]:
             return self.voltage[2]
-        elif param == ParameterID.RUDI_4:
+        elif param == self.voltageParam[3]:
             return self.voltage[3]
+        else:
+            logging.error(f"Invalid param name: {param}")

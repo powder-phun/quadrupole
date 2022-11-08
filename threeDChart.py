@@ -6,7 +6,7 @@ from PySide6 import QtCore
 
 from ui.three_d_chart import Ui_threeDChart
 
-from parameter import ParameterID, Parameter
+from config import ParamConfig
 from utils import DataPacket, FLOAT_VALIDATOR
 
 import numpy as np
@@ -38,20 +38,20 @@ class ThreeDChart(QWidget):
         self.xDataMin: float = 0
         self.xDataMax: float = 1
         self.xDataSteps: int = 2
-        self.xParam: ParameterID = None
+        self.xParam: str = None
         self.yDataMin: float = 0
         self.yDataMax: float = 1
         self.yDataSteps: int = 2
-        self.yParam: ParameterID = None
+        self.yParam: str = None
 
-        self.data: dict[ParameterID, Any] = {}
-        self.params: dict[ParameterID, Parameter] = None
+        self.data: dict[str, Any] = {}
+        self.params: dict[str, ParamConfig] = None
 
         self.plotWidget = None
         self.imshow = None
         self.selected = None
 
-    def setup(self, params: dict[ParameterID, Parameter]):
+    def setup(self, params: dict[str, ParamConfig]):
         self.params = params
         self.setupUi()
         self.setupPlot()
@@ -84,7 +84,7 @@ class ThreeDChart(QWidget):
         self.ui = Ui_threeDChart()
         self.ui.setupUi(self)
 
-    def setRanges(self, paramX: ParameterID, paramY: ParameterID, minX: float, maxX: float, stepX:int, minY: float, maxY: float, stepY: int):
+    def setRanges(self, paramX: str, paramY: str, minX: float, maxX: float, stepX:int, minY: float, maxY: float, stepY: int):
         # Deleting old data
         self.data = {}
         for param in self.params.keys():
@@ -146,10 +146,7 @@ class ThreeDChart(QWidget):
 
     def comboboxChanged(self, text):
         # Read set parameter and save it
-        identifier = next(
-            param.id for param in self.params.values() if param.name == text
-        )
-        self.selected = identifier
+        self.selected = text
 
         # Draw new graph
         self.draw()

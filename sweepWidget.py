@@ -3,24 +3,24 @@ from PySide6.QtCore import Signal
 
 from ui.sweep_widget import Ui_sweepWidget
 from utils import FLOAT_VALIDATOR
-from parameter import ParameterID, Parameter
 
+from config import ParamConfig
 
 class SweepWidget(QWidget):
-    selectedOneChanged = Signal(ParameterID, ParameterID)
-    selectedTwoChanged = Signal(ParameterID, ParameterID)
+    selectedOneChanged = Signal(object, object)
+    selectedTwoChanged = Signal(object, object)
 
     def __init__(self, parent=None):
         super(SweepWidget, self).__init__(parent)
         self.ui = Ui_sweepWidget()
         self.ui.setupUi(self)
 
-        self.selectedOne: ParameterID = None
-        self.selectedTwo: ParameterID = None
+        self.selectedOne: str = None
+        self.selectedTwo: str = None
 
         self.selectingCallbackEnabled = True
 
-        self.params: dict[ParameterId, Parameter] = None
+        self.params: dict[str, ParamConfig] = None
 
         self.ui.sweepOneMinEdit.setValidator(FLOAT_VALIDATOR)
         self.ui.sweepOneMaxEdit.setValidator(FLOAT_VALIDATOR)
@@ -39,6 +39,43 @@ class SweepWidget(QWidget):
 
         self.ui.fileSweepOpenPushbutton.clicked.connect(self.openFileClicked)
 
+    def setDefaults(self, defaults):
+        if "sweepOne" in defaults:
+            if "param" in defaults["sweepOne"]:
+                self.ui.sweepOneCombobox.setCurrentIndex(
+                    self.ui.sweepOneCombobox.findText(defaults["sweepOne"]["param"])
+                )
+            if "enabled" in defaults["sweepOne"] and defaults["sweepOne"]["enabled"]:
+                self.ui.sweepOneCheckbox.setChecked(True)
+            if "min" in defaults["sweepOne"]:
+                self.ui.sweepOneMinEdit.setText(str(defaults["sweepOne"]["min"]))
+            if "max" in defaults["sweepOne"]:
+                self.ui.sweepOneMaxEdit.setText(str(defaults["sweepOne"]["max"]))
+            if "steps" in defaults["sweepOne"]:
+                self.ui.sweepOneStepsSpinbox.setValue(int(defaults["sweepOne"]["steps"]))
+
+        if "sweepTwo" in defaults:
+            if "param" in defaults["sweepTwo"]:
+                self.ui.sweepTwoCombobox.setCurrentIndex(
+                    self.ui.sweepTwoCombobox.findText(defaults["sweepTwo"]["param"])
+                )
+            if "enabled" in defaults["sweepTwo"] and defaults["sweepTwo"]["enabled"]:
+                self.ui.sweepTwoCheckbox.setChecked(True)
+            if "min" in defaults["sweepTwo"]:
+                self.ui.sweepTwoMinEdit.setText(str(defaults["sweepTwo"]["min"]))
+            if "max" in defaults["sweepTwo"]:
+                self.ui.sweepTwoMaxEdit.setText(str(defaults["sweepTwo"]["max"]))
+            if "steps" in defaults["sweepTwo"]:
+                self.ui.sweepTwoStepsSpinbox.setValue(int(defaults["sweepTwo"]["steps"]))
+
+        if "fileSweep" in defaults:
+            if "enabled" in defaults["fileSweep"] and defaults["fileSweep"]["enabled"]:
+                self.ui.fileSweepCheckbox.setChecked(True)
+            if "file" in defaults["fileSweep"]:
+                self.ui.fileSweepLineEdit.setText(defaults["fileSweep"]["file"])
+
+
+
     def fillComboboxes(self):
         # Disable callback on change
         self.selectingCallbackEnabled = False
@@ -49,10 +86,10 @@ class SweepWidget(QWidget):
 
         # Fill comboboxes
         for param in self.params.values():
-            if param.editable:
-                if param.id != self.selectedOne:
+            if param.editable and not param.depending:
+                if param.name != self.selectedOne and param.name:
                     self.ui.sweepTwoCombobox.addItem(param.name)
-                if param.id != self.selectedTwo:
+                if param.name != self.selectedTwo and param.name:
                     self.ui.sweepOneCombobox.addItem(param.name)
 
         # Select the correct one
@@ -64,7 +101,6 @@ class SweepWidget(QWidget):
             self.ui.sweepTwoCombobox.setCurrentIndex(
                 self.ui.sweepTwoCombobox.findText(self.params[self.selectedTwo].name)
             )
-
         # Re-enable callback
         self.selectingCallbackEnabled = True
 
@@ -76,13 +112,7 @@ class SweepWidget(QWidget):
 
         # Set selected one based on current text
         if value:
-            self.setSelectedOne(
-                next(
-                    param.id
-                    for param in self.params.values()
-                    if param.name == self.ui.sweepOneCombobox.currentText()
-                )
-            )
+            self.setSelectedOne(self.ui.sweepOneCombobox.currentText())
         else:
             self.setSelectedOne(None)
 
@@ -97,13 +127,7 @@ class SweepWidget(QWidget):
 
         # Set selected one based on current text
         if value:
-            self.setSelectedTwo(
-                next(
-                    param.id
-                    for param in self.params.values()
-                    if param.name == self.ui.sweepTwoCombobox.currentText()
-                )
-            )
+            self.setSelectedTwo(self.ui.sweepTwoCombobox.currentText())
         else:
             self.setSelectedTwo(None)
 
@@ -193,18 +217,12 @@ class SweepWidget(QWidget):
 
     def comboboxOneChanged(self, text):
         if self.ui.sweepOneCheckbox.isChecked() and self.selectingCallbackEnabled:
-            identifier = next(
-                param.id for param in self.params.values() if param.name == text
-            )
-            self.setSelectedOne(identifier)
+            self.setSelectedOne(text)
             self.fillComboboxes()
 
     def comboboxTwoChanged(self, text):
         if self.ui.sweepTwoCheckbox.isChecked() and self.selectingCallbackEnabled:
-            identifier = next(
-                param.id for param in self.params.values() if param.name == text
-            )
-            self.setSelectedTwo(identifier)
+            self.setSelectedTwo(text)
             self.fillComboboxes()
 
     def setSelectedOne(self, identifier):

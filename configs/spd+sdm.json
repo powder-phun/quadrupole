@@ -1,0 +1,29 @@
+{
+    "name": "SPD Config",
+    "controllers": [
+        {
+            "type": "spd",
+            "ip": "192.168.1.4",
+            "params": [
+                {
+                    "type": "voltageOne",
+                    "name": "V Set"
+                },
+                {
+                    "type": "currentOne",
+                    "name": "C Set"
+                }
+            ]
+        },
+        {
+            "type": "sdm",
+            "ip": "192.168.1.6",
+            "params": [
+                {
+                    "type": "VDC",
+                    "name": "V Meas"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,19 @@
+{
+    "name": "SPD Config",
+    "controllers": [
+        {
+            "type": "spd",
+            "ip": "192.168.1.4",
+            "params": [
+                {
+                    "type": "voltageOne",
+                    "name": "Voltage 1"
+                },
+                {
+                    "type": "currentOne",
+                    "name": "Current 1"
+                }
+            ]
+        }
+    ]
+}
