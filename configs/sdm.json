@@ -1,0 +1,15 @@
+{
+    "name": "SPD Config",
+    "controllers": [
+        {
+            "type": "sdm",
+            "usb": "USB0::0xF4EC::0x1203::SDM34FBC6R0007::0::INSTR",
+            "params": [
+                {
+                    "type": "FREQ",
+                    "name": "f"
+                }
+            ]
+        }
+    ]
+}

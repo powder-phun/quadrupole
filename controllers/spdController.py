@@ -6,16 +6,19 @@ from controllers.controller import Controller
 from config import ParamConfig
 from config import ControllerConfig
 
+from device import Device
+
 class SPDController(Controller):
     def __init__(self, config):
         self.config: ControllerConfig = config
 
-        self.device = None
+        self.device: Device = None
 
         self.currentParam = [None, None]
         self.voltageParam = [None, None]
 
         self.ip = None
+        self.usb = None
 
         ret = self.parseConfig()
         if ret is None:
@@ -57,8 +60,10 @@ class SPDController(Controller):
     def parseConfig(self):
         if "ip" in self.config.json:
             self.ip = self.config.json["ip"]
+        elif "usb" in self.config.json:
+            self.usb = self.config.json["usb"]
         else:
-            logging.error("No ip address specified")
+            logging.error("No ip address or usb specified")
             return False
 
         for param in self.config.params:
@@ -88,19 +93,10 @@ class SPDController(Controller):
 
 
     def connect(self) -> bool:
-        if self.device is None:
-            if self.ip is not None:
-                try:
-                    self.device = vxi11.Instrument(self.ip)
-                    return True
-                except:
-                    logging.error(f"Couldn't connect to {self.ip}")
-                    return False
-            else:
-                logging.error(f"No ip is set")
-                return False
-        else:
-            return True
+        self.device = Device(usb=self.usb, ip=self.ip)
+        ret = self.device.connect()
+        return ret
+
 
 
     def enable(self, state: bool):

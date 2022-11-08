@@ -1,10 +1,13 @@
 import vxi11
 import time
 import logging
+import pyvisa
 
 from controllers.controller import Controller
 from config import ParamConfig
 from config import ControllerConfig
+
+from device import Device
 
 class SDMController(Controller):
     def __init__(self, config):
@@ -12,6 +15,7 @@ class SDMController(Controller):
 
         self.device = None
         self.ip = None
+        self.usb = None
         self.param = None
         self.type = None
 
@@ -28,7 +32,8 @@ class SDMController(Controller):
             "VAC": False,
             "RES": False,
             "IDC": False,
-            "IAC": False
+            "IAC": False,
+            "FREQ": False,
         }
     
     @staticmethod
@@ -38,7 +43,8 @@ class SDMController(Controller):
             "VAC": "Vrms",
             "RES": "Ohm",
             "IDC": "A",
-            "IAC": "Arms"
+            "IAC": "Arms",
+            "FREQ": "Hz"
         }
 
     @staticmethod
@@ -52,8 +58,10 @@ class SDMController(Controller):
     def parseConfig(self):
         if "ip" in self.config.json:
             self.ip = self.config.json["ip"]
+        elif "usb" in self.config.json:
+            self.usb = self.config.json["usb"]
         else:
-            logging.error("No ip address specified")
+            logging.error("No ip address or usb specified")
             return False
 
         for param in self.config.params: 
@@ -67,6 +75,8 @@ class SDMController(Controller):
                 self.type = "CURR:DC"
             elif param.type == "IAC":
                 self.type = "CURR:AC"
+            elif param.type == "FREQ":
+                self.type = "FREQ"
             else:
                 logging.error(f"Invalid parameter name {param}")
 
@@ -78,19 +88,9 @@ class SDMController(Controller):
         logging.error("No adjustable params")
 
     def connect(self) -> bool:
-        if self.device is None:
-            if self.ip is not None:
-                try:
-                    self.device = vxi11.Instrument(self.ip)
-                    return True
-                except:
-                    logging.error(f"Couldn't connect to {self.ip}")
-                    return False
-            else:
-                logging.error(f"No ip is set")
-                return False
-        else:
-            return True
+        self.device = Device(usb=self.usb, ip=self.ip)
+        ret = self.device.connect()
+        return ret
 
 
     def enable(self, state: bool):
@@ -100,8 +100,6 @@ class SDMController(Controller):
     def read(self, param: str) -> float:
         if param == self.param:
             ret = self.device.ask(f"MEAS:{self.type}?")
-            print(ret)
             return float(ret)
         else:
-            print(self.param)
             logging.error("Wrong param name")
