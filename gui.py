@@ -222,7 +222,7 @@ class Main(QMainWindow):
     def stopMeasurement(self):
         self.state = State.STOPPED
 
-        self.enableDevices(False)
+        # self.enableDevices(False)
 
         self.ui.startButton.setText("Start")
         self.ui.stopButton.setEnabled(False)
@@ -232,6 +232,7 @@ class Main(QMainWindow):
 
 
     def closeEvent(self, event):
+        self.enableDevices(False)
         self.exited.emit()
 
     @Slot(DataPacket)
