@@ -38,7 +38,7 @@ class Device:
             try:
                 rm = pyvisa.ResourceManager()
                 self.device = rm.open_resource(self.usb)
-                self.device.timeout = None
+
                 return True
             except:
                 logging.error(f"Couldn't connect to {self.ip}")

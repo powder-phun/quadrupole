@@ -83,7 +83,9 @@ class RudiController(Controller):
             logging.error(f"Invalid param name: {param}")
 
     def connect(self) -> bool:
+        logging.debug(f"Connecting to: {self.ip}")
         self.device = ModbusClient(host=self.ip, port=502, auto_open=True, auto_close=True)
+        logging.debug(f"Connected")
         return True
 
     def changeMode(self, value):

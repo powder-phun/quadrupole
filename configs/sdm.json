@@ -3,7 +3,7 @@
     "controllers": [
         {
             "type": "sdm",
-            "usb": "USB0::0xF4EC::0x1203::SDM34FBC6R0007::0::INSTR",
+            "ip": "169.254.100.102",
             "params": [
                 {
                     "type": "FREQ",

@@ -1,0 +1,72 @@
+{
+    "name": "Quadrupole",
+    "defaults": {
+        "sweepOne": {
+            "enabled": false,
+            "param": "AC(pk-pk)",
+            "min": 0,
+            "max": 2,
+            "steps": 40
+        }
+    },
+    "controllers": [
+        {
+            "type": "afg",
+            "waveformOne": "SIN",
+            "waveformTwo": "DC",
+            "params": [
+                {  
+                    "type": "amplitude",
+                    "channel": 1,
+                    "name": "AC(pk-pk)"
+                },
+                {
+                    "type": "frequency",
+                    "channel": 1,
+                    "name": "Frequency",
+                    "default": 3.3e6
+                },
+                {
+                    "type": "offset",
+                    "channel": 2,
+                    "name": "DC"
+                }
+            ]
+        },
+        {
+            "type": "rudi",
+            "ip": "169.254.100.22",
+            "params": [
+                {
+                    "type": "voltage",
+                    "channel": 1,
+                    "name": "Cathode V",
+                    "default": -200
+                },
+                {
+                    "type": "voltage",
+                    "channel": 2,
+                    "name": "Anode V",
+                    "default": 800
+                },
+                {
+                    "type": "voltage",
+                    "channel": 3,
+                    "name": "Aperture V"
+                }
+            ]
+        },
+        {
+            "type": "sdm",
+            "ip": "169.254.100.101",
+            "params": [
+                {
+                    "type": "VDC",
+                    "name": "Detector",
+                    "unit": "A",
+                    "eval_get": "-(x-1.56181)*4e-9"
+                }
+            ]
+        }
+    ]
+}
