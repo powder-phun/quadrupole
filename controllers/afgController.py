@@ -105,10 +105,10 @@ class AFGController(Controller):
             self.device.write("SOURce2:VOLTage:LEVel:IMMediate:AMPLitude {:.0f}mVpp".format(int(value*1000)))
         elif param == self.offsetParam[0]:
             self.offset[0] = value
-            self.device.write("SOURce1:VOLTage:LEVel:IMMediate:OFFSet {:.0f}mVpp".format(int(value*1000)))
+            self.device.write("SOURce1:VOLTage:LEVel:IMMediate:OFFSet {:.0f}mV".format(int(value*1000)))
         elif param == self.offsetParam[1]:
             self.offset[1] = value
-            self.device.write("SOURce2:VOLTage:LEVel:IMMediate:OFFSet {:.0f}mVpp".format(int(value*1000)))
+            self.device.write("SOURce2:VOLTage:LEVel:IMMediate:OFFSet {:.0f}mV".format(int(value*1000)))
         elif param == self.frequencyParam[0]:
             self.frequency[0] = value
             self.device.write("SOURce1:FREQuency:FIXed {:.0f}Hz".format(value))
