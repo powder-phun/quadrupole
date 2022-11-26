@@ -15,8 +15,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QDoubleSpinBox,
-    QHBoxLayout, QLabel, QLayout, QSizePolicy,
+from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QHBoxLayout,
+    QLabel, QLayout, QLineEdit, QSizePolicy,
     QSpacerItem, QVBoxLayout, QWidget)
 
 class Ui_threeDChart(object):
@@ -116,24 +116,22 @@ class Ui_threeDChart(object):
 
         self.rightVLayout.addWidget(self.label_7)
 
-        self.zMinSpinbox = QDoubleSpinBox(self.widget)
-        self.zMinSpinbox.setObjectName(u"zMinSpinbox")
-        self.zMinSpinbox.setMinimum(-9999999999999999538762658202121142272.000000000000000)
-        self.zMinSpinbox.setMaximum(100000000000000004384584304507619735463404765184.000000000000000)
+        self.zMinLineEdit = QLineEdit(self.widget)
+        self.zMinLineEdit.setObjectName(u"zMinLineEdit")
+        self.zMinLineEdit.setEnabled(False)
 
-        self.rightVLayout.addWidget(self.zMinSpinbox)
+        self.rightVLayout.addWidget(self.zMinLineEdit)
 
         self.label_4 = QLabel(self.widget)
         self.label_4.setObjectName(u"label_4")
 
         self.rightVLayout.addWidget(self.label_4)
 
-        self.zMaxSpinbox = QDoubleSpinBox(self.widget)
-        self.zMaxSpinbox.setObjectName(u"zMaxSpinbox")
-        self.zMaxSpinbox.setMinimum(-9999999999999999931398190359470212947659194368.000000000000000)
-        self.zMaxSpinbox.setMaximum(9999999999999999932209486743616279764617084419440640.000000000000000)
+        self.zMaxLineEdit = QLineEdit(self.widget)
+        self.zMaxLineEdit.setObjectName(u"zMaxLineEdit")
+        self.zMaxLineEdit.setEnabled(False)
 
-        self.rightVLayout.addWidget(self.zMaxSpinbox)
+        self.rightVLayout.addWidget(self.zMaxLineEdit)
 
 
         self.verticalLayout_2.addLayout(self.rightVLayout)
@@ -141,6 +139,7 @@ class Ui_threeDChart(object):
 
         self.horizontalLayout.addWidget(self.widget)
 
+        self.horizontalLayout.setStretch(0, 1)
 
         self.retranslateUi(threeDChart)
 

@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
+  <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0">
    <property name="spacing">
     <number>2</number>
    </property>
@@ -151,12 +151,9 @@
          </widget>
         </item>
         <item>
-         <widget class="QDoubleSpinBox" name="zMinSpinbox">
-          <property name="minimum">
-           <double>-9999999999999999538762658202121142272.000000000000000</double>
-          </property>
-          <property name="maximum">
-           <double>100000000000000004384584304507619735463404765184.000000000000000</double>
+         <widget class="QLineEdit" name="zMinLineEdit">
+          <property name="enabled">
+           <bool>false</bool>
           </property>
          </widget>
         </item>
@@ -168,12 +165,9 @@
          </widget>
         </item>
         <item>
-         <widget class="QDoubleSpinBox" name="zMaxSpinbox">
-          <property name="minimum">
-           <double>-9999999999999999931398190359470212947659194368.000000000000000</double>
-          </property>
-          <property name="maximum">
-           <double>9999999999999999932209486743616279764617084419440640.000000000000000</double>
+         <widget class="QLineEdit" name="zMaxLineEdit">
+          <property name="enabled">
+           <bool>false</bool>
           </property>
          </widget>
         </item>
