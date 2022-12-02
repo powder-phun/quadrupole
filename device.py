@@ -26,6 +26,14 @@ class Device:
         logging.debug(f"Message received: {ret.strip()} from {self.ip} {self.usb}")
         return ret
 
+    def read_raw(self):
+        logging.debug(f"Reading raw bytes")
+        if self.ip is not None:
+            ret = self.device.read_raw()
+        elif self.usb is not None:
+            ret = self.device.read_raw()
+        return ret
+
     def connect(self):
         if self.ip is not None:
             try:

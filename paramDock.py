@@ -1,3 +1,5 @@
+import logging
+
 from PySide6.QtWidgets import (
     QWidget,
     QGridLayout,
@@ -93,7 +95,10 @@ class ParamDock(QWidget):
         self.valueSet.emit(identifier, val)
 
     def setData(self, identifier, value):
-        self.valueLabels[identifier].setText("{:.2E}".format(value))
+        try:
+            self.valueLabels[identifier].setText("{:.2E}".format(value))
+        except TypeError:
+            logging.error(f"Parameter with name: {identifier} has invalid value: {value}")
 
     # Enabling or disabling editing
     def setEnabledParam(self, name: str, value: bool):

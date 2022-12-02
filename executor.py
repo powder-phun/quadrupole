@@ -11,6 +11,8 @@ from controllers.spdController import SPDController
 from controllers.sdmController import SDMController
 from controllers.afgController import AFGController
 from controllers.rudiController import RudiController
+from controllers.impedanceController import ImpedanceController
+from controllers.fyController import FYController
 from config import Config, ControllerConfig, ParamConfig
 
 from utils import DataPacket
@@ -77,6 +79,8 @@ class Executor(QObject):
         self.controllerTemplates[SDMController.getName()] = SDMController
         self.controllerTemplates[AFGController.getName()] = AFGController
         self.controllerTemplates[RudiController.getName()] = RudiController
+        self.controllerTemplates[ImpedanceController.getName()] = ImpedanceController
+        self.controllerTemplates[FYController.getName()] = FYController
 
         for controller in self.config.controllers:
             self.addController(self.controllerTemplates[controller.type](controller), controller)

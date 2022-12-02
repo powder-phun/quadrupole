@@ -102,7 +102,7 @@ class ParamConfig:
         self.max =  self.json.get("max", None)
         self.eval_set =  self.json.get("eval_set", None)
         self.eval_get =  self.json.get("eval_get", None)
-        self.unit = self.json.get("unit", "-")
+        self.unit = self.json.get("unit", None)
 
         if self.eval_set is not None:
             if "a" in self.eval_set or "b" in self.eval_set:
