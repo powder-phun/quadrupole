@@ -1,0 +1,63 @@
+{
+    "name": "Impedance config",
+    "uses_a": true,
+    "controllers": [
+        {
+            "type": "impedance",
+            "ip": "169.254.100.3",
+            "params": [
+                {
+                    "type": "frequency",
+                    "name": "Scope_Frequency",
+                    "eval_set": "a"
+                },
+                {
+                    "type": "|Z|",
+                    "name": "|Z|"
+                },
+                {
+                    "type": "arg(Z)",
+                    "name": "arg(Z)"
+                },
+                {
+                    "type": "R",
+                    "name": "R"
+                },
+                {
+                    "type": "X",
+                    "name": "X"
+                },
+                {
+                    "type": "gain",
+                    "name": "gain"
+                },
+                {
+                    "type": "gain_log",
+                    "name": "gain_log"
+                },
+                {
+                    "type": "phase",
+                    "name": "phase"
+                },
+                {
+                    "type": "C",
+                    "name": "C"
+                }
+                
+            ]
+            
+        },
+        {
+            "type": "fy",
+            "port": "COM5",
+            "params": [
+                {
+                    "type": "frequency",
+                    "channel": 1,
+                    "name": "Gen_Frequency",
+                    "eval_set": "a"
+                }
+            ]
+        }
+    ]
+}
