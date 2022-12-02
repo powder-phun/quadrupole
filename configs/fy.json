@@ -1,0 +1,29 @@
+{
+    "name": "FY Config",
+    "controllers": [
+        {
+            "type": "fy",
+            "port": "COM5",
+            "params": [
+                {  
+                    "type": "amplitude",
+                    "channel": 1,
+                    "name": "Amplitude",
+                    "default": 1
+                },
+                {
+                    "type": "frequency",
+                    "channel": 1,
+                    "name": "Frequency",
+                    "default": 1e6
+                },
+                {
+                    "type": "offset",
+                    "channel": 1,
+                    "name": "Offset",
+                    "default": 0
+                }
+            ]
+        }
+    ]
+}
