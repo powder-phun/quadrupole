@@ -47,12 +47,14 @@ class Executor(QObject):
         self.sweepOneMin: float = 0
         self.sweepOneMax: float = 0
         self.sweepOneSteps: int = 2
+        self.sweepOneLog: bool = False
 
         self.sweepTwoEnabled: bool = False
         self.sweepTwoParam: str = None
         self.sweepTwoMin: float = 0
         self.sweepTwoMax: float = 0
         self.sweepTwoSteps: int = 2
+        self.sweepTwoLog: bool = False
 
         self.fileSweepEnabled: bool = False
         self.fileSweepName: str = ""
@@ -245,11 +247,19 @@ class Executor(QObject):
         sweepTwoIndex = self.counter // self.sweepOneSteps
 
         if self.sweepOneEnabled:
-            value = (sweepOneIndex/(self.sweepOneSteps-1)) * (self.sweepOneMax-self.sweepOneMin) + self.sweepOneMin
+            value = 0
+            if self.sweepOneLog:
+                value = self.sweepOneMin*(self.sweepOneMax/self.sweepOneMin)**(sweepOneIndex/(self.sweepOneSteps-1))
+            else:
+                value = (sweepOneIndex/(self.sweepOneSteps-1)) * (self.sweepOneMax-self.sweepOneMin) + self.sweepOneMin
             self.adjust(self.sweepOneParam, value)
 
         if self.sweepTwoEnabled:
-            value = (sweepTwoIndex/(self.sweepTwoSteps-1)) * (self.sweepTwoMax-self.sweepTwoMin) + self.sweepTwoMin
+            value = 0
+            if self.sweepTwoLog:
+                value = self.sweepTwoMin*(self.sweepTwoMax/self.sweepTwoMin)**(sweepTwoIndex/(self.sweepTwoSteps-1))
+            else:
+                value = (sweepTwoIndex/(self.sweepTwoSteps-1)) * (self.sweepTwoMax-self.sweepTwoMin) + self.sweepTwoMin
             self.sweepTwoValue = value
             self.adjust(self.sweepTwoParam, value)
 
@@ -321,21 +331,23 @@ class Executor(QObject):
         self.timer.stop()
         self.exited.emit()
 
-    @Slot(bool, str, float, float, int)
-    def sweepOneSet(self, enabled: bool, param: str = None, minimum: float = 0, maximum: float = 0, steps: int = 2):
+    @Slot(bool, str, float, float, int, bool)
+    def sweepOneSet(self, enabled: bool, param: str = None, minimum: float = 0, maximum: float = 0, steps: int = 2, log: bool = False):
         self.sweepOneEnabled = enabled
         self.sweepOneParam = param
         self.sweepOneMin = minimum
         self.sweepOneMax = maximum
         self.sweepOneSteps = steps
+        self.sweepOneLog = log
 
-    @Slot(bool, str, float, float, int)
-    def sweepTwoSet(self, enabled: bool, param: str = None, minimum: float = 0, maximum: float = 0, steps: int = 2):
+    @Slot(bool, str, float, float, int, bool)
+    def sweepTwoSet(self, enabled: bool, param: str = None, minimum: float = 0, maximum: float = 0, steps: int = 2, log: bool = False):
         self.sweepTwoEnabled = enabled
         self.sweepTwoParam = param
         self.sweepTwoMin = minimum
         self.sweepTwoMax = maximum
         self.sweepTwoSteps = steps
+        self.sweepTwoLog = log
 
     @Slot(bool, str)
     def fileSweepSet(self, enabled: bool, filename: str):

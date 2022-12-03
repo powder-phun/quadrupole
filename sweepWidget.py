@@ -109,6 +109,7 @@ class SweepWidget(QWidget):
         self.ui.sweepOneMinEdit.setEnabled(value)
         self.ui.sweepOneMaxEdit.setEnabled(value)
         self.ui.sweepOneStepsSpinbox.setEnabled(value)
+        self.ui.sweepOneLogCheckbox.setEnabled(value)
 
         # Set selected one based on current text
         if value:
@@ -124,6 +125,7 @@ class SweepWidget(QWidget):
         self.ui.sweepTwoMinEdit.setEnabled(value)
         self.ui.sweepTwoMaxEdit.setEnabled(value)
         self.ui.sweepTwoStepsSpinbox.setEnabled(value)
+        self.ui.sweepTwoLogCheckbox.setEnabled(value)
 
         # Set selected one based on current text
         if value:
@@ -150,6 +152,7 @@ class SweepWidget(QWidget):
                 self.ui.sweepOneMinEdit.setEnabled(True)
                 self.ui.sweepOneMaxEdit.setEnabled(True)
                 self.ui.sweepOneStepsSpinbox.setEnabled(True)
+                self.ui.sweepOneLogCheckbox.setEnabled(True)
 
             # Enable sweep two only if checkbox selected
             if self.ui.sweepTwoCheckbox.isChecked():
@@ -157,6 +160,7 @@ class SweepWidget(QWidget):
                 self.ui.sweepTwoMinEdit.setEnabled(True)
                 self.ui.sweepTwoMaxEdit.setEnabled(True)
                 self.ui.sweepTwoStepsSpinbox.setEnabled(True)
+                self.ui.sweepOneLogCheckbox.setEnabled(True)
 
             # Enable file sweep only if checkbox selected
             if self.ui.fileSweepCheckbox.isChecked():
@@ -179,11 +183,13 @@ class SweepWidget(QWidget):
             self.ui.sweepOneMinEdit.setEnabled(False)
             self.ui.sweepOneMaxEdit.setEnabled(False)
             self.ui.sweepOneStepsSpinbox.setEnabled(False)
+            self.ui.sweepOneLogCheckbox.setEnabled(False)
 
             self.ui.sweepTwoCombobox.setEnabled(False)
             self.ui.sweepTwoMinEdit.setEnabled(False)
             self.ui.sweepTwoMaxEdit.setEnabled(False)
             self.ui.sweepTwoStepsSpinbox.setEnabled(False)
+            self.ui.sweepTwoLogCheckbox.setEnabled(value)
 
             self.ui.fileSweepAddSpinBox.setEnabled(False)
             self.ui.fileSweepLineEdit.setEnabled(False)

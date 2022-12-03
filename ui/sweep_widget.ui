@@ -15,24 +15,20 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,1,0,1,0,1,0,1">
-     <item row="1" column="6">
-      <widget class="QLineEdit" name="sweepTwoMaxEdit">
-       <property name="enabled">
-        <bool>false</bool>
+    <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,1,0,1,0,1,0,1,0">
+     <item row="0" column="7">
+      <widget class="QLabel" name="sweepOneStepsLabel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
        <property name="text">
-        <string>0.0</string>
+        <string>Steps:</string>
        </property>
-      </widget>
-     </item>
-     <item row="0" column="4">
-      <widget class="QLineEdit" name="sweepOneMinEdit">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="text">
-        <string>0.0</string>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
      </item>
@@ -52,18 +48,8 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="6">
-      <widget class="QLineEdit" name="sweepOneMaxEdit">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="text">
-        <string>0.0</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="3">
-      <widget class="QLabel" name="sweepTwoMinLabel">
+     <item row="1" column="7">
+      <widget class="QLabel" name="sweepTwoStepsLabel">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -71,10 +57,20 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Min:</string>
+        <string>Steps:</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QComboBox" name="sweepTwoCombobox">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="currentIndex">
+        <number>-1</number>
        </property>
       </widget>
      </item>
@@ -94,6 +90,16 @@
        </property>
       </widget>
      </item>
+     <item row="0" column="6">
+      <widget class="QLineEdit" name="sweepOneMaxEdit">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>0.0</string>
+       </property>
+      </widget>
+     </item>
      <item row="0" column="2">
       <widget class="QComboBox" name="sweepOneCombobox">
        <property name="enabled">
@@ -107,8 +113,18 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
-      <widget class="QLabel" name="sweepTwoLabel">
+     <item row="1" column="4">
+      <widget class="QLineEdit" name="sweepTwoMinEdit">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>0.0</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3">
+      <widget class="QLabel" name="sweepOneMinLabel">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -116,7 +132,23 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Sweep 2:</string>
+        <string>Min:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="3">
+      <widget class="QLabel" name="sweepTwoMinLabel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Min:</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -139,47 +171,34 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="3">
-      <widget class="QLabel" name="sweepOneMinLabel">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>Min:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QCheckBox" name="sweepOneCheckbox">
-       <property name="text">
-        <string/>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="checked">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="2">
-      <widget class="QComboBox" name="sweepTwoCombobox">
+     <item row="1" column="8">
+      <widget class="QSpinBox" name="sweepTwoStepsSpinbox">
        <property name="enabled">
         <bool>false</bool>
        </property>
-       <property name="currentIndex">
-        <number>-1</number>
+       <property name="minimum">
+        <number>2</number>
+       </property>
+       <property name="maximum">
+        <number>100000</number>
        </property>
       </widget>
      </item>
-     <item row="1" column="4">
-      <widget class="QLineEdit" name="sweepTwoMinEdit">
+     <item row="0" column="8">
+      <widget class="QSpinBox" name="sweepOneStepsSpinbox">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="minimum">
+        <number>2</number>
+       </property>
+       <property name="maximum">
+        <number>100000</number>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="6">
+      <widget class="QLineEdit" name="sweepTwoMaxEdit">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -204,8 +223,18 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="7">
-      <widget class="QLabel" name="sweepOneStepsLabel">
+     <item row="0" column="4">
+      <widget class="QLineEdit" name="sweepOneMinEdit">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>0.0</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLabel" name="sweepTwoLabel">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -213,52 +242,37 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Steps:</string>
+        <string>Sweep 2:</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
      </item>
-     <item row="0" column="8">
-      <widget class="QSpinBox" name="sweepOneStepsSpinbox">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="minimum">
-        <number>2</number>
-       </property>
-       <property name="maximum">
-        <number>100000</number>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="7">
-      <widget class="QLabel" name="sweepTwoStepsLabel">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
+     <item row="0" column="0">
+      <widget class="QCheckBox" name="sweepOneCheckbox">
        <property name="text">
-        <string>Steps:</string>
+        <string/>
        </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
-     <item row="1" column="8">
-      <widget class="QSpinBox" name="sweepTwoStepsSpinbox">
-       <property name="enabled">
-        <bool>false</bool>
+     <item row="0" column="9">
+      <widget class="QCheckBox" name="sweepOneLogCheckbox">
+       <property name="text">
+        <string>Log</string>
        </property>
-       <property name="minimum">
-        <number>2</number>
-       </property>
-       <property name="maximum">
-        <number>100000</number>
+      </widget>
+     </item>
+     <item row="1" column="9">
+      <widget class="QCheckBox" name="sweepTwoLogCheckbox">
+       <property name="text">
+        <string>Log</string>
        </property>
       </widget>
      </item>

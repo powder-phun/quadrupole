@@ -19,8 +19,8 @@ class Main(QMainWindow):
     restarted = Signal()
     enableDevicesChanged = Signal(bool)
 
-    sweepOneSetup = Signal(bool, str, float, float, int)
-    sweepTwoSetup = Signal(bool, str, float, float, int)
+    sweepOneSetup = Signal(bool, str, float, float, int, bool)
+    sweepTwoSetup = Signal(bool, str, float, float, int, bool)
     fileSweepSetup = Signal(bool, str)
 
     exited = Signal()
@@ -146,9 +146,10 @@ class Main(QMainWindow):
                     float(self.ui.sweepWidget.ui.sweepOneMinEdit.text()),
                     float(self.ui.sweepWidget.ui.sweepOneMaxEdit.text()),
                     self.ui.sweepWidget.ui.sweepOneStepsSpinbox.value(),
+                    self.ui.sweepWidget.ui.sweepOneLogCheckbox.isChecked()
                 )
             else:
-                self.sweepOneSetup.emit(False, None, 0, 0, 2)
+                self.sweepOneSetup.emit(False, None, 0, 0, 2, False)
 
             if self.ui.sweepWidget.ui.sweepTwoCheckbox.isChecked():
                 self.sweepTwoSetup.emit(
@@ -157,9 +158,10 @@ class Main(QMainWindow):
                     float(self.ui.sweepWidget.ui.sweepTwoMinEdit.text()),
                     float(self.ui.sweepWidget.ui.sweepTwoMaxEdit.text()),
                     self.ui.sweepWidget.ui.sweepTwoStepsSpinbox.value(),
+                    self.ui.sweepWidget.ui.sweepTwoLogCheckbox.isChecked()
                 )
             else:
-                self.sweepTwoSetup.emit(False, None, 0, 0, 2)
+                self.sweepTwoSetup.emit(False, None, 0, 0, 2, False)
 
             if self.ui.sweepWidget.ui.fileSweepCheckbox.isChecked():
                 self.fileSweepSetup.emit(True, self.ui.sweepWidget.ui.fileSweepLineEdit.text())
