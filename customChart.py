@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QWidget, QCheckBox
-from PySide6.QtCharts import QChartView, QChart, QValueAxis, QAbstractSeries, QLineSeries
+from PySide6.QtCharts import QChartView, QChart, QValueAxis, QLogValueAxis, QAbstractSeries, QLineSeries
 from PySide6.QtCore import Qt, QMargins, Signal, Slot
 from PySide6.QtGui import QPainter, QMouseEvent
 
@@ -104,6 +104,8 @@ class CustomChart(QWidget):
         self.ui.maxXEdit.editingFinished.connect(self.scaleChanged)
         self.ui.minYEdit.editingFinished.connect(self.scaleChanged)
         self.ui.maxYEdit.editingFinished.connect(self.scaleChanged)
+        self.ui.logXAxisCheckbox.stateChanged.connect(self.setLogXAxis)
+        self.ui.logYAxisCheckbox.stateChanged.connect(self.setLogYAxis)
 
         logging.debug("Setup complete")
 
@@ -171,6 +173,55 @@ class CustomChart(QWidget):
 
     def resetView(self):
         self.scale(True)
+
+    def setLogXAxis(self, is_log=True):
+        logging.debug(f'Setting x axis to {"log" if is_log else "linear"}')
+
+        for series in self.series.values():
+            series.detachAxis(self.xAxis)
+        self.chart.removeAxis(self.xAxis)
+
+        if is_log:
+            self.xAxis = QLogValueAxis()
+            self.xAxis.setBase(10)
+            if self.xMin <= 0:
+                self.xMin = 0.1
+            if self.xMax <= 0:
+                self.xMax = 0.1
+        else:
+            self.xAxis = QValueAxis()
+        self.xAxis.setLabelFormat("%.2e")
+        
+        self.chart.addAxis(self.xAxis, Qt.AlignBottom)
+        for series in self.series.values():
+            series.attachAxis(self.xAxis)
+        
+        self.updateXRange()
+
+
+    def setLogYAxis(self, is_log=True):
+        logging.debug(f'Setting y axis to {"log" if is_log else "linear"}')
+
+        for series in self.series.values():
+            series.detachAxis(self.yAxis)
+        self.chart.removeAxis(self.yAxis)
+
+        if is_log:
+            self.yAxis = QLogValueAxis()
+            self.yAxis.setBase(10)
+            if self.yMin <= 0:
+                self.yMin = 0.1
+            if self.yMax <= 0:
+                self.yMax = 0.1
+        else:
+            self.yAxis = QValueAxis()
+        self.yAxis.setLabelFormat("%.2e")
+
+        self.chart.addAxis(self.yAxis, Qt.AlignLeft)
+        for series in self.series.values():
+            series.attachAxis(self.yAxis)
+
+        self.updateXRange()
 
 
 class ModifiedChartView(QChartView):

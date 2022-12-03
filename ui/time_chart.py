@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'time_chart.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.3.0
+## Created by: Qt User Interface Compiler version 6.3.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -155,6 +155,16 @@ class Ui_timeChart(object):
 
         self.rightVLayout.addWidget(self.resetButton)
 
+        self.logXAxisCheckbox = QCheckBox(self.widget)
+        self.logXAxisCheckbox.setObjectName(u"logXAxisCheckbox")
+
+        self.rightVLayout.addWidget(self.logXAxisCheckbox)
+
+        self.logYAxisCheckbox = QCheckBox(self.widget)
+        self.logYAxisCheckbox.setObjectName(u"logYAxisCheckbox")
+
+        self.rightVLayout.addWidget(self.logYAxisCheckbox)
+
 
         self.verticalLayout_2.addLayout(self.rightVLayout)
 
@@ -175,8 +185,10 @@ class Ui_timeChart(object):
         self.label_3.setText(QCoreApplication.translate("timeChart", u"Y:", None))
         self.yLabel.setText(QCoreApplication.translate("timeChart", u"0.0", None))
         self.scrollCheckbox.setText(QCoreApplication.translate("timeChart", u"Scroll", None))
-        self.scaleXCheckbox.setText(QCoreApplication.translate("timeChart", u"Scale X", None))
-        self.scaleYCheckbox.setText(QCoreApplication.translate("timeChart", u"Scale Y", None))
+        self.scaleXCheckbox.setText(QCoreApplication.translate("timeChart", u"AutoScale X", None))
+        self.scaleYCheckbox.setText(QCoreApplication.translate("timeChart", u"AutoScale Y", None))
         self.resetButton.setText(QCoreApplication.translate("timeChart", u"Reset", None))
+        self.logXAxisCheckbox.setText(QCoreApplication.translate("timeChart", u"Log X Axis", None))
+        self.logYAxisCheckbox.setText(QCoreApplication.translate("timeChart", u"Log Y Axis", None))
     # retranslateUi
 

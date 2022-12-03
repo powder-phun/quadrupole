@@ -159,6 +159,16 @@ class Ui_twoDChart(object):
 
         self.rightVLayout.addWidget(self.resetButton)
 
+        self.logXAxisCheckbox = QCheckBox(self.widget)
+        self.logXAxisCheckbox.setObjectName(u"logXAxisCheckbox")
+
+        self.rightVLayout.addWidget(self.logXAxisCheckbox)
+
+        self.logYAxisCheckbox = QCheckBox(self.widget)
+        self.logYAxisCheckbox.setObjectName(u"logYAxisCheckbox")
+
+        self.rightVLayout.addWidget(self.logYAxisCheckbox)
+
         self.label_4 = QLabel(self.widget)
         self.label_4.setObjectName(u"label_4")
 
@@ -193,9 +203,11 @@ class Ui_twoDChart(object):
         self.label_3.setText(QCoreApplication.translate("twoDChart", u"Y:", None))
         self.yLabel.setText(QCoreApplication.translate("twoDChart", u"0.0", None))
         self.label_2.setText(QCoreApplication.translate("twoDChart", u"X Axis:", None))
-        self.scaleXCheckbox.setText(QCoreApplication.translate("twoDChart", u"Scale X", None))
-        self.scaleYCheckbox.setText(QCoreApplication.translate("twoDChart", u"Scale Y", None))
-        self.resetButton.setText(QCoreApplication.translate("twoDChart", u"Reset", None))
+        self.scaleXCheckbox.setText(QCoreApplication.translate("twoDChart", u"AutoScale X", None))
+        self.scaleYCheckbox.setText(QCoreApplication.translate("twoDChart", u"AutoScale Y", None))
+        self.resetButton.setText(QCoreApplication.translate("twoDChart", u"Reset Scale", None))
+        self.logXAxisCheckbox.setText(QCoreApplication.translate("twoDChart", u"Log X Axis", None))
+        self.logYAxisCheckbox.setText(QCoreApplication.translate("twoDChart", u"Log Y Axis", None))
         self.label_4.setText(QCoreApplication.translate("twoDChart", u"# of points:", None))
     # retranslateUi
 

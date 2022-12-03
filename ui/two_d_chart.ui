@@ -209,7 +209,7 @@
         <item>
          <widget class="QCheckBox" name="scaleXCheckbox">
           <property name="text">
-           <string>Scale X</string>
+           <string>AutoScale X</string>
           </property>
           <property name="checked">
            <bool>true</bool>
@@ -219,7 +219,7 @@
         <item>
          <widget class="QCheckBox" name="scaleYCheckbox">
           <property name="text">
-           <string>Scale Y</string>
+           <string>AutoScale Y</string>
           </property>
           <property name="checked">
            <bool>true</bool>
@@ -229,7 +229,21 @@
         <item>
          <widget class="QPushButton" name="resetButton">
           <property name="text">
-           <string>Reset</string>
+           <string>Reset Scale</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="logXAxisCheckbox">
+          <property name="text">
+           <string>Log X Axis</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="logYAxisCheckbox">
+          <property name="text">
+           <string>Log Y Axis</string>
           </property>
          </widget>
         </item>
