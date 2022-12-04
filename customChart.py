@@ -54,7 +54,7 @@ class CustomChart(QWidget):
         self.chart.addAxis(self.yAxis, Qt.AlignLeft)
 
         # Setting zooming by rect
-        self.chartView.setRubberBand(self.chartView.RectangleRubberBand)
+        self.chartView.setRubberBand(QChartView.RectangleRubberBand)
 
         # Connecting signals
         self.chartView.mouseMoved.connect(self.mouseMoved)
