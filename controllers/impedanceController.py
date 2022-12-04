@@ -140,9 +140,9 @@ class ImpedanceController(Controller):
             elif t == "X":
                 return self.calculate_impedance().imag
             elif t == "L":
-                return self.calculate_impedance().imag/(2*math.pi*self.frequency)
+                return -self.calculate_impedance().imag/(2*math.pi*self.frequency)
             elif t == "C":
-                return -1/(2*math.pi*self.frequency*self.calculate_impedance().imag)
+                return 1/(2*math.pi*self.frequency*self.calculate_impedance().imag)
             elif t == "Q":
                 return abs(self.calculate_impedance().imag/self.calculate_impedance().real)
             elif t == "gain":

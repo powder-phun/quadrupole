@@ -45,28 +45,32 @@ class SweepWidget(QWidget):
                 self.ui.sweepOneCombobox.setCurrentIndex(
                     self.ui.sweepOneCombobox.findText(defaults["sweepOne"]["param"])
                 )
-            if "enabled" in defaults["sweepOne"] and defaults["sweepOne"]["enabled"]:
-                self.ui.sweepOneCheckbox.setChecked(True)
+            if "enabled" in defaults["sweepOne"]:
+                self.ui.sweepOneCheckbox.setChecked(defaults["sweepOne"]["enabled"])
             if "min" in defaults["sweepOne"]:
                 self.ui.sweepOneMinEdit.setText(str(defaults["sweepOne"]["min"]))
             if "max" in defaults["sweepOne"]:
                 self.ui.sweepOneMaxEdit.setText(str(defaults["sweepOne"]["max"]))
             if "steps" in defaults["sweepOne"]:
                 self.ui.sweepOneStepsSpinbox.setValue(int(defaults["sweepOne"]["steps"]))
+            if "log" in defaults["sweepOne"]:
+                self.ui.sweepOneLogCheckbox.setChecked(defaults["sweepOne"]["log"])
 
         if "sweepTwo" in defaults:
             if "param" in defaults["sweepTwo"]:
                 self.ui.sweepTwoCombobox.setCurrentIndex(
                     self.ui.sweepTwoCombobox.findText(defaults["sweepTwo"]["param"])
                 )
-            if "enabled" in defaults["sweepTwo"] and defaults["sweepTwo"]["enabled"]:
-                self.ui.sweepTwoCheckbox.setChecked(True)
+            if "enabled" in defaults["sweepTwo"]:
+                self.ui.sweepTwoCheckbox.setChecked(defaults["sweepTwo"]["enabled"])
             if "min" in defaults["sweepTwo"]:
                 self.ui.sweepTwoMinEdit.setText(str(defaults["sweepTwo"]["min"]))
             if "max" in defaults["sweepTwo"]:
                 self.ui.sweepTwoMaxEdit.setText(str(defaults["sweepTwo"]["max"]))
             if "steps" in defaults["sweepTwo"]:
                 self.ui.sweepTwoStepsSpinbox.setValue(int(defaults["sweepTwo"]["steps"]))
+            if "log" in defaults["sweepTwo"]:
+                self.ui.sweepTwoLogCheckbox.setChecked(defaults["sweepTwo"]["log"])
 
         if "fileSweep" in defaults:
             if "enabled" in defaults["fileSweep"] and defaults["fileSweep"]["enabled"]:

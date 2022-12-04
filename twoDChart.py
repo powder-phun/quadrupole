@@ -67,16 +67,17 @@ class TwoDChart(CustomChart):
     def scale(self, force=False):
         # Autoscaling x if selected
         if self.ui.scaleXCheckbox.isChecked() or force:
-            self.xMin = min(self.data[self.selected])
-            self.xMax = max(self.data[self.selected])
-            x = self.xMax - self.xMin
-            # Fix for bug when setting scale with the same or reversed numbers
-            if x<=0: x = 1
-            self.xMax += 0.1 * x
-            self.xMin -= 0.1 * x
+            if len(self.data[self.selected]) > 0:
+                self.xMin = min(self.data[self.selected])
+                self.xMax = max(self.data[self.selected])
+                x = self.xMax - self.xMin
+                # Fix for bug when setting scale with the same or reversed numbers
+                if x<=0: x = 1
+                self.xMax += 0.1 * x
+                self.xMin -= 0.1 * x
 
-            self.updateXRange()
-            logging.debug("Rescaling x")
+                self.updateXRange()
+                logging.debug("Rescaling x")
 
         # Autoscaling y if selected
         if self.ui.scaleYCheckbox.isChecked() or force:

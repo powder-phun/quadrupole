@@ -1,10 +1,22 @@
 {
     "name": "Impedance config",
+    "defaults": {
+        "sweepOne": {
+            "enabled": true,
+            "param": "a",
+            "min": 1e3,
+            "max": 1e7,
+            "steps": 61,
+            "log": true
+        },
+        "delay": 0.5
+    },
     "uses_a": true,
     "controllers": [
         {
             "type": "impedance",
             "ip": "169.254.100.3",
+            "reference_impedance": 15,
             "params": [
                 {
                     "type": "frequency",
@@ -24,24 +36,16 @@
                     "name": "R"
                 },
                 {
-                    "type": "X",
-                    "name": "X"
-                },
-                {
-                    "type": "gain",
-                    "name": "gain"
-                },
-                {
-                    "type": "gain_log",
-                    "name": "gain_log"
-                },
-                {
-                    "type": "phase",
-                    "name": "phase"
-                },
-                {
                     "type": "C",
                     "name": "C"
+                },
+                {
+                    "type": "Q",
+                    "name": "Q"
+                },
+                {
+                    "type": "L",
+                    "name": "L"
                 }
                 
             ]
