@@ -3,11 +3,12 @@
     "controllers": [
         {
             "type": "sdm",
-            "ip": "169.254.100.102",
+            "ip": "192.168.1.6",
+            "speed": "Middle",
             "params": [
                 {
-                    "type": "FREQ",
-                    "name": "f"
+                    "type": "VDC",
+                    "name": "vdc"
                 }
             ]
         }
