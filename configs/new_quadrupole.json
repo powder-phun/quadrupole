@@ -1,0 +1,50 @@
+{
+    "name": "Quadrupole",
+    "defaults": {
+        "sweepOne": {
+            "enabled": false,
+            "param": "AC(pk-pk)",
+            "min": 0,
+            "max": 24,
+            "steps": 41
+        }
+    },
+    "controllers": [
+        {
+            "type": "afg",
+            "waveformTwo": "DC",
+            "params": [
+                {
+                    "type": "offset",
+                    "channel": 2,
+                    "name": "DC"
+                }
+            ]
+        },
+        {
+            "type": "fy",
+            "port": "COM5",
+            "params": [
+                {  
+                    "type": "amplitude",
+                    "channel": 1,
+                    "name": "AC(pk-pk)",
+                    "default": 1
+                }
+            ]
+        },
+        {
+            "type": "sdm",
+            "ip": "169.254.100.100",
+            "params": [
+                {
+                    "type": "VDC",
+                    "name": "Detector",
+                    "unit": "A",
+                    "eval_get": "(x-1.56160)*4e-9"
+                }
+            ]
+        }
+
+    ]
+}

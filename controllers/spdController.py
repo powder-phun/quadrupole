@@ -73,7 +73,7 @@ class SPDController(Controller):
                 elif param.type == "voltage":
                     self.voltageParam[param.json["channel"]-1] = param.name
                 else:
-                    logging.error(f"Invalid parameter name {param}")
+                    logging.error(f"Invalid parameter type {param.type}")
             else:
                 logging.error(f"Not specified or invalid channel (should be 1 or 2) for param {param.name}")
 

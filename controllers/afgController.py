@@ -117,9 +117,9 @@ class AFGController(Controller):
             self.device.write("SOURce2:FREQuency:FIXed {:.0f}Hz".format(value))
 
     def prepare(self) -> None:
-        if self.config.json["waveformOne"] is not None:
+        if "waveformOne" in self.config.json:
             self.device.write(f"SOURce1:FUNCtion:SHAPe {self.config.json['waveformOne']}")
-        if self.config.json["waveformTwo"] is not None:
+        if "waveformTwo" in self.config.json:
             self.device.write(f"SOURce2:FUNCtion:SHAPe {self.config.json['waveformTwo']}")
 
 
