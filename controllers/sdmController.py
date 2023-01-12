@@ -90,6 +90,7 @@ class SDMController(Controller):
     def connect(self) -> bool:
         self.device = Device(usb=self.usb, ip=self.ip)
         ret = self.device.connect()
+        self.device.write(f"CONF:{self.type}")
         return ret
 
 
@@ -99,7 +100,7 @@ class SDMController(Controller):
 
     def read(self, param: str) -> float:
         if param == self.param:
-            ret = self.device.ask(f"MEAS:{self.type}?")
+            ret = self.device.ask(f"READ?")
             return float(ret)
         else:
             logging.error("Wrong param name")
