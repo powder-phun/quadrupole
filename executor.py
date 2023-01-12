@@ -3,6 +3,7 @@ import time
 import datetime
 import csv
 import logging
+import os.path
 
 from controllers.controller import Controller
 from controllers.dummyController import DummyController
@@ -381,13 +382,18 @@ class Executor(QObject):
                         self.fileSweepData[list_of_params[index]].append(float(value))
 
     def openFile(self):
-        t = datetime.datetime.now().strftime('%Y-%m-%dT%H-%M-%S')
-        p = ""
+        t = datetime.datetime.now().strftime('%m-%d')
+        val = ""
         if self.sweepTwoEnabled:
-            val = (str(self.sweepTwoValue)).replace(".","dot")
-            p = f"{self.params[self.sweepOneParam].name}-{val}"
+            val = ('{0:.2E}'.format(self.sweepTwoValue)).replace(".","dot")
 
-        self.file = open("data/"+t+self.title+p, 'w+')
+        count = 0
+        name = "data/"+ t + "-" + str(count) + "-" + self.title + "-" + val + ".csv"
+        while os.path.isfile(name):
+            count += 1
+            name = "data/"+ t + "-" + str(count) + "-" + self.title + "-" + val + ".csv"
+
+        self.file = open(name, "w+")
 
         self.file.write(f"# {self.comment}\n")
 
