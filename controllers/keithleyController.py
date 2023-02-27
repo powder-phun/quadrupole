@@ -27,6 +27,35 @@ class KeithleyController(Controller):
     def getName():
         return "keithley"
 
+    def getIsEditableDict() -> dict[str, bool]:
+        if self.is_cc:
+            return {
+                "current": True,
+                "voltage": False,
+            }
+        else:
+            return {
+                "current": False,
+                "voltage": True,
+            }
+    
+    @staticmethod
+    def getUnitDict() -> dict[str, str]:
+        return {
+            "current": "A",
+            "voltage": "V",
+        }
+
+    @staticmethod
+    def getMinDict() -> dict[str, bool]:
+        return {}
+
+    @staticmethod
+    def getMaxDict() -> dict[str, bool]:
+        return {}
+
+
+
     def parseConfig(self):
         if "is_cc" in self.config.json:
             self.is_cc = self.config.json["is_cc"]
@@ -66,6 +95,7 @@ class KeithleyController(Controller):
                         self.device.write("J0X") # Restore default settings
                         self.device.write("N0X")  #Standby mode
                         self.device.write("G4,2,0X") # Setup communication format
+                        self.device.write("S3") # Linecycle integration
 
                         if self.is_cc:
                             self.device.write("F1,0X") # Setup DC I Bias

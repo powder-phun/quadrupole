@@ -47,6 +47,7 @@ class ImpedanceController(Controller):
         self.frequency = 1
         self.reference_impedance = 50
         self.phasor = [None, None] # last measured phasor of channel a
+        self.harmonics = [[], []]
         self.volt_div = [None, None]
 
         self.parseConfig()
@@ -67,7 +68,10 @@ class ImpedanceController(Controller):
             "L": False,
             "C": False,
             "Q": False,
-            "frequency": True
+            "amplitude_1_rms": False,
+            "amplitude_1_pkpk": False,
+            "frequency": True,
+            "THD_1": False,
         }
     
     def getUnitDict(self) -> dict[str, str]:
@@ -82,6 +86,9 @@ class ImpedanceController(Controller):
             "L": "H",
             "C": "F",
             "Q": "-",
+            "amplitude_1_rms": "Vrms",
+            "amplitude_1_pkpk": "Vpp",
+            "THD_1": "-",
             "frequency": "Hz"
         }
 
@@ -105,6 +112,10 @@ class ImpedanceController(Controller):
             self.reference_impedance = self.config.json["reference_impedance"]
         else:
             logging.warning("No reference impedance specified, using 50Ω")
+
+        if "harmonics" in self.config.json:
+            count = self.config.json["harmonics"]
+            self.harmonics = [[None for i in range(count)], [None for i in range(count)]]
         
         return True
 
@@ -151,6 +162,14 @@ class ImpedanceController(Controller):
                 return 20*math.log10(abs(self.phasor[1]/self.phasor[0]))
             elif t == "phase":
                 return (cmath.phase(self.phasor[1])-cmath.phase(self.phasor[0])) / (2*math.pi) * 360
+            elif t == "amplitude_1_rms":
+                return abs((self.phasor[0]))
+            elif t == "amplitude_1_pkpk":
+                return abs((self.phasor[0])*2*math.sqrt(2))
+            elif t == "THD_1":
+                return self.calculate_THD(0)
+            elif t == "THD_2":
+                return self.calculate_THD(1)
             else:
                 logging.error(f"Unsupported type: {t}")
         else:
@@ -160,9 +179,12 @@ class ImpedanceController(Controller):
     def calculate_impedance(self):
         return (self.reference_impedance * self.phasor[1])/(self.phasor[0]-self.phasor[1])
 
+    def calculate_THD(self, channel):
+        sum_of_squares = sum(abs(x)**2 for x in self.harmonics[channel])
+        return math.sqrt(sum_of_squares) / abs(self.phasor[channel])
 
     def measure(self):
-        self.set_timediv(1/self.frequency)
+        self.set_timediv(10/self.frequency)
         sample_rate = self.get_samplerate()
 
         a = self.acquire(0)
@@ -178,17 +200,21 @@ class ImpedanceController(Controller):
         self.phasor[0] = self.get_phasor(self.frequency, sample_rate, a)
         self.phasor[1] = self.get_phasor(self.frequency, sample_rate, b)
 
+        for i in range(len(self.harmonics[0])):
+            self.harmonics[0][i] = self.get_phasor(self.frequency * (i+2), sample_rate, a)
+            self.harmonics[1][i] = self.get_phasor(self.frequency * (i+2), sample_rate, b)
+
     @staticmethod
     def get_phasor(frequency, sample_rate, data):
         
         count = len(data)
-        print(frequency, sample_rate, count)
 
         t = np.arange(0, count) / sample_rate
         phase = 2 * np.pi * frequency * t
         value = np.sum(data * np.exp(1j * phase))
+        scale = np.sum((np.sin(phase)+np.cos(phase)) * np.exp(1j * phase))
 
-        return value
+        return (np.real(value)/np.real(scale) + 1j*np.imag(value)/np.imag(scale))/np.sqrt(2)
 
     def acquire(self, channel):
         self.device.write(f"C{channel+1}:WF? ALL")

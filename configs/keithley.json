@@ -1,31 +1,30 @@
 {
     "name": "Keithley test config",
     "defaults": {
-        "sweepOne": {
-            "enabled": true,
-            "param": "Keithley I",
-            "min": 0,
-            "max": 10,
-            "steps": 11
-        },
-        "sweepTwo": {
-            "enabled": false
-        },
-        "fileSweep": {
-            "enabled": false
-        }
     },
     "controllers": [
         {
             "type": "keithley",
-            "is_cc": true,
+            "is_cc": false,
             "params": [
                 {
-                    "type": "current",
-                    "name": "Keithely I"
+                    "type": "voltage",
+                    "name": "Keithely V"
                 }
             ]
             
+        },
+        {
+            "type": "sdm",
+            "ip": "192.168.1.3",
+            "speed": "Slow",
+            "params": [
+                {
+                    "type": "VDC",
+                    "name": "vdc"
+                }
+            ]
         }
+
     ]
 }

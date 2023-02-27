@@ -117,7 +117,7 @@ class FYController(Controller):
         self.device.write(cmd.encode())
 
     def set_frequency(self, frequency, channel):
-        self.send_command('F%014u' % int(frequency*1e6), channel)
+        self.send_command('F%014u' % (int(frequency*1e6)/1e6), channel)
 
     def set_amplitude(self, amplitude, channel):
         self.send_command('A%.2f' % amplitude, channel)

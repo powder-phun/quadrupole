@@ -3,7 +3,7 @@
     "controllers": [
         {
             "type": "fy",
-            "port": "COM5",
+            "port": "COM3",
             "params": [
                 {  
                     "type": "amplitude",

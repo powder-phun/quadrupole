@@ -1,0 +1,76 @@
+{
+    "name": "Amplitude Monitor Calibration",
+    "defaults": {
+        "delay": 3
+    },
+    "uses_a": true,
+    "controllers": [
+        {
+            "type": "impedance",
+            "ip": "192.168.1.8",
+            "reference_impedance": 15,
+            "harmonics": 10,
+            "params": [
+                {
+                    "type": "frequency",
+                    "name": "Scope_Frequency",
+                    "default": 10e6,
+                    "eval_set": "a"
+                },
+                {
+                    "type": "amplitude_1_rms",
+                    "name": "Scope_Amplitude_RMS"
+                },
+                {
+                    "type": "amplitude_1_pkpk",
+                    "name": "Scope_Amplitude_pkpk"
+                },
+                {
+                    "type": "THD_1",
+                    "name": "THD"
+                }   
+            ]
+            
+        },
+        {
+            "type": "fy",
+            "port": "COM3",
+            "params": [
+                {
+                    "type": "frequency",
+                    "channel": 1,
+                    "name": "Gen_Frequency",
+                    "default": 10e6,
+                    "eval_set": "a"
+                },
+                {
+                    "type": "amplitude",
+                    "channel": 1,
+                    "name": "Gen_Amplitude",
+                    "default": 1
+                }
+            ]
+        },
+        {
+            "type": "sdm",
+            "ip": "192.168.1.2",
+            "params": [
+                {
+                    "type": "VDC",
+                    "name": "vdc"
+                }
+            ]
+        },
+        {
+            "type": "spd",
+            "usb": "USB0::0xF4EC::0x1430::SPD3XIEC6R0683::0::INSTR",
+            "params": [
+                {
+                    "type": "voltage",
+                    "name": "Voltage",
+                    "channel": 2
+                }
+            ]
+        }
+    ]
+}
