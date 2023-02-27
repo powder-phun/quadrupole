@@ -239,7 +239,7 @@ class Executor(QObject):
             return self.b
         value =  self.controllers[param].read(param)
         if self.params[param].eval_get is not None:
-            value = eval(self.params[param].eval_get, {}, {"x": value})
+            value = eval(self.params[param].eval_get, {}, {"x": value, "a": self.a})
         return value
 
 

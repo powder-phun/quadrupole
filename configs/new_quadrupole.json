@@ -1,13 +1,11 @@
 {
     "name": "Quadrupole",
+    "uses_a": true,
     "defaults": {
-        "sweepOne": {
-            "enabled": false,
-            "param": "AC(pk-pk)",
-            "min": 0,
-            "max": 24,
-            "steps": 41
-        }
+        "fileSweep": {
+            "enabled": true
+        },
+        "delay": 0.4
     },
     "controllers": [
         {
@@ -29,13 +27,14 @@
                     "type": "amplitude",
                     "channel": 1,
                     "name": "AC(pk-pk)",
-                    "default": 1
+                    "default": 1,
+                    "eval_get": "x*1"
                 }
             ]
         },
         {
             "type": "sdm",
-            "ip": "169.254.100.100",
+            "ip": "169.254.100.102",
             "params": [
                 {
                     "type": "VDC",
