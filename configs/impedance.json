@@ -15,7 +15,7 @@
     "controllers": [
         {
             "type": "impedance",
-            "ip": "169.254.100.3",
+            "ip": "192.168.1.16",
             "reference_impedance": 15,
             "params": [
                 {
@@ -46,6 +46,18 @@
                 {
                     "type": "L",
                     "name": "L"
+                },
+                {
+                    "type": "gain",
+                    "name": "gain"
+                },
+                {
+                    "type": "gain_log",
+                    "name": "gain_log"
+                },
+                {
+                    "type": "phase",
+                    "name": "phase"
                 }
                 
             ]
@@ -53,7 +65,7 @@
         },
         {
             "type": "fy",
-            "port": "COM5",
+            "port": "COM6",
             "params": [
                 {
                     "type": "frequency",

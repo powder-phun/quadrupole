@@ -112,7 +112,7 @@ class ImpedanceController(Controller):
             self.reference_impedance = self.config.json["reference_impedance"]
         else:
             logging.warning("No reference impedance specified, using 50Ω")
-
+        
         if "harmonics" in self.config.json:
             count = self.config.json["harmonics"]
             self.harmonics = [[None for i in range(count)], [None for i in range(count)]]
@@ -161,7 +161,7 @@ class ImpedanceController(Controller):
             elif t == "gain_log":
                 return 20*math.log10(abs(self.phasor[1]/self.phasor[0]))
             elif t == "phase":
-                return (cmath.phase(self.phasor[1])-cmath.phase(self.phasor[0])) / (2*math.pi) * 360
+                return (((cmath.phase(self.phasor[1])-cmath.phase(self.phasor[0]))+3*math.pi)%(2*math.pi)-math.pi) / (2*math.pi) * 360
             elif t == "amplitude_1_rms":
                 return abs((self.phasor[0]))
             elif t == "amplitude_1_pkpk":
@@ -186,16 +186,19 @@ class ImpedanceController(Controller):
     def measure(self):
         self.set_timediv(10/self.frequency)
         sample_rate = self.get_samplerate()
-
-        a = self.acquire(0)
-        while not self.scale(a, 0):
-            time.sleep(SCOPE_DELAY)
-            a = self.acquire(0)
+        time.sleep(SCOPE_DELAY)
+        acq_delay = 1.2*self.get_timediv()*14
+        self.trigger()
+        time.sleep(SCOPE_DELAY+acq_delay)
 
         b = self.acquire(1)
-        while not self.scale(b, 1):
-            time.sleep(SCOPE_DELAY)
+        a = self.acquire(0)
+        while (not self.scale(a, 0)) or (not self.scale(b, 1)):
+            self.trigger()
+            time.sleep(SCOPE_DELAY+acq_delay)
+            a = self.acquire(0)
             b = self.acquire(1)
+
 
         self.phasor[0] = self.get_phasor(self.frequency, sample_rate, a)
         self.phasor[1] = self.get_phasor(self.frequency, sample_rate, b)
@@ -219,6 +222,9 @@ class ImpedanceController(Controller):
     def acquire(self, channel):
         self.device.write(f"C{channel+1}:WF? ALL")
         return self.parse(self.device.read_raw())
+    
+    def trigger(self):
+        self.device.write(f"TRMD SINGLE;ARM;FRTR")
 
     def set_vdiv(self, channel, value):
         self.device.write(f"C{channel+1}:VDIV {value}V")
@@ -229,6 +235,11 @@ class ImpedanceController(Controller):
 
     def set_timediv(self, value):
         self.device.write(f"TDIV {value}s")
+    
+    def get_timediv(self):
+        ret = self.device.ask(f"TDIV?")
+        print(ret)
+        return(float(ret.split()[1][:-1]))
 
     def get_samplerate(self):
         ret = self.device.ask(f"SARA?")
