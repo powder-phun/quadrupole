@@ -15,7 +15,7 @@
     "controllers": [
         {
             "type": "impedance",
-            "ip": "192.168.1.16",
+            "ip": "192.168.1.2",
             "reference_impedance": 15,
             "params": [
                 {
@@ -58,7 +58,19 @@
                 {
                     "type": "phase",
                     "name": "phase"
-                }
+                },
+                {
+                    "type": "amplitude_1_rms",
+                    "name": "Scope_Amplitude_RMS"
+                },
+                {
+                    "type": "amplitude_1_pkpk",
+                    "name": "Scope_Amplitude_pkpk"
+                },
+                {
+                    "type": "THD_1",
+                    "name": "THD"
+                } 
                 
             ]
             

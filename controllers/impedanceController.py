@@ -196,6 +196,7 @@ class ImpedanceController(Controller):
         while (not self.scale(a, 0)) or (not self.scale(b, 1)):
             self.trigger()
             time.sleep(SCOPE_DELAY+acq_delay)
+            print(SCOPE_DELAY+acq_delay)
             a = self.acquire(0)
             b = self.acquire(1)
 
