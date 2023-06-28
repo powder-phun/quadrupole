@@ -34,7 +34,7 @@
         },
         {
             "type": "fy",
-            "port": "COM3",
+            "port": "COM7",
             "params": [
                 {
                     "type": "frequency",

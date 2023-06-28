@@ -21,7 +21,7 @@
         },
         {
             "type": "fy",
-            "port": "COM5",
+            "port": "COM10",
             "params": [
                 {  
                     "type": "amplitude",
@@ -34,13 +34,13 @@
         },
         {
             "type": "sdm",
-            "ip": "169.254.100.102",
+            "ip": "169.254.100.100",
             "params": [
                 {
                     "type": "VDC",
                     "name": "Detector",
                     "unit": "A",
-                    "eval_get": "(x-1.56160)*4e-9"
+                    "eval_get": "x*4e-9"
                 }
             ]
         }

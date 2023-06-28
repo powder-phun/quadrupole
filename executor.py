@@ -388,10 +388,10 @@ class Executor(QObject):
             val = ('{0:.2E}'.format(self.sweepTwoValue)).replace(".","dot")
 
         count = 0
-        name = "data/"+ t + "-" + str(count) + "-" + self.title + "-" + val + ".csv"
+        name = "data/"+ t + "-" + str(count) + "-" + self.title + "-" + str(self.counter // self.sweepOneSteps) + "-" + val + ".csv"
         while os.path.isfile(name):
             count += 1
-            name = "data/"+ t + "-" + str(count) + "-" + self.title + "-" + val + ".csv"
+            name = "data/"+ t + "-" + str(count) + "-" + self.title + "-" + str(self.counter // self.sweepOneSteps) + "-" + val + ".csv"
 
         self.file = open(name, "w+")
 

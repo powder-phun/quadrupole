@@ -34,7 +34,7 @@
         },
         {
             "type": "fy",
-            "port": "COM3",
+            "port": "COM4",
             "params": [
                 {
                     "type": "frequency",
@@ -53,22 +53,11 @@
         },
         {
             "type": "sdm",
-            "ip": "192.168.1.2",
+            "ip": "192.168.1.5",
             "params": [
                 {
                     "type": "VDC",
                     "name": "vdc"
-                }
-            ]
-        },
-        {
-            "type": "spd",
-            "usb": "USB0::0xF4EC::0x1430::SPD3XIEC6R0683::0::INSTR",
-            "params": [
-                {
-                    "type": "voltage",
-                    "name": "Voltage",
-                    "channel": 2
                 }
             ]
         }
