@@ -33,7 +33,7 @@ from config import ControllerConfig
 
 from device import Device
 
-SCOPE_DELAY = 0.5
+SCOPE_DELAY = 1
 
 class ImpedanceController(Controller):
     def __init__(self, config):
@@ -184,7 +184,7 @@ class ImpedanceController(Controller):
         return math.sqrt(sum_of_squares) / abs(self.phasor[channel])
 
     def measure(self):
-        self.set_timediv(10/self.frequency)
+        self.set_timediv(1/self.frequency)
         sample_rate = self.get_samplerate()
         time.sleep(SCOPE_DELAY)
         acq_delay = 1.2*self.get_timediv()*14
@@ -193,8 +193,9 @@ class ImpedanceController(Controller):
 
         b = self.acquire(1)
         a = self.acquire(0)
+        self.device.write(f"TRMD AUTO")
         while (not self.scale(a, 0)) or (not self.scale(b, 1)):
-            self.trigger()
+            #self.trigger()
             time.sleep(SCOPE_DELAY+acq_delay)
             print(SCOPE_DELAY+acq_delay)
             a = self.acquire(0)
@@ -286,4 +287,3 @@ class ImpedanceController(Controller):
 
         return True
 
-        

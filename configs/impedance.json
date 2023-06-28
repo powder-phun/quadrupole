@@ -15,8 +15,8 @@
     "controllers": [
         {
             "type": "impedance",
-            "ip": "192.168.1.2",
-            "reference_impedance": 15,
+            "ip": "192.168.1.120",
+            "reference_impedance": 100000,
             "params": [
                 {
                     "type": "frequency",
@@ -77,7 +77,7 @@
         },
         {
             "type": "fy",
-            "port": "COM6",
+            "port": "COM3",
             "params": [
                 {
                     "type": "frequency",

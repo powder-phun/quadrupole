@@ -38,6 +38,7 @@ class Device:
         if self.ip is not None:
             try:
                 self.device = vxi11.Instrument(self.ip)
+                self.device.timeout = 30
                 return True
             except:
                 logging.error(f"Couldn't connect to {self.ip}")
