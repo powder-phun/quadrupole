@@ -5,59 +5,99 @@ import logging
 from config import ControllerConfig, ParamConfig
 from controllers.controller import Controller
 
-EOL = '\x0A'
-
-class FYController(Controller):
+class EuroController(Controller):
     def __init__(self, config):
         self.config: ControllerConfig = config
         self.device = None
         self.port = None
-        self.amplitudeParam: [str, str] = [None, None]
-        self.offsetParam: [str, str] = [None, None]
-        self.frequencyParam: [str, str] = [None, None]
 
-        self.amplitude: [float, float] = [0, 0]
-        self.offset: [float, float] = [0, 0]
-        self.frequency: [float, float] = [0, 0]
+        self.genAmplitudeParam = [None, None]
+        self.genFreqParam = [None, None]
+        self.voltmeterVoltageParam = [None, None, None, None]
+        self.HVPSUVoltageParam = [None, None, None, None]
+        self.SourcePSUSetVoltParam = None
+        self.SourcePSUSetCurrParam = None
+        self.SourcePSUMeasVoltParam = None
+        self.SourcePSUMeasCurrParam = None
 
-        self.waveform = [None, None]
+
+        self.genAmplitude = [0, 0]
+        self.genFreq = [0, 0]
+        self.voltmeterVoltage = [0, 0, 0, 0]
+        self.HVPSUVoltage = [0, 0, 0, 0]
+        self.SourcePSUSetVolt = 0
+        self.SourcePSUSetCurr = 0
+        self.SourcePSUMeasVolt = 0
+        self.SourcePSUMeasCurr = 0
+
+        self.nChannelsDict = {
+            "generator_amplitude": 2,
+            "generator_frequency": 2,
+            "voltmeter_voltage": 4,
+            "HVPSU_voltage": 4,
+            "source_PSU_set_voltage": 1,
+            "source_PSU_set_current": 1,
+            "source_PSU_measured_voltage": 1,
+            "source_PSU_measured_current": 1
+        }
+
 
         self.parseConfig()
 
     @staticmethod
     def getName():
-        return "fy"
+        return "EuroMeasure"
 
     @staticmethod
     def getIsEditableDict() -> dict[str, bool]:
         return {
-            "amplitude": True,
-            "offset": True,
-            "frequency": True
+            "generator_amplitude": True,
+            "generator_frequency": True,
+            "voltmeter_voltage": False,
+            "HVPSU_voltage": True,
+            "source_PSU_set_voltage": True,
+            "source_PSU_set_current": True,
+            "source_PSU_measured_voltage": False,
+            "source_PSU_measured_current": False
         }
     
     @staticmethod
     def getUnitDict() -> dict[str, str]:
         return {
-            "amplitude": "Vpp",
-            "offset": "V",
-            "frequency": "Hz"
+            "generator_amplitude": "Vpp",
+            "generator_frequency": "Hz",
+            "voltmeter_voltage": "V",
+            "HVPSU_voltage": "V",
+            "source_PSU_set_voltage": "V",
+            "source_PSU_set_current": "I",
+            "source_PSU_measured_voltage": "V",
+            "source_PSU_measured_current": "I"
         }
 
     @staticmethod
     def getMinDict() -> dict[str, float]:
         return {
-            "amplitude": 0,
-            "offset": -12,
-            "frequency": 0
+            "generator_amplitude": 0,
+            "generator_frequency": 0,
+            "voltmeter_voltage": -12,
+            "HVPSU_voltage": -250,
+            "source_PSU_set_voltage": 0,
+            "source_PSU_set_current": 0,
+            "source_PSU_measured_voltage": 0,
+            "source_PSU_measured_current": 0
         }
 
     @staticmethod
     def getMaxDict() -> dict[str, float]:
         return {
-            "amplitude": 24,
-            "offset": 12,
-            "frequency": 60e6
+            "generator_amplitude": 6,
+            "generator_frequency": 75e6,
+            "voltmeter_voltage": 12,
+            "HVPSU_voltage": 250,
+            "source_PSU_set_voltage": 2000, #to be checked
+            "source_PSU_set_current": 2e-3, #to be checked
+            "source_PSU_measured_voltage": 2000,
+            "source_PSU_measured_current": 2e-3
         }
 
     def parseConfig(self):
@@ -67,19 +107,32 @@ class FYController(Controller):
             logging.error("No port specified")
             return False
         for param in self.config.params:
-            if param.json.get("channel", 0) == 1 or param.json.get("channel", 0) == 2:
-                if param.type == "amplitude":
-                    self.amplitudeParam[param.json["channel"]-1] = param.name
-                elif param.type == "offset":
-                    self.offsetParam[param.json["channel"]-1] = param.name
-                elif param.type == "frequency":
-                    self.frequencyParam[param.json["channel"]-1] = param.name
+            if param.type in self.nChannelsDict.keys():
+                if self.nChannelsDict[param.type] == 1:
+                    if param.type == "source_PSU_set_voltage":
+                        self.SourcePSUSetVoltParam = param.name
+                    elif param.type == "source_PSU_measured_voltage":
+                        self.SourcePSUMeasVoltParam = param.name
+                    if param.type == "source_PSU_set_current":
+                        self.SourcePSUSetCurrParam = param.name
+                    elif param.type == "source_PSU_measured_current":
+                        self.SourcePSUMEasCurrParam = param.name
+                    else:
+                        logging.error(f"Invalid number of channels for {param}")
                 else:
-                    logging.error(f"Invalid parameter name {param}")
+                    if param.json.get("channel", 0) in range(1, self.nChannelsDict[param.type]+1):
+                        if param.type == "generator_amplitude":
+                            self.genAmplitudeParam[param.json["channel"]-1] = param.name
+                        elif param.type == "generator_frequency":
+                            self.genFreqParam[param.json["channel"]-1] = param.name
+                        elif param.type == "voltmeter_voltage":
+                            self.voltmeterVoltageParam[param.json["channel"]-1] = param.name
+                        elif param.type == "HVPSU_voltage":
+                            self.HVPSUVoltageParam[param.json["channel"]-1] = param.name
+                    else:
+                        logging.error(f"Invalid number of channels for {param}")
             else:
-                logging.error(f"Not specified or invalid channel (should be 1 or 2) for param {param.name}")
-
-
+                logging.error(f"Invalid parameter {param}")
         return True
 
 
@@ -91,60 +144,93 @@ class FYController(Controller):
             return True
 
     def adjust(self, param: str, value: float) -> None:
-        if param == self.amplitudeParam[0]:
-            self.amplitude[0] = value
-            self.set_amplitude(value, 1)
-        elif param == self.amplitudeParam[1]:
-            self.amplitude[1] = value
-            self.set_amplitude(value, 2)
-        elif param == self.offsetParam[0]:
-            self.offset[0] = value
-            self.set_offset(value, 1)
-        elif param == self.offsetParam[1]:
-            self.offset[1] = value
-            self.set_offset(value, 2)
-        elif param == self.frequencyParam[0]:
-            self.frequency[0] = value
-            self.set_frequency(value, 1)
-        elif param == self.frequencyParam[1]:
-            self.frequency[1] = value
-            self.set_frequency(value, 2)
 
-    def send_command(self, command, channel):
-        channel = "M" if channel == 1 else "F"
-        cmd = "W" + channel + command + EOL
-        logging.debug(f"Command send: {cmd}")
+        multichannelParameters = [
+            (self.genAmplitudeParam, self.set_genAmplitude),
+            (self.genFreqParam, self.set_genFreq),
+            (self.HVPSUVoltageParam, self.set_HVPSUVoltage)
+        ]
+
+        monochannelParameters = [
+            (self.SourcePSUSetVoltParam, self.set_SourcePSUSetVolt),
+            (self.SourcePSUSetCurrParam, self.set_SourcePSUSetCurr)
+        ]
+
+        for multichannelParam in multichannelParameters:
+            print(param, multichannelParam)
+            if param in multichannelParam[0]:
+                multichannelParam[1](value, multichannelParam[0].index(param))
+        
+        for monochannelParam in monochannelParameters:
+            if monochannelParam[0] == param:
+                monochannelParam[1](value)
+
+    def send_command(self, command):
+        cmd = command + '\n'
+        logging.debug(f"Command sent: {cmd}")
         self.device.write(cmd.encode())
 
-    def set_frequency(self, frequency, channel):
-        self.send_command('F%014u' % (int(frequency*1e6)/1e6), channel)
+    def send_querry(self, querry):
+        cmd = querry + '\n'
+        logging.debug(f"Querry sent: {cmd}")
+        self.device.write(cmd.encode())
+        return 0
 
-    def set_amplitude(self, amplitude, channel):
-        self.send_command('A%.2f' % amplitude, channel)
+    def set_genAmplitude(self, amplitude, channel):
+        self.genAmplitude[channel] = amplitude
+        self.send_command(f'GEN:SET:AMPL {amplitude}')
 
-    def set_offset(self, offset, channel):
-        self.send_command('O%.2f' % offset, channel)
+    def set_genFreq(self, frequency, channel):
+        self.genFreq[channel] = frequency
+        self.send_command(f'GEN:SET:FREQ {frequency}')
+
+    def set_HVPSUVoltage(self, voltage, channel):
+        self.HVPSUVoltage[channel] = voltage
+        self.send_command(f'HVPSU:SET:VOLT {channel} {voltage}')
+
+    def set_SourcePSUSetVolt(self, voltage):
+        self.SourcePSUSetVolt = voltage
+
+    def set_SourcePSUSetCurr(self, current):
+        self.SourcePSUSetCurr = current
+    
+    def measure_voltmeterVoltage(self, channel):
+        return 0
+    
+    def measure_SourcePSUMeasVolt():
+        return 0
+
+    def measure_SourcePSUMeasCurr():
+        return 0
 
     def enable(self, state: bool):
-        if state:
-            self.send_command("N1", 1)
-            self.send_command("N1", 2)
-        else:
-            self.send_command("N0", 1)
-            self.send_command("N0", 2)
+        pass
 
     def read(self, param: str) -> float:
-        if param == self.amplitudeParam[0]:
-            return self.amplitude[0]
-        elif param == self.amplitudeParam[1]:
-            return self.amplitude[1]
-        elif param == self.offsetParam[0]:
-            return self.offset[0]
-        elif param == self.offsetParam[1]:
-            return self.offset[1]
-        elif param == self.frequencyParam[0]:
-            return self.frequency[0]
-        elif param == self.frequencyParam[1]:
-            return self.frequency[1]
-        else:
-            logging.error(f"Invalid param name {param}")
+        if param in self.voltmeterVoltageParam:
+            return self.measure_voltmeterVoltge(self.voltmeterVoltageParam.index(param)+1)
+        if param == self.SourcePSUMeasVolt:
+            return self.measure_SourcePSUMeasVolt()
+        if param == self.SourcePSUMeasCurr:
+            return self.measure_SourcePSUMeasCurr()
+
+        multichannelParameters = [
+            (self.genAmplitudeParam, self.genAmplitude),
+            (self.genFreqParam, self.genFreq),
+            (self.HVPSUVoltageParam, self.HVPSUVoltage)
+        ]
+
+        monochannelParameters = [
+            (self.SourcePSUSetVoltParam, self.SourcePSUSetVolt),
+            (self.SourcePSUSetCurrParam, self.SourcePSUSetCurr)
+        ]
+
+        for multichannelParam in multichannelParameters:
+            if param in multichannelParam[0]:
+                return multichannelParam[1][multichannelParam[0].index(param)]
+        
+        for monochannelParam in monochannelParameters:
+            if monochannelParam[0] == param:
+                return monochannelParam[1]
+
+        logging.error(f"Invalid param name {param}")

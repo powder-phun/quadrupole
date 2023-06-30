@@ -1,0 +1,23 @@
+{
+    "name": "FY Config",
+    "controllers": [
+        {
+            "type": "EuroMeasure",
+            "port": "COM5",
+            "params": [
+                {  
+                    "type": "generator_amplitude",
+                    "channel": 1,
+                    "name": "Amplitude 1",
+                    "default": 1
+                },
+                {
+                    "type": "generator_frequency",
+                    "channel": 1,
+                    "name": "Frequency 1",
+                    "default": 1e6
+                }
+            ]
+        }
+    ]
+}
