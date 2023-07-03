@@ -3,7 +3,7 @@
     "controllers": [
         {
             "type": "EuroMeasure",
-            "port": "COM5",
+            "port": "COM4",
             "params": [
                 {  
                     "type": "generator_amplitude",
@@ -16,6 +16,11 @@
                     "channel": 1,
                     "name": "Frequency 1",
                     "default": 1e6
+                },
+                {
+                    "type": "voltmeter_voltage",
+                    "channel": 1,
+                    "name": "Voltmeter 1"
                 }
             ]
         }

@@ -173,20 +173,24 @@ class EuroController(Controller):
     def send_querry(self, querry):
         cmd = querry + '\n'
         logging.debug(f"Querry sent: {cmd}")
+        self.device.flushInput()
         self.device.write(cmd.encode())
-        return 0
+        self.device.flushOutput()
+        ret = self.device.readline().decode()
+        logging.debug(f"Received: {ret}")
+        return ret
 
     def set_genAmplitude(self, amplitude, channel):
         self.genAmplitude[channel] = amplitude
-        self.send_command(f'GEN:SET:AMPL {amplitude}')
+        self.send_command(f'GEN:SET:AMPL {amplitude:.4e}')
 
     def set_genFreq(self, frequency, channel):
         self.genFreq[channel] = frequency
-        self.send_command(f'GEN:SET:FREQ {frequency}')
+        self.send_command(f'GEN:SET:FREQ {frequency:.4e}')
 
     def set_HVPSUVoltage(self, voltage, channel):
         self.HVPSUVoltage[channel] = voltage
-        self.send_command(f'HVPSU:SET:VOLT {channel} {voltage}')
+        self.send_command(f'HVPSU:SET:VOLT {channel} {voltage:.4e}')
 
     def set_SourcePSUSetVolt(self, voltage):
         self.SourcePSUSetVolt = voltage
@@ -195,7 +199,8 @@ class EuroController(Controller):
         self.SourcePSUSetCurr = current
     
     def measure_voltmeterVoltage(self, channel):
-        return 0
+        ret = self.send_querry(f'VOLT:MEAS {channel-1}')
+        return float(ret)
     
     def measure_SourcePSUMeasVolt():
         return 0
@@ -208,7 +213,7 @@ class EuroController(Controller):
 
     def read(self, param: str) -> float:
         if param in self.voltmeterVoltageParam:
-            return self.measure_voltmeterVoltge(self.voltmeterVoltageParam.index(param)+1)
+            return self.measure_voltmeterVoltage(self.voltmeterVoltageParam.index(param)+1)
         if param == self.SourcePSUMeasVolt:
             return self.measure_SourcePSUMeasVolt()
         if param == self.SourcePSUMeasCurr:
