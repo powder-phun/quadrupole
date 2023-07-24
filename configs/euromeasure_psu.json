@@ -1,0 +1,26 @@
+{
+    "name": "FY Config",
+    "controllers": [
+        {
+            "type": "EuroMeasure",
+            "port": "COM3",
+            "params": [
+                {
+                    "type": "HVPSU_voltage",
+                    "channel": 1,
+                    "name": "HVPSU 1"
+                }
+            ]
+        },
+        {
+            "type": "sdm",
+            "ip": "192.168.1.7",
+            "params": [
+                {
+                    "type": "VDC",
+                    "name": "V Meas"
+                }
+            ]
+        }
+    ]
+}

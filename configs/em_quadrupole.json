@@ -1,0 +1,50 @@
+{
+    "name": "Spectrometer EuroMeasure",
+    "defaults": {
+        "delay": 0.3
+    },
+    "uses_a": true,
+    "controllers": [
+        {
+            "type": "EuroMeasure",
+            "port": "COM3",
+            "params": [
+                {
+                    "type": "pid",
+                    "name": "AC_Setpoint",
+                    "default": 0.1
+                },
+                {
+                    "type": "voltmeter_voltage",
+                    "channel": 1,
+                    "name": "Monitor"
+                },
+                {
+                    "type": "voltmeter_voltage",
+                    "channel": 3,
+                    "name": "Detector",
+                    "unit": "A",
+                    "eval_get": "x*4e-9*10/13.3"
+                },
+                {
+                    "type": "generator_frequency",
+                    "channel": 2,
+                    "name": "Frequency",
+                    "default": 7.1e6
+                },
+                {
+                    "type": "HVPSU_voltage",
+                    "channel": 1,
+                    "name": "HVPSU 1",
+                    "eval_set": "a"
+                },
+                {
+                    "type": "HVPSU_voltage",
+                    "channel": 2,
+                    "name": "HVPSU 2",
+                    "eval_set": "-a"
+                } 
+            ]
+        }
+    ]
+}

@@ -11,6 +11,7 @@ class EuroController(Controller):
         self.device = None
         self.port = None
 
+        self.pidParam = [None]
         self.genAmplitudeParam = [None, None]
         self.genFreqParam = [None, None]
         self.voltmeterVoltageParam = [None, None, None, None]
@@ -21,6 +22,7 @@ class EuroController(Controller):
         self.SourcePSUMeasCurrParam = None
 
 
+        self.pid = 0
         self.genAmplitude = [0, 0]
         self.genFreq = [0, 0]
         self.voltmeterVoltage = [0, 0, 0, 0]
@@ -31,6 +33,7 @@ class EuroController(Controller):
         self.SourcePSUMeasCurr = 0
 
         self.nChannelsDict = {
+            "pid": 1,
             "generator_amplitude": 2,
             "generator_frequency": 2,
             "voltmeter_voltage": 4,
@@ -51,6 +54,7 @@ class EuroController(Controller):
     @staticmethod
     def getIsEditableDict() -> dict[str, bool]:
         return {
+            "pid": True,
             "generator_amplitude": True,
             "generator_frequency": True,
             "voltmeter_voltage": False,
@@ -64,6 +68,7 @@ class EuroController(Controller):
     @staticmethod
     def getUnitDict() -> dict[str, str]:
         return {
+            "pid": "V",
             "generator_amplitude": "Vpp",
             "generator_frequency": "Hz",
             "voltmeter_voltage": "V",
@@ -77,6 +82,7 @@ class EuroController(Controller):
     @staticmethod
     def getMinDict() -> dict[str, float]:
         return {
+            "pid": 0,
             "generator_amplitude": 0,
             "generator_frequency": 0,
             "voltmeter_voltage": -12,
@@ -90,11 +96,12 @@ class EuroController(Controller):
     @staticmethod
     def getMaxDict() -> dict[str, float]:
         return {
+            "pid": 4,
             "generator_amplitude": 6,
             "generator_frequency": 75e6,
             "voltmeter_voltage": 12,
-            "HVPSU_voltage": 250,
-            "source_PSU_set_voltage": 2000, #to be checked
+            "HVPSU_voltage": 65535,
+            "source_PSU_set_voltage": 3000, #to be checked
             "source_PSU_set_current": 2e-3, #to be checked
             "source_PSU_measured_voltage": 2000,
             "source_PSU_measured_current": 2e-3
@@ -113,10 +120,12 @@ class EuroController(Controller):
                         self.SourcePSUSetVoltParam = param.name
                     elif param.type == "source_PSU_measured_voltage":
                         self.SourcePSUMeasVoltParam = param.name
-                    if param.type == "source_PSU_set_current":
+                    elif param.type == "source_PSU_set_current":
                         self.SourcePSUSetCurrParam = param.name
                     elif param.type == "source_PSU_measured_current":
                         self.SourcePSUMEasCurrParam = param.name
+                    elif param.type == "pid":
+                        self.pidParam = param.name
                     else:
                         logging.error(f"Invalid number of channels for {param}")
                 else:
@@ -152,12 +161,12 @@ class EuroController(Controller):
         ]
 
         monochannelParameters = [
+            (self.pidParam, self.setPid),
             (self.SourcePSUSetVoltParam, self.set_SourcePSUSetVolt),
             (self.SourcePSUSetCurrParam, self.set_SourcePSUSetCurr)
         ]
 
         for multichannelParam in multichannelParameters:
-            print(param, multichannelParam)
             if param in multichannelParam[0]:
                 multichannelParam[1](value, multichannelParam[0].index(param))
         
@@ -168,7 +177,9 @@ class EuroController(Controller):
     def send_command(self, command):
         cmd = command + '\n'
         logging.debug(f"Command sent: {cmd}")
+        self.device.flushInput()
         self.device.write(cmd.encode())
+        self.device.flushOutput()
 
     def send_querry(self, querry):
         cmd = querry + '\n'
@@ -182,25 +193,33 @@ class EuroController(Controller):
 
     def set_genAmplitude(self, amplitude, channel):
         self.genAmplitude[channel] = amplitude
-        self.send_command(f'GEN:SET:AMPL {amplitude:.4e}')
+        self.send_command(f'GEN:SET:AMPL {channel+1} {amplitude:.4e}')
 
     def set_genFreq(self, frequency, channel):
         self.genFreq[channel] = frequency
-        self.send_command(f'GEN:SET:FREQ {frequency:.4e}')
+        self.send_command(f'GEN:SET:FREQ {channel+1} {frequency:.4e}')
 
     def set_HVPSUVoltage(self, voltage, channel):
         self.HVPSUVoltage[channel] = voltage
-        self.send_command(f'HVPSU:SET:VOLT {channel} {voltage:.4e}')
+        self.send_command(f'HVPSU:SET {channel+1} {voltage}')
+
+    def setPid(self, value):
+        self.pid = value
+        self.send_command(f'PID:SET:SETPOINT {value:.4e}')
+        time.sleep(0.05)
 
     def set_SourcePSUSetVolt(self, voltage):
         self.SourcePSUSetVolt = voltage
+        self.send_command(f'SOURCE:SET {voltage:.4e}')
 
     def set_SourcePSUSetCurr(self, current):
         self.SourcePSUSetCurr = current
     
     def measure_voltmeterVoltage(self, channel):
-        ret = self.send_querry(f'VOLT:MEAS {channel-1}')
-        return float(ret)
+        ret = self.send_querry(f'VOLT:MEAS {channel}')
+        ret = float(ret.split(" ")[1])
+        print(ret)
+        return ret
     
     def measure_SourcePSUMeasVolt():
         return 0
@@ -226,6 +245,7 @@ class EuroController(Controller):
         ]
 
         monochannelParameters = [
+            (self.pidParam, self.pid),
             (self.SourcePSUSetVoltParam, self.SourcePSUSetVolt),
             (self.SourcePSUSetCurrParam, self.SourcePSUSetCurr)
         ]
