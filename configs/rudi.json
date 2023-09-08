@@ -18,12 +18,25 @@
                     "type": "voltage",
                     "channel": 1,
                     "name": "Channel 1",
-                    "default": 1000
+                    "default": 0
                 },
                 {
                     "type": "voltage",
                     "channel": 2,
-                    "name": "Channel 2"
+                    "name": "Channel 2",
+                    "default": 0
+                },
+                {
+                    "type": "voltage",
+                    "channel": 3,
+                    "name": "Channel 3",
+                    "default": 0
+                },
+                {
+                    "type": "voltage",
+                    "channel": 4,
+                    "name": "Channel 4",
+                    "default": 0
                 }
             ]
         }

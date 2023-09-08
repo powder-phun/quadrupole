@@ -1,0 +1,15 @@
+{
+    "name": "Pressure gauge",
+    "controllers": [
+        {
+            "type": "pressure",
+            "port": "COM3",
+            "params": [
+                {
+                    "type": "pressure",
+                    "name": "pressure"
+                }
+            ]
+        }
+    ]
+}

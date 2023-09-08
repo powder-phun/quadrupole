@@ -15,6 +15,7 @@ from controllers.rudiController import RudiController
 from controllers.impedanceController import ImpedanceController
 from controllers.fyController import FYController
 from controllers.euroController import EuroController
+from controllers.pressureController import PressureController
 from config import Config, ControllerConfig, ParamConfig
 
 from utils import DataPacket
@@ -86,6 +87,7 @@ class Executor(QObject):
         self.controllerTemplates[ImpedanceController.getName()] = ImpedanceController
         self.controllerTemplates[FYController.getName()] = FYController
         self.controllerTemplates[EuroController.getName()] = EuroController
+        self.controllerTemplates[PressureController.getName()] = PressureController
 
         for controller in self.config.controllers:
             self.addController(self.controllerTemplates[controller.type](controller), controller)

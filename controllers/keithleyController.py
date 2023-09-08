@@ -27,7 +27,7 @@ class KeithleyController(Controller):
     def getName():
         return "keithley"
 
-    def getIsEditableDict() -> dict[str, bool]:
+    def getIsEditableDict(self) -> dict[str, bool]:
         if self.is_cc:
             return {
                 "current": True,

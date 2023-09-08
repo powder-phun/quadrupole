@@ -1,8 +1,16 @@
 {
-    "name": "Keithley test config",
-    "defaults": {
-    },
+    "name": "Pressure gauge",
     "controllers": [
+        {
+            "type": "pressure",
+            "port": "COM3",
+            "params": [
+                {
+                    "type": "pressure",
+                    "name": "pressure"
+                }
+            ]
+        },
         {
             "type": "keithley",
             "is_cc": false,
