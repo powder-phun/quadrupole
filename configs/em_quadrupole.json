@@ -1,49 +1,80 @@
 {
     "name": "Spectrometer EuroMeasure",
     "defaults": {
-        "delay": 0.3
+        "delay": 0.1
     },
     "uses_a": true,
     "controllers": [
         {
             "type": "EuroMeasure",
-            "port": "COM3",
+            "port": "COM14",
             "params": [
-                {
-                    "type": "pid",
-                    "name": "AC_Setpoint",
-                    "default": 0.1
-                },
-                {
-                    "type": "voltmeter_voltage",
-                    "channel": 1,
-                    "name": "Monitor"
-                },
                 {
                     "type": "voltmeter_voltage",
                     "channel": 3,
-                    "name": "Detector",
+                    "name": "Detector_Voltage",
                     "unit": "A",
                     "eval_get": "x*4e-9*10/13.3"
                 },
                 {
-                    "type": "generator_frequency",
-                    "channel": 2,
-                    "name": "Frequency",
-                    "default": 7.1e6
-                },
-                {
                     "type": "HVPSU_voltage",
                     "channel": 1,
-                    "name": "HVPSU 1",
+                    "name": "DC 1",
                     "eval_set": "a"
                 },
                 {
                     "type": "HVPSU_voltage",
                     "channel": 2,
-                    "name": "HVPSU 2",
+                    "name": "DC 2",
                     "eval_set": "-a"
-                } 
+                },
+                {
+                    "type": "pid_setpoint",
+                    "name": "PID_setpoint",
+                    "default": 0.1
+                },
+                {
+                    "type": "pid_enable",
+                    "name": "PID_enable",
+                    "default": 1.0
+                },
+                {
+                    "type": "pid_p",
+                    "name": "PID_p",
+                    "default": 0
+                },
+                {
+                    "type": "pid_i",
+                    "name": "PID_i",
+                    "default": 5
+                },
+                {
+                    "type": "pid_d",
+                    "name": "PID_d",
+                    "default": 0.0
+                },
+                {
+                    "type": "voltmeter_voltage",
+                    "channel": 1,
+                    "name": "RF_Monitor"
+                },
+                {
+                    "type": "generator_frequency",
+                    "channel": 2,
+                    "name": "RF_Frequency",
+                    "default": 7.20e6
+                },
+                {
+                    "type": "generator_amplitude",
+                    "channel": 2,
+                    "name": "RF_Manual_Amplitude",
+                    "default": 0
+                },
+                {
+                    "type": "source_PSU_set_voltage",
+                    "name": "Source_Voltage",
+                    "default": 0
+                }
             ]
         }
     ]

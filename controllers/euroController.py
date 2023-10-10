@@ -11,7 +11,11 @@ class EuroController(Controller):
         self.device = None
         self.port = None
 
-        self.pidParam = [None]
+        self.pidSetpointParam = None
+        self.pidEnableParam = None
+        self.pidPParam = None
+        self.pidIParam = None
+        self.pidDParam = None
         self.genAmplitudeParam = [None, None]
         self.genFreqParam = [None, None]
         self.voltmeterVoltageParam = [None, None, None, None]
@@ -22,7 +26,11 @@ class EuroController(Controller):
         self.SourcePSUMeasCurrParam = None
 
 
-        self.pid = 0
+        self.pidSetpoint = 0
+        self.pidEnabled = False
+        self.pidP = 10
+        self.pidI = 1000
+        self.pidD = 0
         self.genAmplitude = [0, 0]
         self.genFreq = [0, 0]
         self.voltmeterVoltage = [0, 0, 0, 0]
@@ -33,7 +41,11 @@ class EuroController(Controller):
         self.SourcePSUMeasCurr = 0
 
         self.nChannelsDict = {
-            "pid": 1,
+            "pid_setpoint": 1,
+            "pid_enable": 1,
+            "pid_p": 1,
+            "pid_i": 1,
+            "pid_d": 1,
             "generator_amplitude": 2,
             "generator_frequency": 2,
             "voltmeter_voltage": 4,
@@ -54,7 +66,11 @@ class EuroController(Controller):
     @staticmethod
     def getIsEditableDict() -> dict[str, bool]:
         return {
-            "pid": True,
+            "pid_setpoint": True,
+            "pid_enable": True,
+            "pid_p": True,
+            "pid_i": True,
+            "pid_d": True,
             "generator_amplitude": True,
             "generator_frequency": True,
             "voltmeter_voltage": False,
@@ -68,7 +84,11 @@ class EuroController(Controller):
     @staticmethod
     def getUnitDict() -> dict[str, str]:
         return {
-            "pid": "V",
+            "pid_setpoint": "V",
+            "pid_enable": "-",
+            "pid_p": "-",
+            "pid_i": "-",
+            "pid_d": "-",
             "generator_amplitude": "Vpp",
             "generator_frequency": "Hz",
             "voltmeter_voltage": "V",
@@ -82,7 +102,11 @@ class EuroController(Controller):
     @staticmethod
     def getMinDict() -> dict[str, float]:
         return {
-            "pid": 0,
+            "pid_setpoint": 0,
+            "pid_enable": 0,
+            "pid_p": 0,
+            "pid_i": 0,
+            "pid_d": 0,
             "generator_amplitude": 0,
             "generator_frequency": 0,
             "voltmeter_voltage": -12,
@@ -96,7 +120,11 @@ class EuroController(Controller):
     @staticmethod
     def getMaxDict() -> dict[str, float]:
         return {
-            "pid": 4,
+            "pid_setpoint": 4,
+            "pid_enable": 1,
+            "pid_p": 1e9,
+            "pid_i": 1e9,
+            "pid_d": 1e9,
             "generator_amplitude": 6,
             "generator_frequency": 75e6,
             "voltmeter_voltage": 12,
@@ -124,8 +152,16 @@ class EuroController(Controller):
                         self.SourcePSUSetCurrParam = param.name
                     elif param.type == "source_PSU_measured_current":
                         self.SourcePSUMEasCurrParam = param.name
-                    elif param.type == "pid":
-                        self.pidParam = param.name
+                    elif param.type == "pid_setpoint":
+                        self.pidSetpointParam = param.name
+                    elif param.type == "pid_enable":
+                        self.pidEnableParam = param.name
+                    elif param.type == "pid_p":
+                        self.pidPParam = param.name
+                    elif param.type == "pid_i":
+                        self.pidIParam = param.name
+                    elif param.type == "pid_d":
+                        self.pidDParam = param.name
                     else:
                         logging.error(f"Invalid number of channels for {param}")
                 else:
@@ -147,7 +183,7 @@ class EuroController(Controller):
 
     def connect(self) -> bool:
         if self.device is None:
-            self.device = serial.Serial(self.port, 115200, serial.EIGHTBITS, serial.PARITY_NONE, serial.STOPBITS_ONE, timeout=5)
+            self.device = serial.Serial(self.port, 115200, serial.EIGHTBITS, serial.PARITY_NONE, serial.STOPBITS_ONE, timeout=1, writeTimeout=1)
             return True
         else:
             return True
@@ -161,7 +197,11 @@ class EuroController(Controller):
         ]
 
         monochannelParameters = [
-            (self.pidParam, self.setPid),
+            (self.pidSetpointParam, self.setPidSetpoint),
+            (self.pidEnableParam, self.setPidEnable),
+            (self.pidPParam, self.setPidP),
+            (self.pidIParam, self.setPidI),
+            (self.pidDParam, self.setPidD),
             (self.SourcePSUSetVoltParam, self.set_SourcePSUSetVolt),
             (self.SourcePSUSetCurrParam, self.set_SourcePSUSetCurr)
         ]
@@ -180,33 +220,74 @@ class EuroController(Controller):
         self.device.flushInput()
         self.device.write(cmd.encode())
         self.device.flushOutput()
+        print(self.device.readline().decode())
+        print(self.device.readline().decode())
 
     def send_querry(self, querry):
-        cmd = querry + '\n'
-        logging.debug(f"Querry sent: {cmd}")
-        self.device.flushInput()
-        self.device.write(cmd.encode())
-        self.device.flushOutput()
-        ret = self.device.readline().decode()
-        logging.debug(f"Received: {ret}")
-        return ret
+        value = None
+        while value is None:
+            cmd = querry + '\n'
+            ret = None
+            try:
+                self.device.flushInput()
+                self.device.write(cmd.encode())
+                logging.debug(f"Querry sent: {cmd}")
+                self.device.flushOutput()
+                time.sleep(0.01)
+                ret = self.device.readline().decode()
+                self.device.readline().decode()
+                logging.debug(f"Received: {ret}")
+            except:
+                self.device.close()
+                time.sleep(2)
+                self.device = serial.Serial(self.port, 115200, serial.EIGHTBITS, serial.PARITY_NONE, serial.STOPBITS_ONE, timeout=1, writeTimeout=1)
+            try:
+                value = float(ret)
+            except:
+                time.sleep(1)
+                try:
+                    if "ERROR" in ret:
+                        logging.info("Error received: %s", self.device.readline().decode())
+                except:
+                    logging.error("Failed to read error")
+        return value
 
     def set_genAmplitude(self, amplitude, channel):
         self.genAmplitude[channel] = amplitude
-        self.send_command(f'GEN:SET:AMPL {channel+1} {amplitude:.4e}')
+        self.send_command(f'GEN:VOLTAGE {channel+1} {amplitude:.4e}')
 
     def set_genFreq(self, frequency, channel):
         self.genFreq[channel] = frequency
-        self.send_command(f'GEN:SET:FREQ {channel+1} {frequency:.4e}')
+        self.send_command(f'GEN:FREQUENCY {channel+1} {frequency:.4e}')
 
     def set_HVPSUVoltage(self, voltage, channel):
         self.HVPSUVoltage[channel] = voltage
-        self.send_command(f'HVPSU:SET {channel+1} {voltage}')
+        self.send_command(f'HVPSU:SET {channel+1} {voltage:.4e}')
 
-    def setPid(self, value):
-        self.pid = value
-        self.send_command(f'PID:SET:SETPOINT {value:.4e}')
+    def setPidSetpoint(self, value):
+        self.pidSetpoint = value
+        self.send_command(f'PID:SETPOINT {value:.4e}')
         time.sleep(0.05)
+
+    def setPidEnable(self, value):
+        if value <= 0.5:
+            self.pidEnabled = False
+            self.send_command(f'PID:DISABLE')
+        else:
+            self.pidEnabled = True
+            self.send_command(f'PID:ENABLE')
+
+    def setPidP(self, value):
+        self.pidP = value
+        self.send_command(f'PID:SET P {value:.4e}')
+
+    def setPidI(self, value):
+        self.pidI = value
+        self.send_command(f'PID:SET I {value:.4e}')
+
+    def setPidD(self, value):
+        self.pidD = value
+        self.send_command(f'PID:SET D {value:.4e}')
 
     def set_SourcePSUSetVolt(self, voltage):
         self.SourcePSUSetVolt = voltage
@@ -216,8 +297,8 @@ class EuroController(Controller):
         self.SourcePSUSetCurr = current
     
     def measure_voltmeterVoltage(self, channel):
-        ret = self.send_querry(f'VOLT:MEAS {channel}')
-        ret = float(ret.split(" ")[1])
+        ret = self.send_querry(f'VOLT:MEASURE {channel-1}')
+        ret = float(ret)
         print(ret)
         return ret
     
@@ -245,7 +326,11 @@ class EuroController(Controller):
         ]
 
         monochannelParameters = [
-            (self.pidParam, self.pid),
+            (self.pidSetpointParam, self.pidSetpoint),
+            (self.pidEnableParam, self.pidEnabled),
+            (self.pidPParam, self.pidP),
+            (self.pidIParam, self.pidI),
+            (self.pidDParam, self.pidD),
             (self.SourcePSUSetVoltParam, self.SourcePSUSetVolt),
             (self.SourcePSUSetCurrParam, self.SourcePSUSetCurr)
         ]

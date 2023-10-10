@@ -69,6 +69,7 @@ class Executor(QObject):
 
         self.a = 0
         self.b = 0
+        self.c = 0
         self.depending = []
 
         for controller in self.config.controllers:
@@ -172,6 +173,13 @@ class Executor(QObject):
             self.params["b"].editable = True
             self.params["b"].default = self.config.defaults.get("b", 0)
 
+        if self.config.json.get("uses_c", False):
+            self.params["c"] = ParamConfig()
+            self.params["c"].name = "c"
+            self.params["c"].unit = "-"
+            self.params["c"].editable = True
+            self.params["c"].default = self.config.defaults.get("c", 0)
+
     @Slot()
     def connectControllers(self):
         self.initControllers()
@@ -204,6 +212,7 @@ class Executor(QObject):
         line = ""
         for param, value in packet.data.items():
             line += str(value) + "\t"
+        line += datetime.datetime.now().strftime('%d-%m-%y %H:%M:%S.%f')
         line += "\n"
         self.file.write(line)
 
@@ -241,9 +250,12 @@ class Executor(QObject):
             return self.a
         if param == "b":
             return self.b
+        if param == "c":
+            return self.c
         value =  self.controllers[param].read(param)
         if self.params[param].eval_get is not None:
-            value = eval(self.params[param].eval_get, {}, {"x": value, "a": self.a})
+            print(value, self.a)
+            value = eval(self.params[param].eval_get, {}, {"x": value, "a": self.a, "b": self.b, "c": self.c})
         return value
 
 
@@ -285,12 +297,14 @@ class Executor(QObject):
             self.a = value
         elif param == "b":
             self.b = value
+        elif param == "c":
+            self.c = value
         else:
             self.paramValues[param] = value
 
             # Evaluate custom expression
             if self.params[param].eval_set is not None:
-                value = eval(self.params[param].eval_set, {}, {"x": value, "a": self.a, "b": self.b})
+                value = eval(self.params[param].eval_set, {}, {"x": value, "a": self.a, "b": self.b, "c": self.c})
 
             # Check safety margins
             if self.params[param].min is not None:

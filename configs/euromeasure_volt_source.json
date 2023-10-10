@@ -8,7 +8,13 @@
                 {
                     "type": "voltmeter_voltage",
                     "channel": 3,
-                    "name": "Voltmeter 1"
+                    "name": "Voltmeter 3",
+                    "unit": "A",
+                    "eval_get": "x*4e-9*10/13.3"
+                },
+                {
+                    "type": "source_PSU_set_voltage",
+                    "name": "Source"
                 }
             ]
         }

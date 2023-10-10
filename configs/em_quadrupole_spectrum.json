@@ -3,15 +3,38 @@
     "defaults": {
         "delay": 0.1
     },
+    "uses_a": true,
+    "uses_b": true,
+    "uses_c": true,
     "controllers": [
         {
             "type": "EuroMeasure",
             "port": "COM14",
             "params": [
                 {
+                    "type": "voltmeter_voltage",
+                    "channel": 3,
+                    "name": "Detector_Voltage",
+                    "unit": "A",
+                    "eval_get": "x*4e-9*10/13.3"
+                },
+                {
+                    "type": "HVPSU_voltage",
+                    "channel": 1,
+                    "name": "DC 1",
+                    "eval_set": "a*c*0.0272+b"
+                },
+                {
+                    "type": "HVPSU_voltage",
+                    "channel": 2,
+                    "name": "DC 2",
+                    "eval_set": "-a*c*0.0272-b"
+                },
+                {
                     "type": "pid_setpoint",
-                    "name": "RF_Setpoint",
-                    "default": 0.0
+                    "name": "PID_setpoint",
+                    "default": 0.1,
+                    "eval_set": "c*0.0272"
                 },
                 {
                     "type": "pid_enable",
@@ -21,12 +44,12 @@
                 {
                     "type": "pid_p",
                     "name": "PID_p",
-                    "default": 10.0
+                    "default": 0
                 },
                 {
                     "type": "pid_i",
                     "name": "PID_i",
-                    "default": 100.0
+                    "default": 5
                 },
                 {
                     "type": "pid_d",
@@ -40,9 +63,15 @@
                 },
                 {
                     "type": "generator_frequency",
-                    "channel": 1,
+                    "channel": 2,
                     "name": "RF_Frequency",
-                    "default": 7.28e6
+                    "default": 7.22e6
+                },
+                {
+                    "type": "generator_amplitude",
+                    "channel": 2,
+                    "name": "RF_Manual_Amplitude",
+                    "default": 0
                 },
                 {
                     "type": "source_PSU_set_voltage",

@@ -105,5 +105,5 @@ class ParamConfig:
         self.unit = self.json.get("unit", None)
 
         if self.eval_set is not None:
-            if "a" in self.eval_set or "b" in self.eval_set:
+            if "a" in self.eval_set or "b" in self.eval_set or "c" in self.eval_set:
                 self.depending = True
