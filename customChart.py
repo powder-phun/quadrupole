@@ -38,6 +38,9 @@ class CustomChart(QWidget):
         self.data: dict[str, list[float]] = {}
         self.params: dict[str, ParamConfig] = None
 
+        self.is_x_log = False
+        self.is_y_log = False
+
     def initialize(self):
 
         # Visual settings
@@ -119,7 +122,10 @@ class CustomChart(QWidget):
 
         # Adding data
         for identifier, value in packet.data.items():
-            self.data[identifier].append(value)
+            if self.is_y_log:
+                self.data[identifier].append(abs(value))
+            else:
+                self.data[identifier].append(value)
         self.updateSeries(packet)
 
         self.scale()
@@ -153,14 +159,24 @@ class CustomChart(QWidget):
         self.updateYRange()
 
     def updateXRange(self):
-        self.xAxis.setRange(self.xMin, self.xMax)
-        self.ui.minXEdit.setText("{:.2E}".format(self.xMin))
-        self.ui.maxXEdit.setText("{:.2E}".format(self.xMax))
+        xMin = self.xMin
+        xMax = self.xMax
+        if self.is_x_log:
+            xMin = max(self.xMin, 1e-20)
+            xMax = max(self.xMax, 1e-18)
+        self.xAxis.setRange(xMin, xMax)
+        self.ui.minXEdit.setText("{:.2E}".format(xMin))
+        self.ui.maxXEdit.setText("{:.2E}".format(xMax))
 
     def updateYRange(self):
-        self.yAxis.setRange(self.yMin, self.yMax)
-        self.ui.minYEdit.setText("{:.2E}".format(self.yMin))
-        self.ui.maxYEdit.setText("{:.2E}".format(self.yMax))
+        yMin = self.yMin
+        yMax = self.yMax
+        if self.is_y_log:
+            yMin = max(self.yMin, 1e-20)
+            yMax = max(self.yMax, 1e-18)
+        self.yAxis.setRange(yMin, yMax)
+        self.ui.minYEdit.setText("{:.2E}".format(yMin))
+        self.ui.maxYEdit.setText("{:.2E}".format(yMax))
 
     def viewChanged(self):
         self.xMin = self.xAxis.min()
@@ -175,6 +191,7 @@ class CustomChart(QWidget):
         self.scale(True)
 
     def setLogXAxis(self, is_log=True):
+        self.is_x_log = is_log
         logging.debug(f'Setting x axis to {"log" if is_log else "linear"}')
 
         for series in self.series.values():
@@ -184,10 +201,6 @@ class CustomChart(QWidget):
         if is_log:
             self.xAxis = QLogValueAxis()
             self.xAxis.setBase(10)
-            if self.xMin <= 0:
-                self.xMin = 0.1
-            if self.xMax <= 0:
-                self.xMax = 0.1
         else:
             self.xAxis = QValueAxis()
         self.xAxis.setLabelFormat("%.2e")
@@ -200,6 +213,7 @@ class CustomChart(QWidget):
 
 
     def setLogYAxis(self, is_log=True):
+        self.is_y_log = is_log
         logging.debug(f'Setting y axis to {"log" if is_log else "linear"}')
 
         for series in self.series.values():
@@ -209,10 +223,6 @@ class CustomChart(QWidget):
         if is_log:
             self.yAxis = QLogValueAxis()
             self.yAxis.setBase(10)
-            if self.yMin <= 0:
-                self.yMin = 0.1
-            if self.yMax <= 0:
-                self.yMax = 0.1
         else:
             self.yAxis = QValueAxis()
         self.yAxis.setLabelFormat("%.2e")
@@ -221,7 +231,7 @@ class CustomChart(QWidget):
         for series in self.series.values():
             series.attachAxis(self.yAxis)
 
-        self.updateXRange()
+        self.updateYRange()
 
 
 class ModifiedChartView(QChartView):

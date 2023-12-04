@@ -6,6 +6,7 @@
     "uses_a": true,
     "uses_b": true,
     "uses_c": true,
+    "uses_d": true,
     "controllers": [
         {
             "type": "EuroMeasure",
@@ -22,19 +23,19 @@
                     "type": "HVPSU_voltage",
                     "channel": 1,
                     "name": "DC 1",
-                    "eval_set": "a*c*0.0272+b"
+                    "eval_set": "a*c*d+b"
                 },
                 {
                     "type": "HVPSU_voltage",
                     "channel": 2,
                     "name": "DC 2",
-                    "eval_set": "-a*c*0.0272-b"
+                    "eval_set": "-a*c*d-b"
                 },
                 {
                     "type": "pid_setpoint",
                     "name": "PID_setpoint",
                     "default": 0.1,
-                    "eval_set": "c*0.0272"
+                    "eval_set": "c*d"
                 },
                 {
                     "type": "pid_enable",
@@ -76,6 +77,11 @@
                 {
                     "type": "source_PSU_set_voltage",
                     "name": "Source_Voltage",
+                    "default": 0
+                },
+                {
+                    "type": "source_PSU_measured_current",
+                    "name": "Source_Current",
                     "default": 0
                 }
             ]

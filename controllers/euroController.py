@@ -151,7 +151,7 @@ class EuroController(Controller):
                     elif param.type == "source_PSU_set_current":
                         self.SourcePSUSetCurrParam = param.name
                     elif param.type == "source_PSU_measured_current":
-                        self.SourcePSUMEasCurrParam = param.name
+                        self.SourcePSUMeasCurrParam = param.name
                     elif param.type == "pid_setpoint":
                         self.pidSetpointParam = param.name
                     elif param.type == "pid_enable":
@@ -261,6 +261,7 @@ class EuroController(Controller):
         self.send_command(f'GEN:FREQUENCY {channel+1} {frequency:.4e}')
 
     def set_HVPSUVoltage(self, voltage, channel):
+        print( voltage )
         self.HVPSUVoltage[channel] = voltage
         self.send_command(f'HVPSU:SET {channel+1} {voltage:.4e}')
 
@@ -295,6 +296,7 @@ class EuroController(Controller):
 
     def set_SourcePSUSetCurr(self, current):
         self.SourcePSUSetCurr = current
+        self.send_command(f'SOURCE:SET:CURRENT {current:.4e}')
     
     def measure_voltmeterVoltage(self, channel):
         ret = self.send_querry(f'VOLT:MEASURE {channel-1}')
@@ -302,11 +304,16 @@ class EuroController(Controller):
         print(ret)
         return ret
     
-    def measure_SourcePSUMeasVolt():
-        return 0
+    def measure_SourcePSUMeasVolt(self):
+        ret = self.send_querry(f'SOURCE:READ:VOLTAGE')
+        print(ret)
+        ret = float(ret)
+        return ret
 
-    def measure_SourcePSUMeasCurr():
-        return 0
+    def measure_SourcePSUMeasCurr(self):
+        ret = self.send_querry(f'SOURCE:READ:CURRENT')
+        ret = float(ret)
+        return ret
 
     def enable(self, state: bool):
         pass
@@ -314,9 +321,9 @@ class EuroController(Controller):
     def read(self, param: str) -> float:
         if param in self.voltmeterVoltageParam:
             return self.measure_voltmeterVoltage(self.voltmeterVoltageParam.index(param)+1)
-        if param == self.SourcePSUMeasVolt:
+        if param == self.SourcePSUMeasVoltParam:
             return self.measure_SourcePSUMeasVolt()
-        if param == self.SourcePSUMeasCurr:
+        if param == self.SourcePSUMeasCurrParam:
             return self.measure_SourcePSUMeasCurr()
 
         multichannelParameters = [

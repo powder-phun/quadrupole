@@ -70,6 +70,7 @@ class Executor(QObject):
         self.a = 0
         self.b = 0
         self.c = 0
+        self.d = 0
         self.depending = []
 
         for controller in self.config.controllers:
@@ -180,6 +181,13 @@ class Executor(QObject):
             self.params["c"].editable = True
             self.params["c"].default = self.config.defaults.get("c", 0)
 
+        if self.config.json.get("uses_d", False):
+            self.params["d"] = ParamConfig()
+            self.params["d"].name = "d"
+            self.params["d"].unit = "-"
+            self.params["d"].editable = True
+            self.params["d"].default = self.config.defaults.get("d", 0)
+
     @Slot()
     def connectControllers(self):
         self.initControllers()
@@ -252,10 +260,12 @@ class Executor(QObject):
             return self.b
         if param == "c":
             return self.c
+        if param == "d":
+            return self.d
         value =  self.controllers[param].read(param)
         if self.params[param].eval_get is not None:
             print(value, self.a)
-            value = eval(self.params[param].eval_get, {}, {"x": value, "a": self.a, "b": self.b, "c": self.c})
+            value = eval(self.params[param].eval_get, {}, {"x": value, "a": self.a, "b": self.b, "c": self.c, "d": self.d})
         return value
 
 
@@ -299,12 +309,14 @@ class Executor(QObject):
             self.b = value
         elif param == "c":
             self.c = value
+        elif param == "d":
+            self.d = value
         else:
             self.paramValues[param] = value
 
             # Evaluate custom expression
             if self.params[param].eval_set is not None:
-                value = eval(self.params[param].eval_set, {}, {"x": value, "a": self.a, "b": self.b, "c": self.c})
+                value = eval(self.params[param].eval_set, {}, {"x": value, "a": self.a, "b": self.b, "c": self.c, "d": self.d})
 
             # Check safety margins
             if self.params[param].min is not None:
