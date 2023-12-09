@@ -1,0 +1,53 @@
+{
+    "name": "HP34401A Config",
+    "controllers": [
+        {
+            "type": "HP34401A",
+            "ip": "192.168.1.7",
+            "speed": "Middle",
+            "range": "10",
+            "params": [
+                {
+                    "type": "VDC",
+                    "name": "Keysight V"
+                }
+            ]
+        },
+        {
+            "type": "HP34401A",
+            "ip": "192.168.1.8",
+            "speed": "Middle",
+            "range": "10",
+            "params": [
+                {
+                    "type": "VDC",
+                    "name": "SDM3045X"
+                }
+            ]
+        },
+        {
+            "type": "fy",
+            "port": "/dev/ttyUSB0",
+            "params": [
+                {  
+                    "type": "amplitude",
+                    "channel": 1,
+                    "name": "Amplitude",
+                    "default": 1
+                },
+                {
+                    "type": "frequency",
+                    "channel": 1,
+                    "name": "Frequency",
+                    "default": 1e6
+                },
+                {
+                    "type": "offset",
+                    "channel": 1,
+                    "name": "Offset",
+                    "default": 0
+                }
+            ]
+        }
+   ]
+}

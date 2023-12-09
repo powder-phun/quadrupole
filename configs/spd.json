@@ -3,15 +3,28 @@
     "controllers": [
         {
             "type": "spd",
-            "ip": "192.168.1.4",
+            "ip": "192.168.1.2",
             "params": [
                 {
-                    "type": "voltageOne",
-                    "name": "Voltage 1"
+                    "type": "voltage",
+                    "name": "Voltage 1",
+                    "channel": 1
                 },
                 {
-                    "type": "currentOne",
-                    "name": "Current 1"
+                    "type": "current",
+                    "name": "Current 1",
+                    "channel": 1
+                }
+            ]
+        },
+        {
+            "type": "EuroMeasure",
+            "port": "/dev/ttyACM0",
+            "params": [
+                {
+                    "type": "voltmeter_voltage",
+                    "channel": 3,
+                    "name": "Voltmeter 4"
                 }
             ]
         }

@@ -1,0 +1,62 @@
+{
+    "name": "Spectrometer EuroMeasure",
+    "defaults": {
+        "delay": 0.1
+    },
+    "controllers": [
+        {
+            "type": "EuroMeasure",
+            "port": "/dev/ttyACM0",
+            "params": [
+                {
+                    "type": "voltmeter_raw",
+                    "channel": 1,
+                    "address": 14,
+                    "name": "ch1a"
+                },
+                {
+                    "type": "voltmeter_raw",
+                    "channel": 2,
+                    "address": 14,
+                    "name": "ch2a"
+                },
+                {
+                    "type": "voltmeter_raw",
+                    "channel": 3,
+                    "address": 14,
+                    "name": "ch3a"
+                },
+                {
+                    "type": "voltmeter_raw",
+                    "channel": 4,
+                    "address": 14,
+                    "name": "ch4a"
+                },
+                {
+                    "type": "voltmeter_raw",
+                    "channel": 1,
+                    "address": 15,
+                    "name": "ch1b"
+                },
+                {
+                    "type": "voltmeter_raw",
+                    "channel": 2,
+                    "address": 15,
+                    "name": "ch2b"
+                },
+                {
+                    "type": "voltmeter_raw",
+                    "channel": 3,
+                    "address": 15,
+                    "name": "ch3b"
+                },
+                {
+                    "type": "voltmeter_raw",
+                    "channel": 4,
+                    "address": 15,
+                    "name": "ch4b"
+                }
+            ]
+        }
+    ]
+}
