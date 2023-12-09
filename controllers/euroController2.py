@@ -118,8 +118,20 @@ class Voltmeter_raw(EM_parameter):
     unit = ""
     n_channels = 4
 
-
-parameter_class_dict = {"source_psu_set_current": Source_psu_set_current,
+parameter_class_dict = {"pid_p": Pid_p,
+                        "pid_i": Pid_i,
+                        "pid_d": Pid_d,
+                        "pid_state": Pid_state,
+                        "pid_setpoint": Pid_setpoint,
+                        "generator_amplitude": Generator_amplitude,
+                        "generator_frequency": Generator_frequency,
+                        "hvpsu_voltage": Hvpsu_voltage,
+                        "source_psu_set_voltage": Source_psu_set_voltage,
+                        "source_psu_set_current": Source_psu_set_current,
+                        "source_psu_measured_voltage": Source_psu_measured_voltage,
+                        "source_psu_set_current": Source_psu_set_current,
+                        "source_psu_measured_voltage": Source_psu_measured_voltage,
+                        "source_psu_set_current": Source_psu_set_current,
                         "source_psu_measured_voltage": Source_psu_measured_voltage,
                         "source_psu_measured_current": Source_psu_measured_current,
                         "voltmeter_voltage": Voltmeter_voltage,
