@@ -115,7 +115,15 @@ class Voltmeter_raw(EM_parameter):
         return em.get_voltmeter_raw(self.channel, self.address)
 
     isEditable = False
-    unit = ""
+    unit = "counts"
+    n_channels = 4
+
+class Voltmeter_avglen(EM_parameter):
+    def adjust(self, avglen):
+        return em.set_voltmeter_avglen(self.channel, avglen, self.address)
+
+    isEditable = True
+    unit = "samples"
     n_channels = 4
 
 parameter_class_dict = {"pid_p": Pid_p,
@@ -135,7 +143,8 @@ parameter_class_dict = {"pid_p": Pid_p,
                         "source_psu_measured_voltage": Source_psu_measured_voltage,
                         "source_psu_measured_current": Source_psu_measured_current,
                         "voltmeter_voltage": Voltmeter_voltage,
-                        "voltmeter_raw": Voltmeter_raw}
+                        "voltmeter_raw": Voltmeter_raw,
+                        "voltmeter_avglen": Voltmeter_avglen}
 
 class EuroController(Controller):
     def __init__(self, config):

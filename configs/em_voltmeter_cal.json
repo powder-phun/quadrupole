@@ -1,12 +1,13 @@
 {
     "name": "Spectrometer EuroMeasure",
+    "uses_a": true,
     "defaults": {
         "delay": 0.1
     },
     "controllers": [
         {
             "type": "HP34401A",
-            "ip": "192.168.1.4",
+            "ip": "192.168.1.6",
             "speed": "Middle",
             "range": "10",
             "params": [
@@ -17,26 +18,18 @@
             ]
         },
         {
-            "type": "fy",
-            "port": "/dev/ttyUSB0",
+            "type": "spd",
+            "ip": "192.168.1.5",
             "params": [
-                {  
-                    "type": "amplitude",
-                    "channel": 1,
-                    "name": "Amplitude",
-                    "default": 1
+                {
+                    "type": "voltage",
+                    "name": "Voltage 1",
+                    "channel": 1
                 },
                 {
-                    "type": "frequency",
-                    "channel": 1,
-                    "name": "Frequency",
-                    "default": 1e6
-                },
-                {
-                    "type": "offset",
-                    "channel": 1,
-                    "name": "Offset",
-                    "default": 0
+                    "type": "current",
+                    "name": "Current 1",
+                    "channel": 1
                 }
             ]
         },
