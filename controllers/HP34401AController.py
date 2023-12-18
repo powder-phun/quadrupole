@@ -77,6 +77,8 @@ class HP34401AController(Controller):
                 self.type = "CURR:AC"
             elif param.type == "FREQ":
                 self.type = "FREQ"
+            elif param.type == "TEMP":
+                self.type = "TEMP THER,KITS90"
             else:
                 logging.error(f"Invalid parameter name {param}")
 

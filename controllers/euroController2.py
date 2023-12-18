@@ -14,44 +14,53 @@ class EM_parameter():
         self.channel = channel
         self.address = address
 
+    def read(self):
+        return self.state
+    
+    def adjust(self, value):
+        self.state = value
+        self.set(value)
+
+
     isEditable = None
     unit = ""
     min = float('-inf')
     max = float('inf')
     n_channels = None
+    state = None
 
 class Pid_p(EM_parameter):
-    def adjust(self, p):
+    def set(self, p):
         return em.set_pid_d(p, self.address)
 
     isEditable = True
 
 class Pid_i(EM_parameter):
-    def adjust(self, i):
+    def set(self, i):
         return em.set_pid_d(i, self.address)
 
     isEditable = True
 
 class Pid_d(EM_parameter):
-    def adjust(self, d):
+    def set(self, d):
         return em.set_pid_d(d, self.address)
 
     isEditable = True
 
 class Pid_state(EM_parameter):
-    def adjust(self, state):
+    def set(self, state):
         return em.set_pid_state(state, self.address)
 
     isEditable = True
 
 class Pid_setpoint(EM_parameter):
-    def adjust(self, setpoint):
+    def set(self, setpoint):
         return em.set_pid_setpoint(setpoint, self.address)
 
     isEditable = True
 
 class Generator_amplitude(EM_parameter):
-    def adjust(self, amplitude):
+    def set(self, amplitude):
         return em.set_generator_amplitude(self.channel, amplitude, self.address)
 
     isEditable = True
@@ -59,7 +68,7 @@ class Generator_amplitude(EM_parameter):
     n_channels = 2
 
 class Generator_frequency(EM_parameter):
-    def adjust(self, frequenecy):
+    def set(self, frequenecy):
         return em.set_generator_frequency(self.channel, frequenecy, self.address)
 
     isEditable = True
@@ -67,7 +76,7 @@ class Generator_frequency(EM_parameter):
     n_channels = 2
 
 class Hvpsu_voltage(EM_parameter):
-    def adjust(self, voltage):
+    def set(self, voltage):
         return em.set_hvpsu_voltage(self.channel, voltage, self.address)
 
     isEditable = True
@@ -75,14 +84,14 @@ class Hvpsu_voltage(EM_parameter):
     n_channels = 4
 
 class Source_psu_set_voltage(EM_parameter):
-    def adjust(self, voltage):
+    def set(self, voltage):
         return em.set_source_psu_voltage(voltage, self.address)
 
     isEditable = True
     unit = "V"
 
 class Source_psu_set_current(EM_parameter):
-    def adjust(self, current):
+    def set(self, current):
         return em.set_source_psu_current(current, self.address)
 
     isEditable = True
@@ -119,8 +128,8 @@ class Voltmeter_raw(EM_parameter):
     n_channels = 4
 
 class Voltmeter_avglen(EM_parameter):
-    def adjust(self, avglen):
-        return em.set_voltmeter_avglen(self.channel, avglen, self.address)
+    def set(self, avglen):
+        em.set_voltmeter_avglen(self.channel, avglen, self.address)
 
     isEditable = True
     unit = "samples"

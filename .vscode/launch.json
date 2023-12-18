@@ -10,7 +10,8 @@
             "request": "launch",
             "program": "main.py",
             "console": "integratedTerminal",
-            "justMyCode": true
+            "justMyCode": false,
+            "args": ["-c", "/home/jan/code/quadrupole/configs/em_voltmeter_cal.json"]
         }
     ]
 }
