@@ -80,6 +80,22 @@ class Hvpsu_voltage(EM_parameter):
         return em.set_hvpsu_voltage(self.channel, voltage, self.address)
 
     isEditable = True
+    unit = "V"
+    n_channels = 4
+
+class Hvpsu_raw(EM_parameter):
+    def set(self, voltage):
+        return em.set_hvpsu_raw(self.channel, voltage, self.address)
+
+    isEditable = True
+    unit = "lsb"
+    n_channels = 4
+
+class Hvpsu_(EM_parameter):
+    def set(self, voltage):
+        return em.set_hvpsu_voltage(self.channel, voltage, self.address)
+
+    isEditable = True
     unit = "A"
     n_channels = 4
 
@@ -143,6 +159,7 @@ parameter_class_dict = {"pid_p": Pid_p,
                         "generator_amplitude": Generator_amplitude,
                         "generator_frequency": Generator_frequency,
                         "hvpsu_voltage": Hvpsu_voltage,
+                        "hvpsu_raw": Hvpsu_raw,
                         "source_psu_set_voltage": Source_psu_set_voltage,
                         "source_psu_set_current": Source_psu_set_current,
                         "source_psu_measured_voltage": Source_psu_measured_voltage,

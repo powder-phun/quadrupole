@@ -1,0 +1,61 @@
+{
+    "name": "HP34401A Config",
+    "uses_a": true,
+    "uses_b": true,
+    "controllers": [
+        {
+            "type": "HP34401A",
+            "port": "/dev/ttyUSB0",
+            "int_nplc": 10,
+            "range": "1000",
+            "params": [
+                {
+                    "type": "VDC",
+                    "name": "Keithley V"
+                }
+            ]
+        },
+        {
+            "type": "HP34401A",
+            "ip": "192.168.1.7",
+            "int_nplc": 10,
+            "range": "1000",
+            "params": [
+                {
+                    "type": "VDC",
+                    "name": "Keysight V"
+                }
+            ]
+        },
+        {
+            "type": "EuroMeasure",
+            "port": "/dev/ttyACM0",
+            "params": [
+                {
+                    "type": "hvpsu_raw",
+                    "channel": 1,
+                    "name": "hvpsu1",
+                    "eval_set": "a"
+                },
+                {
+                    "type": "hvpsu_raw",
+                    "channel": 2,
+                    "name": "hvpsu2",
+                    "eval_set": "a+b"
+                },
+                {
+                    "type": "hvpsu_raw",
+                    "channel": 3,
+                    "name": "hvpsu3",
+                    "eval_set": "a"
+                },
+                {
+                    "type": "hvpsu_raw",
+                    "channel": 4,
+                    "name": "hvpsu4",
+                    "eval_set": "a+b"
+                }
+            ]
+        }
+   ]
+}

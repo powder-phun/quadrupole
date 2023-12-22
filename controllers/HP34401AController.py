@@ -16,6 +16,7 @@ class HP34401AController(Controller):
         self.device = None
         self.ip = None
         self.usb = None
+        self.serial_port = None
         self.param = None
         self.type = None
 
@@ -60,6 +61,8 @@ class HP34401AController(Controller):
             self.ip = self.config.json["ip"]
         elif "usb" in self.config.json:
             self.usb = self.config.json["usb"]
+        elif "port" in self.config.json:
+            self.serial_port = self.config.json["port"]
         else:
             logging.error("No ip address or usb specified")
             return False
@@ -90,8 +93,15 @@ class HP34401AController(Controller):
         else:
             self.averaging = False
         
+        if "int_nplc" in self.config.json:
+            self.nplc = self.config.json["int_nplc"]
+        else:
+            self.nplc = "default"
+        
         if "range" in self.config.json:
-            self.type += " " + str(self.config.json["range"])
+            self.range = self.config.json["range"]
+        else:
+            self.range = ""
 
 
         return True
@@ -100,15 +110,16 @@ class HP34401AController(Controller):
         logging.error("No adjustable params")
 
     def connect(self) -> bool:
-        self.device = Device(usb=self.usb, ip=self.ip)
+        self.device = Device(usb=self.usb, ip=self.ip, serial_port=self.serial_port)
         ret = self.device.connect()
-        self.device.write(f"CONF:{self.type}")
+        self.device.write(f"CONF:{self.type} {str(self.range)}")
         self.device.write(f"trigger:source immediate")
         if self.averaging:
             pass#self.device.write(f"samp:count 100")
         else:
             self.device.write(f"trigger:count 1")
         #self.device.write(f"trigger:delay 0")
+        self.device.write(f"sense:{self.type}:nplc {str(self.nplc)}")
         self.device.write(f"initiate")
         return ret
 

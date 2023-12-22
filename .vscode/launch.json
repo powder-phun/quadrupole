@@ -11,7 +11,7 @@
             "program": "main.py",
             "console": "integratedTerminal",
             "justMyCode": false,
-            "args": ["-c", "/home/jan/code/quadrupole/configs/em_voltmeter_cal.json"]
+            "args": ["-c", "/home/jan/code/quadrupole/configs/em_hvpsu_cal.json", "--log", "DEBUG"]
         }
     ]
 }

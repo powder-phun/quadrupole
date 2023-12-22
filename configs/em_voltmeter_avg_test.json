@@ -1,0 +1,28 @@
+{
+    "name": "Spectrometer EuroMeasure",
+    "uses_a": true,
+    "defaults": {
+        "delay": 0.1
+    },
+    "controllers": [
+        {
+            "type": "EuroMeasure",
+            "port": "/dev/ttyACM0",
+            "params": [
+                {
+                    "type": "voltmeter_raw",
+                    "channel": 2,
+                    "address": 14,
+                    "name": "ch2a"
+                },
+                {
+                    "type": "voltmeter_avglen",
+                    "channel": 2,
+                    "address": 14,
+                    "default": 10,
+                    "name": "ch2a avglen"
+                }
+            ]
+        }
+    ]
+}

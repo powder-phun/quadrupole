@@ -3,9 +3,8 @@
     "controllers": [
         {
             "type": "HP34401A",
-            "ip": "192.168.1.7",
-            "speed": "Middle",
-            "averaging_time": 10,
+            "port": "/dev/ttyUSB0",
+            "int_nplc": 3.8461,
             "range": "10",
             "params": [
                 {

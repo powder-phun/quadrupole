@@ -1,0 +1,45 @@
+{
+    "name": "HP34401A Config",
+    "controllers": [
+        {
+            "type": "HP34401A",
+            "port": "/dev/ttyUSB0",
+            "int_nplc": 10,
+            "range": "10",
+            "params": [
+                {
+                    "type": "VDC",
+                    "name": "Kithley V"
+                }
+            ]
+        },
+        {
+            "type": "HP34401A",
+            "ip": "192.168.1.7",
+            "int_nplc": 10,
+            "range": "10",
+            "params": [
+                {
+                    "type": "VDC",
+                    "name": "Keysight V"
+                }
+            ]
+        },
+        {
+            "type": "spd",
+            "ip": "192.168.1.2",
+            "params": [
+                {
+                    "type": "voltage",
+                    "name": "Voltage 1",
+                    "channel": 1
+                },
+                {
+                    "type": "current",
+                    "name": "Current 1",
+                    "channel": 1
+                }
+            ]
+        }
+   ]
+}
