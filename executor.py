@@ -17,6 +17,7 @@ from controllers.fyController import FYController
 from controllers.euroController2 import EuroController
 from controllers.pressureController import PressureController
 from controllers.HP34401AController import HP34401AController
+from controllers.HamegHM5014Controller import HamegHM5014Controller
 from config import Config, ControllerConfig, ParamConfig
 
 from utils import DataPacket
@@ -92,6 +93,7 @@ class Executor(QObject):
         self.controllerTemplates[EuroController.getName()] = EuroController
         self.controllerTemplates[PressureController.getName()] = PressureController
         self.controllerTemplates[HP34401AController.getName()] = HP34401AController
+        self.controllerTemplates[HamegHM5014Controller.getName()] = HamegHM5014Controller
 
         for controller in self.config.controllers:
             self.addController(self.controllerTemplates[controller.type](controller), controller)
@@ -216,6 +218,7 @@ class Executor(QObject):
 
         time.sleep(self.delay)
         packet = DataPacket(time.time() - self.startTime, self.counter)
+        print(self.params.keys())
         for param in self.params.keys():
             packet.addData(param, self.read(param))
 
@@ -264,7 +267,9 @@ class Executor(QObject):
             return self.c
         if param == "d":
             return self.d
+        
         value =  self.controllers[param].read(param)
+
         if self.params[param].eval_get is not None:
             print(value, self.a)
             value = eval(self.params[param].eval_get, {}, {"x": value, "a": self.a, "b": self.b, "c": self.c, "d": self.d})

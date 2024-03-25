@@ -1,13 +1,27 @@
 {
-    "name": "Spectrometer EuroMeasure",
+    "name": "Voltmeter Calibration",
     "uses_a": true,
     "defaults": {
-        "delay": 6
+        "delay": 6,
+        "sweepOne": {
+            "enabled": true,
+            "param": "Voltage 1",
+            "min": 0,
+            "max": 24,
+            "steps": 41
+        },
+        "sweepTwo": {
+            "enabled": true,
+            "param": "a",
+            "min": 1,
+            "max": 100000,
+            "steps": 100001
+        }
     },
     "controllers": [
         {
             "type": "spd",
-            "ip": "192.168.1.7",
+            "ip": "169.254.100.103",
             "params": [
                 {
                     "type": "voltage",
@@ -92,7 +106,7 @@
         },
         {
             "type": "HP34401A",
-            "ip": "192.168.1.5",
+            "ip": "169.254.100.101",
             "speed": "Middle",
             "averaging_time": 1,
             "range": "10",
@@ -105,7 +119,7 @@
         },
         {
             "type": "HP34401A",
-            "ip": "192.168.1.3",
+            "ip": "169.254.100.104",
             "params": [
                 {
                     "type": "TEMP",

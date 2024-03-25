@@ -1,0 +1,15 @@
+{
+    "name": "Temp logger",
+    "controllers": [
+        {
+            "type": "HP34401A",
+            "ip": "169.254.100.101",
+            "params": [
+                {
+                    "type": "TEMP",
+                    "name": "T"
+                }
+            ]
+        }
+   ]
+}

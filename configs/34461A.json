@@ -4,12 +4,12 @@
         {
             "type": "HP34401A",
             "port": "/dev/ttyUSB0",
-            "int_nplc": 3.8461,
+            "int_nplc": 10,
             "range": "10",
             "params": [
                 {
                     "type": "VDC",
-                    "name": "Keysight V"
+                    "name": "Kithley V"
                 }
             ]
         }
