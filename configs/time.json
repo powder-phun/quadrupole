@@ -1,0 +1,14 @@
+{
+    "name": "unix time demo Config",
+    "controllers": [
+        {
+            "type": "UnixTime",
+            "params": [
+                {
+                    "type": "time",
+                    "name": "time"
+                }
+            ]
+        }
+   ]
+}

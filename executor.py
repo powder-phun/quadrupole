@@ -18,6 +18,7 @@ from controllers.euroController2 import EuroController
 from controllers.pressureController import PressureController
 from controllers.HP34401AController import HP34401AController
 from controllers.HamegHM5014Controller import HamegHM5014Controller
+from controllers.UnixTimeController import UnixTimeController
 from config import Config, ControllerConfig, ParamConfig
 
 from utils import DataPacket
@@ -94,6 +95,7 @@ class Executor(QObject):
         self.controllerTemplates[PressureController.getName()] = PressureController
         self.controllerTemplates[HP34401AController.getName()] = HP34401AController
         self.controllerTemplates[HamegHM5014Controller.getName()] = HamegHM5014Controller
+        self.controllerTemplates[UnixTimeController.getName()] = UnixTimeController
 
         for controller in self.config.controllers:
             self.addController(self.controllerTemplates[controller.type](controller), controller)
