@@ -81,7 +81,7 @@ class HP34401AController(Controller):
             elif param.type == "FREQ":
                 self.type = "FREQ"
             elif param.type == "TEMP":
-                self.type = "TEMP THER,KITS90"
+                self.type = "TEMP RTD,PT100"
             else:
                 logging.error(f"Invalid parameter name {param}")
 

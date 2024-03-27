@@ -135,7 +135,16 @@
             "params": [
                 {
                     "type": "TEMP",
-                    "name": "temp"
+                    "name": "temp_pt100"
+                }
+            ]
+        },
+        {
+            "type": "UnixTime",
+            "params": [
+                {
+                    "type": "time",
+                    "name": "time"
                 }
             ]
         }
