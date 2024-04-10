@@ -21,7 +21,7 @@
     "controllers": [
         {
             "type": "spd",
-            "ip": "169.254.100.10",
+            "ip": "169.254.100.100",
             "params": [
                 {
                     "type": "voltage",
