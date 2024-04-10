@@ -3,9 +3,10 @@
     "controllers": [
         {
             "type": "HM5014",
-            "port": "/dev/ttyS0",
-            "center_freq": "48.00",
+            "port": "/dev/ttyUSB0",
             "config_commands": "#vm0\r",
+            "span": 500,
+            "center_freq": 253,
             "delay": 1,
             "params": [
                 {
