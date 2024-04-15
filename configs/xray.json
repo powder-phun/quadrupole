@@ -1,0 +1,86 @@
+{
+    "name": "xray measurements",
+    "defaults": {
+    },
+    "controllers": [
+        {
+            "type": "EuroMeasure",
+            "port": "/dev/ttyACM0",
+            "params": [
+                {
+                    "type": "source_psu_set_voltage",
+                    "address": 3,
+                    "default": 0,
+                    "name": "focus_V"
+                },
+                {
+                    "type": "source_psu_set_voltage",
+                    "address": 7,
+                    "default": 0,
+                    "name": "E+P_V"
+                }
+            ]
+        },
+        {
+            "type": "HP34401A",
+            "ip": "169.254.100.12",
+            "speed": "Slow",
+            "params": [
+                {
+                    "type": "VDC",
+                    "name": "anode_v",
+                    "eval_get": "x*1e3",
+                    "unit": "V"
+                }
+            ]
+        },
+        {
+            "type": "HP34401A",
+            "port": "/dev/ttyS0",
+            "int_nplc": 10,
+            "params": [
+                {
+                    "type": "VDC",
+                    "name": "focus_I",
+                    "eval_get": "x/1e4",
+                    "unit": "A"
+                }
+            ]
+        },
+        {
+            "type": "HP34401A",
+            "ip": "169.254.100.30",
+            "speed": "Slow",
+            "params": [
+                {
+                    "type": "VDC",
+                    "name": "E+P_I",
+                    "eval_get": "x/1e4",
+                    "unit": "A"
+                }
+            ]
+        },
+        {
+            "type": "HP34401A",
+            "ip": "169.254.100.20",
+            "speed": "Slow",
+            "params": [
+                {
+                    "type": "VDC",
+                    "name": "anode_I",
+                    "unit": "A",
+                    "eval_get": "x*0.00066-4.48e-5"
+                }
+            ]
+        },       
+        {
+            "type": "UnixTime",
+            "params": [
+                {
+                    "type": "time",
+                    "name": "time"
+                }
+            ]
+        }
+    ]
+}
