@@ -1,7 +1,37 @@
 {
-    "name": "HM5014 Config",
+    "name": "Spectrometer EuroMeasure",
     "uses_a": true,
+    "defaults": {
+        "delay": 0.1
+    },
     "controllers": [
+        {
+            "type": "EuroMeasure",
+            "port": "/dev/ttyACM0",
+            "params": [
+                {
+                    "type": "generator_amplitude",
+                    "channel": 1,
+                    "name": "A1"
+                },
+                {
+                    "type": "generator_frequency",
+                    "channel": 1,
+                    "name": "f1"
+                },
+                {
+                    "type": "generator_amplitude",
+                    "channel": 2,
+                    "name": "A2"
+                },
+                {
+                    "type": "generator_frequency",
+                    "channel": 2,
+                    "name": "f2",
+                    "eval_set": "a"
+                }
+            ]
+        },
         {
             "type": "HM5014",
             "port": "/dev/ttyUSB0",
@@ -50,5 +80,5 @@
                 }
             ]
         }
-   ]
+    ]
 }

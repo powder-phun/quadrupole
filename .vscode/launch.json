@@ -20,7 +20,7 @@
             "justMyCode": false,
             "args": [
                 "-c",
-                "/home/jan/code/quadrupole/configs/em_hvpsu_cal.json",
+                "/home/jan/code/quadrupole/configs/em_generator.json",
                 "--log",
                 "DEBUG"
             ]

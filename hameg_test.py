@@ -8,5 +8,5 @@ print(config.controllers)
 hm = HamegHM5014Controller(config.controllers[0])
 
 hm.connect()
-time.sleep(1)
+
 hm.read("Amax")

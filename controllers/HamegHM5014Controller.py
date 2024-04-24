@@ -10,8 +10,13 @@ import scipy as sp
 from controllers.controller import Controller
 from config import ParamConfig
 from config import ControllerConfig
-from time import sleep
+#from time import sleep
+#from time import time
+import time
 from device import Device
+
+
+#base_freq has to be first parameter invoked in config!
 
 class HamegHM5014Controller(Controller):
     def __init__(self, config):
@@ -23,6 +28,7 @@ class HamegHM5014Controller(Controller):
         self.serial_port = None
         self.param = None
         self.type = None
+        self.measurement_timestamp = 0
 
         self.parseConfig()
 
@@ -33,13 +39,29 @@ class HamegHM5014Controller(Controller):
     @staticmethod
     def getIsEditableDict() -> dict[str, bool]:
         return {
-            "Amax": False,
+            "base_freq": True,
+            "timestamp": False,
+            "Pmax": False,
+            "lin_Pmax": False,
+            "base_P": False,
+            "base_dB": False,
+            "base_V": False,
+            "thd": False,
+            "lin_thd": False
         }
     
     @staticmethod
     def getUnitDict() -> dict[str, str]:
         return {
-            "Amax": "dB"
+            "base_freq": "Hz",
+            "timestamp": "s",
+            "Pmax": "dBm",
+            "lin_Pmax": "w",
+            "base_P": "w",
+            "base_dB": "dB",
+            "base_V": "V",
+            "thd": "dB",
+            "lin_thd": ""
         }
 
     @staticmethod
@@ -65,6 +87,11 @@ class HamegHM5014Controller(Controller):
         else:
             self.center_freq = None
         
+        if "attenuator" in self.config.json:
+            self.attenuator = int(self.config.json["attenuator"])
+        else:
+            self.attenuator = None
+        
         if "span" in self.config.json:
             self.span = self.config.json["span"]
         else:
@@ -78,7 +105,7 @@ class HamegHM5014Controller(Controller):
         return True
 
     def adjust(self, param: str, value: float) -> None:
-        logging.error("No adjustable params")
+        self.base_freq = value
 
     def connect(self) -> bool:
         self.ser = serial.Serial(self.serial_port, 4800)
@@ -91,16 +118,21 @@ class HamegHM5014Controller(Controller):
         self.ser.write(b'#kl1\r')
         time.sleep(0.1)
         if self.center_freq is not None:
-            self.ser.write("#cf{:08.3f}\r".format(self.center_freq).encode())
-            print("#cf{:08.3f}\r".format(self.center_freq).encode())
+            self.ser.write("#cf{:08.3f}\r".format(self.center_freq/1.0e6).encode())
+            print("#cf{:08.3f}\r".format(self.center_freq/1.0e6).encode())
             time.sleep(0.1)
         if self.span is not None:
             self.ser.write((f"#sp{int(self.span)}\r").encode())
-            print((f"#sp{int(self.span)}\r").encode())
+            print((f"#sp{int(self.span/1e6)}\r").encode())
             time.sleep(0.1)
+        if self.attenuator is not None:
+            self.ser.write((f"#at{int(self.attenuator)}\r").encode())
+            print((f"#at{int(self.attenuator)}\r").encode())
+            time.sleep(0.5)
         if self.config_commands is not None:
             pass#self.ser.write(self.config_commands.encode())
         print("sent")
+        time.sleep(1)
         return True
 
 
@@ -108,54 +140,109 @@ class HamegHM5014Controller(Controller):
         print("enable")
         pass
 
+    def measure(self):
+        self.ser.write((f"#dm0\r").encode())
+        time.sleep(0.1)
+
+        self.ser.write((f"#at{int(self.attenuator)}\r").encode())
+        time.sleep(0.5)
+
+        self.ser.write((f"#vm3\r").encode())
+        time.sleep(6)
+        
+        self.ser.flushInput()
+        self.ser.write((f"#bm1\r").encode())
+        c = self.ser.read(5)
+        c = self.ser.read(2001)
+        
+        print(f"max: {np.max(np.frombuffer(c, dtype=np.uint8))}")
+
+        if np.max(np.frombuffer(c, dtype=np.uint8)) > 230 and self.attenuator < 35:
+            self.attenuator += 10
+            self.measure()
+            return
+        
+        if np.max(np.frombuffer(c, dtype=np.uint8)) < 177 and self.attenuator > 5:
+            self.attenuator -= 10
+            self.measure()
+            return
+
+        self.peaks, self.properties = sp.signal.find_peaks(np.frombuffer(c, dtype=np.uint8), height=65, threshold=None, distance=None, prominence=None, width=None, wlen=None, rel_height=0.5, plateau_size=None)
+
+        if len(self.peaks)==0:
+            self.base_dB = -100
+            self.Pmax = -100
+            self.thd = 0
+            self.lin_Pmax = 0
+            self.lin_thd = 1
+            self.lin_Pmax = 0
+
+        self.amplitudes = np.frombuffer(c, dtype=np.uint8)*0.4-120.8+self.attenuator #in dB
+        self.frequencies = np.linspace(self.center_freq-self.span/2, self.center_freq+self.span/2, 2001) #in Hz
+        self.lin_powers = 10**(self.amplitudes/10) * 1e-3 #in w
+        
+
+        #find base frequency:
+        f_diff = np.abs(self.frequencies[self.peaks] - self.base_freq)
+        self.base_peak_index = f_diff.argmin()
+        self.harmonic_peaks = np.delete(self.peaks, self.base_peak_index)
+
+
+        self.base_P = self.lin_powers[self.peaks[self.base_peak_index]]
+        self.base_dB = self.amplitudes[self.peaks[self.base_peak_index]]
+        self.base_V = np.sqrt(self.base_P*50)
+
+        print(f"base index: {self.base_peak_index}, base freq: {self.frequencies[self.peaks[self.base_peak_index]]}, base dB: {self.base_dB}")
+
+        #plt.plot(frequencies, amplitudes)
+        #plt.plot(frequencies[peaks], amplitudes[peaks], "x")
+        #plt.show()
+
+        #plt.plot(frequencies, lin_powers)
+        #plt.plot(frequencies[peaks], lin_powers[peaks], "x")
+        #plt.show()
+
+        for peak in self.peaks:
+            print(self.frequencies[peak], self.amplitudes[peak])
+
+        
+        self.lin_Pmax = np.max(self.lin_powers) #in watts
+        if len(self.harmonic_peaks) == 0:
+            self.lin_thd = 1/10000000
+        else:
+            self.lin_thd = np.sum(self.lin_powers[self.harmonic_peaks]) / self.base_P #in terms of power
+        self.Pmax = 10 * np.log10(self.lin_Pmax/1e-3) #in dB
+        self.thd = 10 * np.log10(self.lin_thd) #in dB
+
+        self.measurement_timestamp = int(time.time())
+
+
+        print(f"THD {self.lin_thd}, Pmax {self.lin_Pmax}w")
+        print(f"THD {self.thd}dB, Pmax {self.Pmax}dBm")
+
+
+        print(self.ser.in_waiting)
+
 
     def read(self, param: str) -> float:
-        if param == "Amax":
-            self.ser.write((f"#dm0\r").encode())
-            time.sleep(0.1)
-            self.ser.write((f"#vm3\r").encode())
-            time.sleep(6)
-            
-            self.ser.flushInput()
-            self.ser.write((f"#bm1\r").encode())
-            c = self.ser.read(5)
-            c = self.ser.read(2001)
-            
-            
-            amplitudes = np.frombuffer(c, dtype=np.uint8)*0.4-80.8
-            frequencies = np.linspace(self.center_freq-self.span/2, self.center_freq+self.span/2, 2001)
-            lin_amplitudes = 10**(amplitudes/10) * 1e-3
-            print(amplitudes)
-            
-            peaks, properties = sp.signal.find_peaks(amplitudes, height=-56, threshold=None, distance=None, prominence=None, width=None, wlen=None, rel_height=0.5, plateau_size=None)
-
-            plt.plot(frequencies, amplitudes)
-            plt.plot(frequencies[peaks], amplitudes[peaks], "x")
-            plt.show()
-
-            plt.plot(frequencies, lin_amplitudes)
-            plt.plot(frequencies[peaks], lin_amplitudes[peaks], "x")
-            plt.show()
-
-            for peak in peaks:
-                print(frequencies[peak], lin_amplitudes[peak])
-
-
-            lin_amplitudes[np.argmax(lin_amplitudes)] = 0
-
-            print(lin_amplitudes[peaks])
-            
-            lin_Amax = np.max(lin_amplitudes) #in watts
-            lin_thd = np.sum(lin_amplitudes[peaks]) / lin_Amax #in terms of power
-            Amax = 10 * np.log10(lin_Amax/1e-3)
-            thd = 10 * np.log10(lin_thd)
-
-
-            print(f"THD {lin_thd}, Amax {lin_Amax}w")
-            print(f"THD {thd}dB, Amax {Amax}dBm")
-
-
-            print(self.ser.in_waiting)
-            return(np.max(amplitudes))
+        if param == "base_freq":
+            self.measure()
+            return(self.base_freq)
+        if param == "timestamp":
+            return(self.measurement_timestamp)
+        elif param == "Pmax":
+            return(self.Pmax)
+        elif param == "lin_Pmax":
+            return(self.lin_Pmax)
+        elif param == "base_P":
+            return(self.base_P)
+        elif param == "base_V":
+            return(self.base_V)
+        elif param == "base_dB":
+            return(self.base_dB)
+        elif param == "thd":
+            return(self.thd)
+        elif param == "lin_thd":
+            return(self.lin_thd)
         else:
             logging.error("Wrong param name")
