@@ -17,7 +17,7 @@ class HP34401AController(Controller):
         self.ip = None
         self.usb = None
         self.serial_port = None
-        self.param = None
+        self.params = {}
         self.type = None
 
         self.parseConfig()
@@ -115,7 +115,7 @@ class HP34401AController(Controller):
         self.device.write(f"CONF:{self.type} {str(self.range)}")
         self.device.write(f"trigger:source immediate")
         if self.averaging:
-            pass#self.device.write(f"samp:count 100")
+            pass
         else:
             self.device.write(f"trigger:count 1")
         #self.device.write(f"trigger:delay 0")
