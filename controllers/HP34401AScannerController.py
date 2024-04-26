@@ -16,7 +16,7 @@ from device import Device
 
 
 class Scanner_channel():
-    def __init__(self, param):
+    def __init__(self, param, device, scanner_device):
         if param.type == "VDC":
             self.type = "VOLT:DC"
         elif param.type == "VAC":
@@ -142,6 +142,12 @@ class HP34401AScannerController(Controller):
             logging.error("No ip address or usb specified")
             return False
         
+        if "scanner_port" in self.config.json:
+            self.scanner_port = self.config.json["scanner_port"]
+        else:
+            logging.error("No port for scanner specified")
+
+        
         for param in self.config.params:
             self.params[param.name] = Scanner_channel(param.json)
         return True
@@ -150,7 +156,11 @@ class HP34401AScannerController(Controller):
         self.device = Device(usb=self.usb, ip=self.ip, serial_port=self.serial_port)
         ret = self.device.connect()
         self.device.write(f"trigger:source immediate")
-        return ret
+
+
+        self.scanner_device = Device(serial_port=self.scanner_port)
+        ret2 = self.scanner_device.connect()
+        return ret and ret2
 
     def adjust(self, param: str, value: float) -> None:
         logging.error("No adjustable params")
