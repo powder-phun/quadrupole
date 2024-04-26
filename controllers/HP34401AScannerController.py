@@ -63,20 +63,18 @@ class Scanner_channel():
 
         time.sleep(0.1)
 
-        if param == self.param:
-            if self.averaging:
-                
-                self.device.write(f"SAMP:COUN 1000")
-                self.device.write(f"CALC:AVER:stat 1")
-                self.device.write(f"init")
-                time.sleep(float(self.avg_time))
-                ret = self.device.ask(f"calc:aver:aver?")
-                self.device.write(f"abort")
-            else:
-                ret = self.device.ask(f"READ?")
-            return float(ret)
+        if self.averaging:
+            
+            self.device.write(f"SAMP:COUN 1000")
+            self.device.write(f"CALC:AVER:stat 1")
+            self.device.write(f"init")
+            time.sleep(float(self.avg_time))
+            ret = self.device.ask(f"calc:aver:aver?")
+            self.device.write(f"abort")
         else:
-            logging.error("Wrong param name")
+            ret = self.device.ask(f"READ?")
+        return float(ret)
+
     
 
 
