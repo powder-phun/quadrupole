@@ -1,0 +1,23 @@
+{
+    "name": "HP34401A Scanner card Config",
+    "controllers": [
+        {
+            "type": "HP34401AScanner",
+            "port": "/dev/ttyS0",
+            "params": [
+                {
+                    "type": "VDC",
+                    "name": "10V",
+                    "int_nplc": 10,
+                    "range": "10"
+                },
+                {
+                    "type": "VDC",
+                    "name": "1V",
+                    "int_nplc": 10,
+                    "range": "1"
+                }
+            ]
+        }
+   ]
+}

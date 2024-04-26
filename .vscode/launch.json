@@ -20,7 +20,7 @@
             "justMyCode": false,
             "args": [
                 "-c",
-                "/home/jan/code/quadrupole/configs/em_generator.json",
+                "/home/jan/code/quadrupole/configs/34461AScanner.json",
                 "--log",
                 "DEBUG"
             ]

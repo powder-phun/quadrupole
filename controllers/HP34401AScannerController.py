@@ -36,23 +36,24 @@ class Scanner_channel():
 
         if "averaging_time" in param.json:
             self.averaging = True
-            self.avg_time = self.config.json["averaging_time"]
+            self.avg_time = param.json["averaging_time"]
         else:
             self.averaging = False
         
         if "int_nplc" in param.json:
-            self.nplc = self.config.json["int_nplc"]
+            self.nplc = param.json["int_nplc"]
         else:
             self.nplc = "default"
         
         if "range" in param.json:
-            self.range = self.config.json["range"]
+            self.range = param.json["range"]
         else:
             self.range = ""
     
 
 
-    def read(self):
+    def read(self, device):
+        self.device = device
         self.device.write(f"CONF:{self.type} {str(self.range)}")
         self.device.write(f"trigger:source immediate")
         if self.averaging:
@@ -94,6 +95,8 @@ class HP34401AScannerController(Controller):
         self.ip = None
         self.usb = None
         self.serial_port = None
+        self.params = {}
+        self.type = None
 
         self.parseConfig()
 
@@ -149,7 +152,7 @@ class HP34401AScannerController(Controller):
 
         
         for param in self.config.params:
-            self.params[param.name] = Scanner_channel(param.json)
+            self.params[param.name] = Scanner_channel(param)
         return True
     
     def connect(self) -> bool:
@@ -169,4 +172,4 @@ class HP34401AScannerController(Controller):
         pass
 
     def read(self, param: str) -> float:
-        return(self.params[param].read())
+        return(self.params[param].read(self.device))
