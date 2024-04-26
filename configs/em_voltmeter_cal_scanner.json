@@ -1,0 +1,148 @@
+{
+    "name": "Voltmeter Calibration",
+    "uses_a": true,
+    "defaults": {
+        "delay": 6,
+        "sweepOne": {
+            "enabled": true,
+            "param": "Voltage 1",
+            "min": 0,
+            "max": 24,
+            "steps": 41
+        },
+        "sweepTwo": {
+            "enabled": true,
+            "param": "a",
+            "min": 1,
+            "max": 100000,
+            "steps": 100001
+        }
+    },
+    "controllers": [
+        {
+            "type": "spd",
+            "ip": "169.254.100.101",
+            "params": [
+                {
+                    "type": "voltage",
+                    "name": "Voltage 1",
+                    "channel": 1
+                },
+                {
+                    "type": "current",
+                    "name": "Current 1",
+                    "default": 0.2,
+                    "channel": 1
+                }
+            ]
+        },
+        {
+            "type": "EuroMeasure",
+            "port": "/dev/ttyACM0",
+            "params": [
+                {
+                    "type": "voltmeter_avglen",
+                    "channel": 1,
+                    "address": 14,
+                    "default": 250,
+                    "name": "ch1a avglen"
+                },
+                {
+                    "type": "voltmeter_avglen",
+                    "channel": 1,
+                    "address": 15,
+                    "default": 250,
+                    "name": "ch1b avglen"
+                },
+                {
+                    "type": "voltmeter_raw",
+                    "channel": 1,
+                    "address": 14,
+                    "name": "ch1a"
+                },
+                {
+                    "type": "voltmeter_raw",
+                    "channel": 2,
+                    "address": 14,
+                    "name": "ch2a"
+                },
+                {
+                    "type": "voltmeter_raw",
+                    "channel": 3,
+                    "address": 14,
+                    "name": "ch3a"
+                },
+                {
+                    "type": "voltmeter_raw",
+                    "channel": 4,
+                    "address": 14,
+                    "name": "ch4a"
+                },
+                {
+                    "type": "voltmeter_raw",
+                    "channel": 1,
+                    "address": 15,
+                    "name": "ch1b"
+                },
+                {
+                    "type": "voltmeter_raw",
+                    "channel": 2,
+                    "address": 15,
+                    "name": "ch2b"
+                },
+                {
+                    "type": "voltmeter_raw",
+                    "channel": 3,
+                    "address": 15,
+                    "name": "ch3b"
+                },
+                {
+                    "type": "voltmeter_raw",
+                    "channel": 4,
+                    "address": 15,
+                    "name": "ch4b"
+                }
+            ]
+        },
+        {
+            "type": "HP34401AScanner",
+            "port": "/dev/ttyS0",
+            "scanner_port": "/dev/ttyUSB0",
+            "params": [
+                {
+                    "type": "VDC",
+                    "name": "VDC10",
+                    "int_nplc": 10,
+                    "range": "10",
+                    "channel_number": 1
+                },
+                {
+                    "type": "VDC",
+                    "name": "VDC1",
+                    "int_nplc": 10,
+                    "range": "1",
+                    "channel_number": 2
+                }
+            ]
+        },
+        {
+            "type": "HP34401A",
+            "ip": "169.254.100.20",
+            "params": [
+                {
+                    "type": "TEMP",
+                    "name": "temp_pt100"
+                }
+            ]
+        },
+        {
+            "type": "UnixTime",
+            "params": [
+                {
+                    "type": "time",
+                    "name": "time"
+                }
+            ]
+        }
+    ]
+}

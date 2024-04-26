@@ -4,18 +4,21 @@
         {
             "type": "HP34401AScanner",
             "port": "/dev/ttyS0",
+            "scanner_port": "/dev/ttyUSB0",
             "params": [
                 {
                     "type": "VDC",
                     "name": "10V",
                     "int_nplc": 10,
-                    "range": "10"
+                    "range": "10",
+                    "channel_number": 1
                 },
                 {
                     "type": "VDC",
                     "name": "1V",
                     "int_nplc": 10,
-                    "range": "1"
+                    "range": "1",
+                    "channel_number": 2
                 }
             ]
         }
