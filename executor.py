@@ -82,11 +82,8 @@ class Executor(QObject):
                 self.params[param.name] = param
                 self.paramValues[param.name] = None
 
-        print(self.params.items())
-
         self.params = dict(sorted(self.params.items(), key=lambda x: x[1].json.get("priority", 0)))
         
-        print(self.params.items())
  
 
 

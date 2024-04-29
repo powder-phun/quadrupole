@@ -61,7 +61,7 @@ class UnixTimeController(Controller):
 
 
     def read(self, param: str) -> float:
-        if param == "time":
+        if param == self.param:
             return(float(time.time()))
         else:
             logging.error("Wrong param name")

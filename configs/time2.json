@@ -6,8 +6,7 @@
             "params": [
                 {
                     "type": "time",
-                    "name": "time1",
-                    "priority": 1
+                    "name": "time1"
                 }
             ]
         },
@@ -17,7 +16,7 @@
                 {
                     "type": "time",
                     "name": "time2",
-                    "priority": -1
+                    "priority": 1
                 }
             ]
         }
