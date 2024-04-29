@@ -17,6 +17,8 @@ from device import Device
 
 class Scanner_channel():
     def __init__(self, param, device, scanner_device):
+        self.device = device
+        self.scanner_device = scanner_device
         if param.type == "VDC":
             self.type = "VOLT:DC"
         elif param.type == "VAC":
@@ -49,10 +51,16 @@ class Scanner_channel():
             self.range = param.json["range"]
         else:
             self.range = ""
+
+        if "channel_number" in param.json:
+            self.channel_number = int(param.json["channel_number"])
     
 
 
     def read(self, device):
+        self.scanner_device.write(f"0\r")
+        self.scanner_device.device.flushOutput()
+        
         self.device = device
         self.device.write(f"CONF:{self.type} {str(self.range)}")
         self.device.write(f"trigger:source immediate")
@@ -61,6 +69,11 @@ class Scanner_channel():
         else:
             self.device.write(f"trigger:count 1")
         self.device.write(f"sense:{self.type}:nplc {str(self.nplc)}")
+
+        time.sleep(0.5)
+
+        self.scanner_device.write(f"{self.channel_number}\r")
+        self.scanner_device.device.flushOutput()
 
         time.sleep(0.1)
 
@@ -92,6 +105,7 @@ class HP34401AScannerController(Controller):
         self.config: ControllerConfig = config
 
         self.device = None
+        self.scanner_device = None
         self.ip = None
         self.usb = None
         self.serial_port = None
@@ -151,8 +165,6 @@ class HP34401AScannerController(Controller):
             logging.error("No port for scanner specified")
 
         
-        for param in self.config.params:
-            self.params[param.name] = Scanner_channel(param)
         return True
     
     def connect(self) -> bool:
@@ -163,6 +175,10 @@ class HP34401AScannerController(Controller):
 
         self.scanner_device = Device(serial_port=self.scanner_port)
         ret2 = self.scanner_device.connect()
+
+        for param in self.config.params:
+            self.params[param.name] = Scanner_channel(param, self.device, self.scanner_device)
+
         return ret and ret2
 
     def adjust(self, param: str, value: float) -> None:

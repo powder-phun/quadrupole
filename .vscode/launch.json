@@ -8,8 +8,15 @@
             "name": "Python Debugger: Current File",
             "type": "debugpy",
             "request": "launch",
-            "program": "${file}",
-            "console": "integratedTerminal"
+            "program": "main.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                "-c",
+                "/home/jan/code/quadrupole/configs/34461AScanner.json",
+                "--log",
+                "DEBUG"
+            ]
         },
         {
             "name": "Python: Main File",
