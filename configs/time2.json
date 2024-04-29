@@ -1,0 +1,25 @@
+{
+    "name": "unix time demo Config",
+    "controllers": [
+        {
+            "type": "UnixTime",
+            "params": [
+                {
+                    "type": "time",
+                    "name": "time1",
+                    "priority": 1
+                }
+            ]
+        },
+        {
+            "type": "UnixTime",
+            "params": [
+                {
+                    "type": "time",
+                    "name": "time2",
+                    "priority": -1
+                }
+            ]
+        }
+   ]
+}
