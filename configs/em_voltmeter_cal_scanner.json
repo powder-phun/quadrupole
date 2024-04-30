@@ -2,7 +2,7 @@
     "name": "Voltmeter Calibration",
     "uses_a": true,
     "defaults": {
-        "delay": 60,
+        "delay": 20,
         "sweepOne": {
             "enabled": true,
             "param": "Voltage 1",
