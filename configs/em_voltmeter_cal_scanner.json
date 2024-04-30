@@ -58,49 +58,57 @@
                     "type": "voltmeter_raw",
                     "channel": 1,
                     "address": 14,
-                    "name": "ch1a"
+                    "name": "ch1a",
+                    "priority": 2
                 },
                 {
                     "type": "voltmeter_raw",
                     "channel": 2,
                     "address": 14,
-                    "name": "ch2a"
+                    "name": "ch2a",
+                    "priority": 2
                 },
                 {
                     "type": "voltmeter_raw",
                     "channel": 3,
                     "address": 14,
-                    "name": "ch3a"
+                    "name": "ch3a",
+                    "priority": 2
                 },
                 {
                     "type": "voltmeter_raw",
                     "channel": 4,
                     "address": 14,
-                    "name": "ch4a"
+                    "name": "ch4a",
+                    "priority": 2
                 },
                 {
                     "type": "voltmeter_raw",
                     "channel": 1,
                     "address": 15,
-                    "name": "ch1b"
+                    "name": "ch1b",
+                    "priority": 4
                 },
                 {
                     "type": "voltmeter_raw",
                     "channel": 2,
                     "address": 15,
-                    "name": "ch2b"
+                    "name": "ch2b",
+                    "priority": 4
                 },
                 {
                     "type": "voltmeter_raw",
                     "channel": 3,
                     "address": 15,
-                    "name": "ch3b"
+                    "name": "ch3b",
+                    "priority": 4
                 },
                 {
                     "type": "voltmeter_raw",
                     "channel": 4,
                     "address": 15,
-                    "name": "ch4b"
+                    "name": "ch4b",
+                    "priority": 4
                 }
             ]
         },
@@ -114,14 +122,16 @@
                     "name": "VDC10",
                     "int_nplc": 10,
                     "range": "10",
-                    "channel_number": 1
+                    "channel_number": 1,
+                    "priority": 1
                 },
                 {
                     "type": "VDC",
                     "name": "VDC1",
                     "int_nplc": 10,
                     "range": "1",
-                    "channel_number": 2
+                    "channel_number": 2,
+                    "priority": 3
                 }
             ]
         },
