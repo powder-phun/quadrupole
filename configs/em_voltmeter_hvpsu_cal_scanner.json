@@ -1,0 +1,212 @@
+{
+    "name": "Voltmeter Calibration",
+    "uses_a": true,
+    "uses_b": true,
+    "defaults": {
+        "delay": 20,
+        "sweepOne": {
+            "enabled": true,
+            "param": "b",
+            "min": 0,
+            "max": 1,
+            "steps": 41
+        },
+        "sweepTwo": {
+            "enabled": true,
+            "param": "a",
+            "min": 1,
+            "max": 10000000,
+            "steps": 10000001
+        }
+    },
+    "controllers": [
+        {
+            "type": "spd",
+            "ip": "169.254.100.101",
+            "params": [
+                {
+                    "type": "voltage",
+                    "name": "Voltage 1",
+                    "channel": 1,
+                    "eval_set": "b * 24.0"
+                },
+                {
+                    "type": "current",
+                    "name": "Current 1",
+                    "default": 0.2,
+                    "channel": 1
+                }
+            ]
+        },
+        {
+            "type": "EuroMeasure",
+            "port": "/dev/ttyACM0",
+            "params": [
+                {
+                    "type": "voltmeter_avglen",
+                    "channel": 1,
+                    "address": 14,
+                    "default": 250,
+                    "name": "ch1a avglen"
+                },
+                {
+                    "type": "voltmeter_avglen",
+                    "channel": 1,
+                    "address": 15,
+                    "default": 250,
+                    "name": "ch1b avglen"
+                },
+                {
+                    "type": "voltmeter_raw",
+                    "channel": 1,
+                    "address": 14,
+                    "name": "ch1a",
+                    "priority": 2
+                },
+                {
+                    "type": "voltmeter_raw",
+                    "channel": 2,
+                    "address": 14,
+                    "name": "ch2a",
+                    "priority": 2
+                },
+                {
+                    "type": "voltmeter_raw",
+                    "channel": 3,
+                    "address": 14,
+                    "name": "ch3a",
+                    "priority": 2
+                },
+                {
+                    "type": "voltmeter_raw",
+                    "channel": 4,
+                    "address": 14,
+                    "name": "ch4a",
+                    "priority": 2
+                },
+                {
+                    "type": "voltmeter_raw",
+                    "channel": 1,
+                    "address": 15,
+                    "name": "ch1b",
+                    "priority": 4
+                },
+                {
+                    "type": "voltmeter_raw",
+                    "channel": 2,
+                    "address": 15,
+                    "name": "ch2b",
+                    "priority": 4
+                },
+                {
+                    "type": "voltmeter_raw",
+                    "channel": 3,
+                    "address": 15,
+                    "name": "ch3b",
+                    "priority": 4
+                },
+                {
+                    "type": "voltmeter_raw",
+                    "channel": 4,
+                    "address": 15,
+                    "name": "ch4b",
+                    "priority": 4
+                },
+                {
+                    "type": "hvpsu_raw",
+                    "channel": 1,
+                    "name": "hvpsu1",
+                    "eval_set": "int(b * (2**16-1))"
+                },
+                {
+                    "type": "hvpsu_raw",
+                    "channel": 2,
+                    "name": "hvpsu2",
+                    "eval_set": "int(b * (2**16-1))"
+                },
+                {
+                    "type": "hvpsu_raw",
+                    "channel": 3,
+                    "name": "hvpsu3",
+                    "eval_set": "int(b * (2**16-1))"
+                },
+                {
+                    "type": "hvpsu_raw",
+                    "channel": 4,
+                    "name": "hvpsu4",
+                    "eval_set": "int(b * (2**16-1))"
+                }
+            ]
+        },
+        {
+            "type": "HP34401AScanner",
+            "port": "/dev/ttyS0",
+            "scanner_port": "/dev/ttyUSB0",
+            "params": [
+                {
+                    "type": "VDC",
+                    "name": "VDC10",
+                    "int_nplc": 10,
+                    "range": "10",
+                    "channel_number": 1,
+                    "priority": 1
+                },
+                {
+                    "type": "VDC",
+                    "name": "VDC1",
+                    "int_nplc": 10,
+                    "range": "1",
+                    "channel_number": 2,
+                    "priority": 3
+                },
+                {
+                    "type": "VDC",
+                    "name": "VDChvpsu1",
+                    "int_nplc": 10,
+                    "range": "1000",
+                    "channel_number": 3
+                },
+                {
+                    "type": "VDC",
+                    "name": "VDChvpsu2",
+                    "int_nplc": 10,
+                    "range": "1000",
+                    "channel_number": 4
+                },
+                {
+                    "type": "VDC",
+                    "name": "VDChvpsu3",
+                    "int_nplc": 10,
+                    "range": "1000",
+                    "channel_number": 5
+                },
+                {
+                    "type": "VDC",
+                    "name": "VDChvpsu4",
+                    "int_nplc": 10,
+                    "range": "1000",
+                    "channel_number": 6
+                }
+            ]
+        },
+        {
+            "type": "HP34401A",
+            "ip": "169.254.100.20",
+            "params": [
+                {
+                    "type": "TEMP",
+                    "name": "temp_pt100"
+                }
+            ]
+        },
+        {
+            "type": "UnixTime",
+            "params": [
+                {
+                    "type": "time",
+                    "name": "time"
+                }
+            ]
+        }
+    ]
+}

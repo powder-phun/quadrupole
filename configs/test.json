@@ -1,0 +1,122 @@
+{
+    "name": "Voltmeter Calibration",
+    "uses_a": true,
+    "uses_b": true,
+    "defaults": {
+        "delay": 20,
+        "sweepOne": {
+            "enabled": true,
+            "param": "b",
+            "min": 0,
+            "max": 1,
+            "steps": 41
+        },
+        "sweepTwo": {
+            "enabled": true,
+            "param": "a",
+            "min": 1,
+            "max": 10000000,
+            "steps": 10000001
+        }
+    },
+    "controllers": [
+        {
+            "type": "spd",
+            "ip": "169.254.100.101",
+            "params": [
+                {
+                    "type": "voltage",
+                    "name": "Voltage 1",
+                    "channel": 1,
+                    "eval_set": "b * 24.0"
+                },
+                {
+                    "type": "current",
+                    "name": "Current 1",
+                    "default": 0.2,
+                    "channel": 1
+                }
+            ]
+        },
+        {
+            "type": "EuroMeasure",
+            "port": "/dev/ttyACM0",
+            "params": [
+                {
+                    "type": "hvpsu_raw",
+                    "channel": 1,
+                    "name": "hvpsu1"
+                },
+                {
+                    "type": "hvpsu_raw",
+                    "channel": 2,
+                    "name": "hvpsu2"
+                },
+                {
+                    "type": "hvpsu_raw",
+                    "channel": 3,
+                    "name": "hvpsu3"
+                },
+                {
+                    "type": "hvpsu_raw",
+                    "channel": 4,
+                    "name": "hvpsu4"
+                }
+            ]
+        },
+        {
+            "type": "HP34401AScanner",
+            "port": "/dev/ttyS0",
+            "scanner_port": "/dev/ttyUSB0",
+            "params": [
+                {
+                    "type": "VDC",
+                    "name": "VDChvpsu1",
+                    "int_nplc": 10,
+                    "range": "1000",
+                    "channel_number": 3
+                },
+                {
+                    "type": "VDC",
+                    "name": "VDChvpsu2",
+                    "int_nplc": 10,
+                    "range": "1000",
+                    "channel_number": 4
+                },
+                {
+                    "type": "VDC",
+                    "name": "VDChvpsu3",
+                    "int_nplc": 10,
+                    "range": "1000",
+                    "channel_number": 5
+                },
+                {
+                    "type": "VDC",
+                    "name": "VDChvpsu4",
+                    "int_nplc": 10,
+                    "range": "1000",
+                    "channel_number": 6
+                }
+            ]
+        },
+        {
+            "type": "HP34401A",
+            "ip": "169.254.100.20",
+            "params": [
+                {
+                    "type": "TEMP",
+                    "name": "temp_pt100"
+                }
+            ]
+        },
+        {
+            "type": "UnixTime",
+            "params": [
+                {
+                    "type": "time",
+                    "name": "time"
+                }
+            ]
+        }
+    ]
+}
