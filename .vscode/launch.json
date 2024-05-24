@@ -27,7 +27,7 @@
             "justMyCode": false,
             "args": [
                 "-c",
-                "/home/jan/code/quadrupole/configs/time2.json",
+                "/home/jan/code/quadrupole/configs/impedance_generator.json",
                 "--log",
                 "DEBUG"
             ]

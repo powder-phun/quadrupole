@@ -70,6 +70,7 @@ class ImpedanceController(Controller):
             "Q": False,
             "amplitude_1_rms": False,
             "amplitude_1_pkpk": False,
+            "amplitude_1_dBm": False,
             "frequency": True,
             "THD_1": False,
         }
@@ -88,6 +89,7 @@ class ImpedanceController(Controller):
             "Q": "-",
             "amplitude_1_rms": "Vrms",
             "amplitude_1_pkpk": "Vpp",
+            "amplitude_1_dBm": "dBm",
             "THD_1": "-",
             "frequency": "Hz"
         }
@@ -166,6 +168,8 @@ class ImpedanceController(Controller):
                 return abs((self.phasor[0]))
             elif t == "amplitude_1_pkpk":
                 return abs((self.phasor[0])*2*math.sqrt(2))
+            elif t == "amplitude_1_dBm":
+                return 10*np.log10((abs((self.phasor[0]))**2/50.0*1000))
             elif t == "THD_1":
                 return self.calculate_THD(0)
             elif t == "THD_2":
@@ -181,6 +185,7 @@ class ImpedanceController(Controller):
 
     def calculate_THD(self, channel):
         sum_of_squares = sum(abs(x)**2 for x in self.harmonics[channel])
+        print(self.harmonics)
         return math.sqrt(sum_of_squares) / abs(self.phasor[channel])
 
     def measure(self):

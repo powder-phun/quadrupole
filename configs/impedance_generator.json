@@ -1,0 +1,79 @@
+{
+    "name": "Impedance config",
+    "defaults": {
+        "sweepOne": {
+            "enabled": true,
+            "param": "a",
+            "min": 1e3,
+            "max": 2e7,
+            "steps": 10,
+            "log": false
+        },
+        "delay": 0.5
+    },
+    "uses_a": true,
+    "controllers": [
+        {
+            "type": "EuroMeasure",
+            "port": "/dev/ttyACM0",
+            "params": [
+                {
+                    "type": "generator_amplitude",
+                    "channel": 2,
+                    "name": "A2",
+                    "default": 1
+                },
+                {
+                    "type": "generator_frequency",
+                    "channel": 2,
+                    "name": "f2",
+                    "eval_set": "a"
+                }
+            ]
+        },
+        {
+            "type": "impedance",
+            "ip": "192.168.1.9",
+            "reference_impedance": 100000,
+            "harmonics": 7,
+            "params": [
+                {
+                    "type": "frequency",
+                    "name": "Scope_Frequency",
+                    "priority": -1,
+                    "eval_set": "a"
+                },
+                {
+                    "type": "gain",
+                    "name": "gain"
+                },
+                {
+                    "type": "gain_log",
+                    "name": "gain_log"
+                },
+                {
+                    "type": "phase",
+                    "name": "phase"
+                },
+                {
+                    "type": "amplitude_1_rms",
+                    "name": "Scope_Amplitude_RMS"
+                },
+                {
+                    "type": "amplitude_1_dBm",
+                    "name": "amplitude_1_dBm"
+                },
+                {
+                    "type": "amplitude_1_pkpk",
+                    "name": "Scope_Amplitude_pkpk"
+                },
+                {
+                    "type": "THD_1",
+                    "name": "THD"
+                } 
+                
+            ]
+            
+        }
+    ]
+}
