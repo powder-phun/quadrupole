@@ -91,6 +91,11 @@ class HamegHM5014Controller(Controller):
             self.attenuator = int(self.config.json["attenuator"])
         else:
             self.attenuator = None
+
+        if "added_attenuator" in self.config.json:
+            self.added_attenuator = int(self.config.json["added_attenuator"])
+        else:
+            self.added_attenuator = 0
         
         if "span" in self.config.json:
             self.span = self.config.json["span"]
@@ -177,7 +182,7 @@ class HamegHM5014Controller(Controller):
             self.lin_thd = 1
             self.lin_Pmax = 0
 
-        self.amplitudes = np.frombuffer(c, dtype=np.uint8)*0.4-120.8+self.attenuator #in dB
+        self.amplitudes = np.frombuffer(c, dtype=np.uint8)*0.4-120.8+self.attenuator+self.added_attenuator #in dB
         self.frequencies = np.linspace(self.center_freq-self.span/2, self.center_freq+self.span/2, 2001) #in Hz
         self.lin_powers = 10**(self.amplitudes/10) * 1e-3 #in w
         
@@ -210,9 +215,9 @@ class HamegHM5014Controller(Controller):
         if len(self.harmonic_peaks) == 0:
             self.lin_thd = 1/10000000
         else:
-            self.lin_thd = np.sum(self.lin_powers[self.harmonic_peaks]) / self.base_P #in terms of power
+            self.lin_thd = np.sqrt(np.sum(self.lin_powers[self.harmonic_peaks]) / self.base_P) #in terms of voltage
         self.Pmax = 10 * np.log10(self.lin_Pmax/1e-3) #in dB
-        self.thd = 10 * np.log10(self.lin_thd) #in dB
+        self.thd = 20 * np.log10(self.lin_thd) #in dB
 
         self.measurement_timestamp = int(time.time())
 
@@ -231,8 +236,12 @@ class HamegHM5014Controller(Controller):
         if param == "timestamp":
             return(self.measurement_timestamp)
         elif param == "Pmax":
+            if self.Pmax is None:
+                return(-100)
             return(self.Pmax)
         elif param == "lin_Pmax":
+            if self.lin_Pmax is None:
+                return(0)
             return(self.lin_Pmax)
         elif param == "base_P":
             return(self.base_P)

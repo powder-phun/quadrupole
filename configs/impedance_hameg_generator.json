@@ -1,0 +1,113 @@
+{
+    "name": "Impedance config",
+    "defaults": {
+        "sweepOne": {
+            "enabled": true,
+            "param": "a",
+            "min": 1e3,
+            "max": 2e7,
+            "steps": 10,
+            "log": false
+        },
+        "delay": 0.5
+    },
+    "uses_a": true,
+    "controllers": [
+        {
+            "type": "EuroMeasure",
+            "port": "/dev/ttyACM0",
+            "params": [
+                {
+                    "type": "generator_amplitude",
+                    "channel": 2,
+                    "name": "A2",
+                    "default": 1
+                },
+                {
+                    "type": "generator_frequency",
+                    "channel": 2,
+                    "name": "f2",
+                    "eval_set": "a"
+                }
+            ]
+        },
+        {
+            "type": "impedance",
+            "ip": "192.168.1.120",
+            "reference_impedance": 100000,
+            "harmonics": 12,
+            "params": [
+                {
+                    "type": "frequency",
+                    "name": "Scope_Frequency",
+                    "priority": -1,
+                    "eval_set": "a"
+                },
+                {
+                    "type": "amplitude_1_rms",
+                    "name": "scope_rms"
+                },
+                {
+                    "type": "amplitude_1_dBm",
+                    "name": "scope_dBm"
+                },
+                {
+                    "type": "amplitude_1_pkpk",
+                    "name": "scope_pkpk"
+                },
+                {
+                    "type": "THD_1",
+                    "name": "scope_thd"
+                } 
+                
+            ]
+            
+        },
+        {
+            "type": "HM5014",
+            "port": "/dev/ttyUSB0",
+            "config_commands": "#vm0\r",
+            "span": 50e6,
+            "center_freq": 27.3e6,
+            "delay": 1,
+            "attenuator": 30,
+            "added_attenuator": 19.6,
+            "params": [
+                {
+                    "type": "base_freq",
+                    "name": "base_freq",
+                    "priority":-1,
+                    "eval_set": "a"
+                },
+                {
+                    "type": "Pmax",
+                    "name": "Pmax"
+                },
+                {
+                    "type": "lin_Pmax",
+                    "name": "lin_Pmax"
+                },
+                {
+                    "type": "base_P",
+                    "name": "base_P"
+                },
+                {
+                    "type": "base_dB",
+                    "name": "base_dB"
+                },
+                {
+                    "type": "base_V",
+                    "name": "base_V"
+                },
+                {
+                    "type": "thd",
+                    "name": "thd"
+                },
+                {
+                    "type": "lin_thd",
+                    "name": "lin_thd"
+                }
+            ]
+        }
+    ]
+}

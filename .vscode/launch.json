@@ -27,7 +27,7 @@
             "justMyCode": false,
             "args": [
                 "-c",
-                "/home/jan/code/quadrupole/configs/impedance_generator.json",
+                "/home/jan/code/quadrupole/configs/impedance_hameg_generator.json",
                 "--log",
                 "DEBUG"
             ]
