@@ -67,6 +67,14 @@ class Generator_amplitude(EM_parameter):
     unit = "V"
     n_channels = 2
 
+class Generator_amplitude_raw(EM_parameter):
+    def set(self, amplitude):
+        return em.set_generator_amplitude_raw(self.channel, amplitude, self.address)
+
+    isEditable = True
+    unit = "counts"
+    n_channels = 2
+
 class Generator_frequency(EM_parameter):
     def set(self, frequenecy):
         return em.set_generator_frequency(self.channel, frequenecy, self.address)
@@ -157,6 +165,7 @@ parameter_class_dict = {"pid_p": Pid_p,
                         "pid_state": Pid_state,
                         "pid_setpoint": Pid_setpoint,
                         "generator_amplitude": Generator_amplitude,
+                        "generator_amplitude_raw": Generator_amplitude_raw,
                         "generator_frequency": Generator_frequency,
                         "hvpsu_voltage": Hvpsu_voltage,
                         "hvpsu_raw": Hvpsu_raw,

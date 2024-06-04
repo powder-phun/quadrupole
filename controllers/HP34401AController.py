@@ -66,6 +66,11 @@ class HP34401AController(Controller):
         else:
             logging.error("No ip address or usb specified")
             return False
+        
+        if "temp_sensor" in self.config.json:
+            self.temp_sensor = self.config.json["temp_sensor"]
+        else:
+            self.temp_sensor = "RTD,PT100"
 
         for param in self.config.params: 
             if param.type == "VDC":
@@ -81,7 +86,7 @@ class HP34401AController(Controller):
             elif param.type == "FREQ":
                 self.type = "FREQ"
             elif param.type == "TEMP":
-                self.type = "TEMP" #"TEMP RTD,PT100"
+                self.type = f"TEMP {self.temp_sensor}" #"TEMP RTD,PT100"
             else:
                 logging.error(f"Invalid parameter name {param}")
 
