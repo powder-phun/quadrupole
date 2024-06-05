@@ -12,16 +12,17 @@
         "delay": 0.5
     },
     "uses_a": true,
+    "uses_b": true,
     "controllers": [
         {
             "type": "EuroMeasure",
             "port": "/dev/ttyACM0",
             "params": [
                 {
-                    "type": "generator_amplitude",
+                    "type": "generator_amplitude_raw",
                     "channel": 2,
-                    "name": "A2",
-                    "default": 1
+                    "name": "A2r",
+                    "default": 10000
                 },
                 {
                     "type": "generator_frequency",
@@ -33,9 +34,9 @@
         },
         {
             "type": "impedance",
-            "ip": "192.168.1.9",
+            "ip": "192.168.1.120",
             "reference_impedance": 100000,
-            "harmonics": 7,
+            "harmonics": 12,
             "params": [
                 {
                     "type": "frequency",
@@ -44,32 +45,20 @@
                     "eval_set": "a"
                 },
                 {
-                    "type": "gain",
-                    "name": "gain"
-                },
-                {
-                    "type": "gain_log",
-                    "name": "gain_log"
-                },
-                {
-                    "type": "phase",
-                    "name": "phase"
-                },
-                {
                     "type": "amplitude_1_rms",
-                    "name": "Scope_Amplitude_RMS"
+                    "name": "scope_rms"
                 },
                 {
                     "type": "amplitude_1_dBm",
-                    "name": "amplitude_1_dBm"
+                    "name": "scope_dBm"
                 },
                 {
                     "type": "amplitude_1_pkpk",
-                    "name": "Scope_Amplitude_pkpk"
+                    "name": "scope_pkpk"
                 },
                 {
                     "type": "THD_1",
-                    "name": "THD"
+                    "name": "scope_thd"
                 } 
                 
             ]
