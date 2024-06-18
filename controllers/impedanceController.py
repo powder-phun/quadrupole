@@ -185,11 +185,12 @@ class ImpedanceController(Controller):
 
     def calculate_THD(self, channel):
         sum_of_squares = sum(abs(x)**2 for x in self.harmonics[channel])
-        print(self.harmonics)
+        print("harmonics:")
+        print(np.abs(self.harmonics[channel]))
         return math.sqrt(sum_of_squares) / abs(self.phasor[channel])
 
     def measure(self):
-        self.set_timediv(1/self.frequency)
+        self.set_timediv(1/self.frequency*50)
         sample_rate = self.get_samplerate()
         time.sleep(SCOPE_DELAY)
         acq_delay = 1.2*self.get_timediv()*14
@@ -202,7 +203,6 @@ class ImpedanceController(Controller):
         while (not self.scale(a, 0)) or (not self.scale(b, 1)):
             #self.trigger()
             time.sleep(SCOPE_DELAY+acq_delay)
-            print(SCOPE_DELAY+acq_delay)
             a = self.acquire(0)
             b = self.acquire(1)
 
@@ -245,7 +245,6 @@ class ImpedanceController(Controller):
     
     def get_timediv(self):
         ret = self.device.ask(f"TDIV?")
-        print(ret)
         return(float(ret.split()[1][:-1]))
 
     def get_samplerate(self):

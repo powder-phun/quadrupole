@@ -5,9 +5,9 @@
             "enabled": true,
             "param": "a",
             "min": 1e3,
-            "max": 2e7,
-            "steps": 10,
-            "log": false
+            "max": 1e8,
+            "steps": 251,
+            "log": true
         },
         "delay": 0.5
     },
@@ -36,7 +36,7 @@
             "type": "impedance",
             "ip": "192.168.1.120",
             "reference_impedance": 100000,
-            "harmonics": 12,
+            "harmonics": 3,
             "params": [
                 {
                     "type": "frequency",

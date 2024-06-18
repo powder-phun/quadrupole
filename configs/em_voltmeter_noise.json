@@ -1,0 +1,41 @@
+{
+    "name": "Voltmeter Calibration",
+    "uses_a": true,
+    "defaults": {
+        "delay": 6
+    },
+    "controllers": [
+        {
+            "type": "EuroMeasure",
+            "port": "/dev/ttyACM0",
+            "params": [
+                {
+                    "type": "voltmeter_avglen",
+                    "channel": 1,
+                    "address": 14,
+                    "default": 250,
+                    "name": "ch1a_avglen"
+                },
+                {
+                    "type": "voltmeter_raw",
+                    "channel": 1,
+                    "name": "ch1_10V"
+                },
+                {
+                    "type": "voltmeter_raw",
+                    "channel": 2,
+                    "name": "ch2_1V"
+                }
+            ]
+        },
+        {
+            "type": "UnixTime",
+            "params": [
+                {
+                    "type": "time",
+                    "name": "time"
+                }
+            ]
+        }
+    ]
+}

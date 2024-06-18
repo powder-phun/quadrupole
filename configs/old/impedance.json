@@ -77,7 +77,7 @@
         },
         {
             "type": "fy",
-            "port": "COM3",
+            "port": "/dev/ttyUSB0",
             "params": [
                 {
                     "type": "frequency",

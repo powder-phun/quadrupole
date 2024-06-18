@@ -1,0 +1,36 @@
+{
+    "name": "Voltmeter Calibration",
+    "uses_a": true,
+    "uses_b": true,
+    "defaults": {
+        "delay": 0.2
+    },
+    "controllers": [
+        {
+            "type": "EuroMeasure",
+            "port": "/dev/ttyACM0",
+            "params": [
+                {
+                    "type": "hvpsu_voltage",
+                    "channel": 1,
+                    "name": "hvpsu1"
+                },
+                {
+                    "type": "hvpsu_voltage",
+                    "channel": 2,
+                    "name": "hvpsu2"
+                },
+                {
+                    "type": "hvpsu_voltage",
+                    "channel": 3,
+                    "name": "hvpsu3"
+                },
+                {
+                    "type": "hvpsu_voltage",
+                    "channel": 4,
+                    "name": "hvpsu4"
+                }
+            ]
+        }
+    ]
+}
