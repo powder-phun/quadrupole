@@ -1,0 +1,67 @@
+{
+    "name": "HP34401A Config",
+    "uses_a": true,
+    "uses_b": true,
+    "delay": 5,
+    "controllers": [
+        {
+            "type": "EuroMeasure",
+            "port": "/dev/ttyACM0",
+            "params": [
+                {
+                    "type": "hvpsu_voltage",
+                    "channel": 1,
+                    "name": "hvpsu1",
+                    "eval_set": "a"
+                },
+                {
+                    "type": "hvpsu_voltage",
+                    "channel": 2,
+                    "name": "hvpsu2",
+                    "eval_set": "a+b"
+                },
+                {
+                    "type": "hvpsu_voltage",
+                    "channel": 3,
+                    "name": "hvpsu3",
+                    "eval_set": "a"
+                },
+                {
+                    "type": "hvpsu_voltage",
+                    "channel": 4,
+                    "name": "hvpsu4",
+                    "eval_set": "a+b"
+                }
+            ]
+        },
+        {
+            "type": "HP34401A",
+            "ip": "192.168.1.2",
+            "speed": "Middle",
+            "averaging_time": 1,
+            "range": "1000",
+            "params": [
+                {
+                    "type": "VDC",
+                    "name": "VDC",
+                    "int_nplc": 10
+                }
+            ]
+        },
+        {
+            "type": "HP34401A",
+            "ip": "192.168.1.3",
+            "speed": "Middle",
+            "averaging_time": 1,
+            "range": "60",
+            "params": [
+                {
+                    "type": "VDC",
+                    "name": "IDC",
+                    "int_nplc": 10,
+                    "eval_get": "x/5001.5"
+                }
+            ]
+        }
+   ]
+}
