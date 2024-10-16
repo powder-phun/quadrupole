@@ -1,0 +1,27 @@
+{
+    "name": "Spectrometer EuroMeasure",
+    "defaults": {
+        "delay": 0.1
+    },
+    "uses_a": true,
+    "controllers": [
+        {
+            "type": "EuroMeasure",
+            "port": "/dev/ttyACM0",
+            "params": [
+                {
+                    "type": "voltmeter_voltage",
+                    "channel": 1,
+                    "name": "voltage",
+                    "unit": "V",
+                    "eval_get": "x*957.9"
+                },
+                {
+                    "type": "source_psu_set_voltage",
+                    "name": "Source_Voltage",
+                    "default": 0
+                }
+            ]
+        }
+    ]
+}

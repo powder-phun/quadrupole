@@ -27,7 +27,7 @@
             "justMyCode": false,
             "args": [
                 "-c",
-                "/home/jan/code/quadrupole/configs/em_voltmeter_noise.json",
+                "/home/jan/code/quadrupole/configs/em_source_test.json",
                 "--log",
                 "DEBUG"
             ]
