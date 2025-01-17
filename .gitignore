@@ -164,6 +164,6 @@ profiles/
 
 .vscode/
 
+data/*
 notes
-
 log.txt
