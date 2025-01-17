@@ -1,0 +1,67 @@
+{
+    "name": "Voltmeter Calibration",
+    "defaults": {
+        "delay": 0.1
+    },
+    "controllers": [
+        {
+            "type": "EuroMeasure",
+            "port": "/dev/ttyACM0",
+            "params": [
+                {
+                    "type": "hvpsu_voltage",
+                    "channel": 3,
+                    "name": "Bessel"
+                },
+                {
+                    "type": "hvpsu_voltage",
+                    "channel": 4,
+                    "name": "Faraday Bias"
+                },
+                {
+                    "type": "source_psu_set_voltage",
+                    "name": "Set V",
+                    "address": 5
+                },
+                {
+                    "type": "source_psu_set_current",
+                    "name": "Set I",
+                    "address": 5
+                },
+                {
+                    "type": "source_psu_measured_voltage",
+                    "name": "Get V",
+                    "address": 5
+                },
+                {
+                    "type": "source_psu_measured_current",
+                    "name": "Get I",
+                    "address": 5
+                },
+                {
+                    "type": "source_psu_set_voltage",
+                    "name": "Multiplier V",
+                    "address": 7
+                },
+                {
+                    "type": "source_psu_set_current",
+                    "name": "Multiplier I",
+                    "default": 200e-6,
+                    "address": 7
+                }
+            ]
+        },
+        {
+            "type": "HP34401A",
+            "ip": "192.168.0.10",
+            "speed": "fast",
+            "int_nplc": 1,
+            "params": [
+                {
+                    "type": "VDC",
+                    "name": "IDC"
+                }
+            ]
+        }
+    ]
+}
