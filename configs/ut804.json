@@ -1,0 +1,15 @@
+{
+    "name": "",
+    "controllers": [
+        {
+            "type": "ut804",
+            "port": "/dev/ttyUSB0",
+            "params": [
+                {
+                    "type": "value",
+                    "name": "value"
+                }
+            ]
+        }
+    ]
+}

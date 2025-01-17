@@ -20,6 +20,7 @@ from controllers.HP34401AController import HP34401AController
 from controllers.HP34401AScannerController import HP34401AScannerController
 from controllers.HamegHM5014Controller import HamegHM5014Controller
 from controllers.UnixTimeController import UnixTimeController
+from controllers.UT804 import UT804Controller
 from config import Config, ControllerConfig, ParamConfig
 
 from utils import DataPacket
@@ -102,6 +103,7 @@ class Executor(QObject):
         self.controllerTemplates[HP34401AScannerController.getName()] = HP34401AScannerController
         self.controllerTemplates[HamegHM5014Controller.getName()] = HamegHM5014Controller
         self.controllerTemplates[UnixTimeController.getName()] = UnixTimeController
+        self.controllerTemplates[UT804Controller.getName()] = UT804Controller
 
         for controller in self.config.controllers:
             self.addController(self.controllerTemplates[controller.type](controller), controller)
