@@ -1,0 +1,39 @@
+{
+    "name": "Voltmeter Calibration",
+    "defaults": {
+        "delay": 0.1
+    },
+    "controllers": [
+        {
+            "type": "EuroMeasure",
+            "port": "/dev/ttyACM0",
+            "params": [
+                {
+                    "type": "hvpsu_voltage",
+                    "channel": 3,
+                    "name": "Bessel"
+                },
+                {
+                    "type": "hvpsu_voltage",
+                    "channel": 4,
+                    "name": "Faraday Bias"
+                }
+            ]
+        },
+        {
+            "type": "HP34401A",
+            "ip": "192.168.0.10",
+            "speed": "fast",
+            "int_nplc": 1,
+            "range": 20,
+            "params": [
+                {
+                    "type": "VDC",
+                    "name": "Current",
+                    "eval_get": "x/10e6",
+                    "unit": "A"
+                }
+            ]
+        }
+    ]
+}
